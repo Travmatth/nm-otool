@@ -3,5 +3,6 @@
 ._*
 *.out*
 **/.nfs*
-philo
 test/test
+ft_nm
+ft_otool
