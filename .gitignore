@@ -1,0 +1,7 @@
+*.dSYM
+**/*.o
+._*
+*.out*
+**/.nfs*
+philo
+test/test

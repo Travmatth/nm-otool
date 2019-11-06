@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "internal.h": "c",
+        "cstdlib": "c"
+    }
+}
