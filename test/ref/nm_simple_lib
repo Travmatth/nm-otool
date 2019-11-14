@@ -1,0 +1,8 @@
+Script started on Thu Nov 14 13:15:35 2019
+command: nm simple_lib.a
+
+simple_lib.a(simple_obj.o):
+                 U _printf
+0000000000000000 T _simple_func
+
+Script done on Thu Nov 14 13:15:35 2019

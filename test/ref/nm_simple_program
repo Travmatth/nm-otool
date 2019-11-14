@@ -1,0 +1,10 @@
+Script started on Thu Nov 14 13:15:44 2019
+command: nm simple_program
+0000000100000000 T __mh_execute_header
+0000000100000f50 T _main
+0000000100000f30 T _main_func
+                 U _printf
+0000000100000f00 T _simple_func
+                 U dyld_stub_binder
+
+Script done on Thu Nov 14 13:15:44 2019
