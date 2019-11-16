@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/07 17:28:29 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/15 16:22:21 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ int		main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	common_test();
 	nm_skeleton();
 	return (EXIT_SUCCESS);
 }

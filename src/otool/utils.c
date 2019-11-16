@@ -6,13 +6,8 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/06 12:31:36 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/06 12:33:38 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/15 16:28:49 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/nm.h"
-
-void	otool_skeleton(void)
-{
-	ft_printf("otool working\n");
-}

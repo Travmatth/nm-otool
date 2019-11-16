@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/07 18:02:21 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/15 18:04:37 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@
 ** @param {int} argc - number of arguments passed to program
 ** @param {*char[]} argv - the arguments passed to program
 ** @param {*const envp[]} envp - the environment variables passed to program
+** @return {int} 0 on success, 1 on failure
 */
 
 int		main(int argc, char *argv[], char *envp[])
 {
-	(void)argc;
-	(void)argv;
-	(void)envp;
-	common_test();
-	otool_skeleton();
+	char	*file;
+
+	if (get_file(argc, argv, envp, &file) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 12:34:43 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/04/26 15:26:17 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/15 17:08:16 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@
 ** defines
 */
 
+# define PASS (void)0
 # define OCT_VALUES "01234567"
 # define HEX_VALUES_LOWER "0123456789abcdef"
 # define HEX_VALUES_UPPER "0123456789ABCDEF"

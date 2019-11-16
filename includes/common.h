@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/07 17:38:55 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/15 18:04:41 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,22 @@
 #  include "../libftprintf/srcs/includes/ft_printf.h"
 # endif
 
-void	common_test(void);
+/*
+** fcntl.h - open
+** sys/stat.h - fstat
+** sys/mman.h - mmap/PROT_READ/PROT_WRITE/MAP_PRIVATE/MAP_FAILED
+*/
+
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <sys/mman.h>
+
+# define MMAP_PROT (PROT_READ | PROT_WRITE)
+# define MMAP_FLAGS (MAP_PRIVATE)
+
+int			get_file(int argc, char **argv, char **envp, char **file);
+uint32_t	swap_uint32(uint32_t old);
+uint64_t	swap_uint64(uint64_t old);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

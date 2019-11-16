@@ -13,7 +13,7 @@ CFLAGS = -Wall -Wextra -Werror -Wpedantic
 LDFLAGS = -Llibftprintf -lftprintf -I./includes
 IS_DEBUG =
 TEST_FILE = test/test.c
-TEST_NAME = test/test
+TEST_NAME = test/run_test
 
 COMMON = utils
 COMMON_FILES = $(addprefix src/common/, $(COMMON))
@@ -36,18 +36,7 @@ OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 
 .PHONY = all clean fclean re
 
-all: $(SUBMODULES) $(NM_NAME) $(OTOOL_NAME)
-
-debug: set-debug all
-
-test: set-debug all
-	@echo -n 'Compiling nm-otool tests... '
-	@$(CC) $(IS_DEBUG) $(DEBUG) $(CFLAGS) $(LDFLAGS) $(NM_OBJ) $(OTOOL_OBJ) $(TEST_FILE) -o $(TEST_NAME)
-	@echo "\033[32mdone\033[0m"
-
-set-debug:
-	@echo 'Compiling nm-otool with debugging logs enabled'
-	$(eval IS_DEBUG='-D__DEBUG__') 
+all: $(NM_NAME) $(OTOOL_NAME)
 
 $(LIBFT):
 	@$(MAKE) -C libftprintf
@@ -71,10 +60,27 @@ $(OTOOL_NAME): $(LIBFT) $(COMMON_OBJ) $(OTOOL_OBJ)
 	@$(CC) $(IS_DEBUG) $(DEBUG) $(CFLAGS) $(LDFLAGS) $(COMMON_OBJ) $(OTOOL_OBJ) $(OTOOL_MAIN) -o $@
 	@echo "\033[32mdone\033[0m"
 
+debug: set-debug $(COMMON_OBJ)
+
+test: set-debug all
+	@echo -n 'Compiling nm-otool tests... '
+	@$(CC) $(IS_DEBUG) $(DEBUG) $(CFLAGS) $(LDFLAGS) $(COMMON_OBJ) $(TEST_FILE) -o $(TEST_NAME)
+	@echo "\033[32mdone\033[0m"
+
+run_test:
+	@./$(TEST_NAME)
+
+set-debug:
+	@echo 'Compiling nm-otool with debugging logs enabled'
+	$(eval IS_DEBUG='-D__DEBUG__') 
+
+shallow_clean:
+	@rm -rf $(NAME) $(TEST_NAME)
+
 clean:
 	@$(MAKE) clean -C libftprintf
 	@echo -n 'Cleaning nm-otool object files... '
-	@rm -rf $(OBJ) *.dSYM test/*.dSYM *.DS_Store typescript
+	@rm -rf $(OBJ) *.dSYM test/*.dSYM *.DS_Store
 	@echo "\033[32mdone\033[0m"
 
 fclean: clean
