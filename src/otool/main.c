@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/18 18:27:39 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/18 18:50:40 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,13 @@ int		main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	else if (determine_file(&ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if ((ctx.flags & IS_FAT)
-		&& dump_fat_segs(&ctx, &print_text, &print_text64) == EXIT_FAILURE)
+	else if ((ctx.flags & IS_FAT) && dump_fat_segs(&ctx
+		, &print_section
+		, &print_section64) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if (dump_mach_segs(&ctx, &print_text, &print_text64) == EXIT_FAILURE)
+	else if (dump_mach_segs(&ctx
+		, &print_section
+		, &print_section64) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (cleanup_ctx(&ctx));
 }

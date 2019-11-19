@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/18 18:29:41 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/18 18:51:59 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 ** IS_FAT: binary file is in FAT format
 */
 
-enum			e_flags
+enum	e_flags
 {
 	IS_SWAPPED = (1u << 0),
 	IS_32 = (1u << 1),
@@ -67,31 +67,31 @@ typedef struct	s_ctx
 ** signature of functions passed into dump_*_segs functions
 */
 
-typedef int	(*t_seg_func)(t_ctx *ctx, struct segment_command *segment);
-typedef int	(*t_seg64_func)(t_ctx *ctx, struct segment_command_64 *segment);
+typedef int		(*t_seg_func)(t_ctx *ctx, struct segment_command *segment);
+typedef int		(*t_seg64_func)(t_ctx *ctx, struct segment_command_64 *segment);
 
 /*
 ** common/utils.c
 */
 
-int			get_file(int argc, char **argv, char **envp, t_ctx *ctx);
-int			determine_file(t_ctx *ctx);
-uint32_t	swap_uint32(uint32_t old);
-uint64_t	swap_uint64(uint64_t old);
-int			cleanup_ctx(t_ctx *ctx);
+int				get_file(int argc, char **argv, char **envp, t_ctx *ctx);
+int				determine_file(t_ctx *ctx);
+uint32_t		swap_uint32(uint32_t old);
+uint64_t		swap_uint64(uint64_t old);
+int				cleanup_ctx(t_ctx *ctx);
 
 /*
 ** common/mach-o.c
 */
 
-int			dump_mach_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
+int				dump_mach_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
 
 
 /*
 ** common/fat.c
 */
 
-int			dump_fat_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
+int				dump_fat_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined
