@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   otool.h                                            :+:      :+:    :+:   */
+/*   fat.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/07 15:51:03 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/18 18:18:09 by tmatthew         ###   ########.fr       */
+/*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
+/*   Updated: 2019/11/18 18:29:54 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_OTOOL_H
-# define FT_OTOOL_H
+#include "../../includes/common.h"
 
-# include "common.h"
-
-int		print_text(t_ctx *ctx, struct segment_command *segment);
-int		print_text64(t_ctx *ctx, struct segment_command_64 *segment);
-#endif
+int		dump_fat_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64)
+{
+	(void)ctx;
+	(void)f;
+	(void)f64;
+	return (EXIT_SUCCESS);
+}

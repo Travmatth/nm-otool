@@ -15,7 +15,7 @@ IS_DEBUG =
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
 
-COMMON = utils
+COMMON = fat mach_o utils
 COMMON_FILES = $(addprefix src/common/, $(COMMON))
 COMMON_SRC = $(addsuffix .c, $(COMMON_FILES))
 COMMON_OBJ = $(COMMON_SRC:.c=.o)
@@ -29,7 +29,7 @@ NM_OBJ = $(NM_SRC:.c=.o)
 
 OTOOL_NAME = ft_otool
 OTOOL_MAIN = src/otool/main.c
-OTOOL = utils
+OTOOL = utils print
 OTOOL_FILES = $(addprefix src/otool/, $(OTOOL))
 OTOOL_SRC = $(addsuffix .c, $(OTOOL_FILES))
 OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
