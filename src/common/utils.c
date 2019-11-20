@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/18 18:24:03 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/19 16:40:56 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,10 @@ int			get_file(int argc, char **argv, char **envp, t_ctx *ctx)
 				, MMAP_FLAGS, fd, 0)) == MAP_FAILED)
 		DEBUG_LOG("Error: failed mappping %s into memory\n", argv[1]);
 	else
+	{
+		ctx->size = f_stat.st_size;
 		return (EXIT_SUCCESS);
-	ctx->size = f_stat.st_size;
+	}
 	return (EXIT_FAILURE);
 }
 
@@ -64,7 +66,7 @@ int			determine_file(t_ctx *ctx)
 	}
 	else if (magic == MH_CIGAM_64)
 		ctx->flags |= IS_SWAPPED;
-	else if (magic == FAT_CIGAM)
+	else if (magic == FAT_MAGIC)
 		ctx->flags |= IS_FAT;
 	else if (magic == FAT_CIGAM)
 	{
