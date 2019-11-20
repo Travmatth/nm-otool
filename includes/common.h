@@ -102,14 +102,14 @@ int				cleanup_ctx(t_ctx *ctx);
 ** common/mach-o.c
 */
 
-int				dump_mach_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
+int				dump_mach_lcmds(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
 
 
 /*
 ** common/fat.c
 */
 
-int				dump_fat_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
+int				dump_fat_lcmds(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

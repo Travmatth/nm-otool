@@ -103,7 +103,9 @@ set-debug:
 
 # remove executables and test files in project, not dependencies
 shallow_clean:
-	@rm -rf $(NAME) $(TEST_NAME)
+	@echo -n 'Shallow cleaning nm-otool object files... '
+	@rm -rf $(COMMON_OBJ) $(OTOOL_OBJ) $(NM_OBJ) $(TEST_OBJ) *.dSYM test/*.dSYM *.DS_Store
+	@echo "\033[32mdone\033[0m"
 
 # remove executables, debugging dirs
 clean:

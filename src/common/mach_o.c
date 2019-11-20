@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/18 18:46:38 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/20 13:10:50 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 ** @param{t_seg64_func} function called with current segment being iterated over
 */
 
-int		dump_mach_segs(t_ctx *ctx, t_seg_func f, t_seg64_func f64)
+int		dump_mach_lcmds(t_ctx *ctx, t_seg_func f, t_seg64_func f64)
 {
 	(void)ctx;
 	(void)f;
