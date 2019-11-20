@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/19 16:40:56 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/20 15:17:43 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int			get_file(int argc, char **argv, char **envp, t_ctx *ctx)
 }
 
 /*
-** determine if given file is FAT or 32/64bit Mach-O binary
+** determine if given file is FAT, 32/64bit Mach-O binary, or archive
 ** @param {t_ctx*} struct containing file
 ** @return {int} 0 on success, 1 on error
 */
@@ -57,63 +57,16 @@ int			determine_file(t_ctx *ctx)
 	uint32_t	magic;
 
 	magic = *(uint32_t*)ctx->file;
-	if (magic == MH_MAGIC)
-		ctx->flags |= IS_32;
-	else if (magic == MH_CIGAM)
-	{
-		ctx->flags |= IS_32;
-		ctx->flags |= IS_SWAPPED;
-	}
-	else if (magic == MH_CIGAM_64)
-		ctx->flags |= IS_SWAPPED;
-	else if (magic == FAT_MAGIC)
-		ctx->flags |= IS_FAT;
-	else if (magic == FAT_CIGAM)
-	{
-		ctx->flags |= IS_FAT;
-		ctx->flags |= IS_SWAPPED;
-	}
-	else if (magic != MH_MAGIC_64)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}
-
-/*
-** swap the bytes of 32bit integer to different endianness
-** @param {uint32_t} old integer to swap
-** @return {uint32_t} swapped integer
-*/
-
-uint32_t	swap_uint32(uint32_t old)
-{
-	uint32_t	new;
-
-	new = ((old & 0xff000000) >> 24) |
-		((old & 0x00ff0000) >> 8) |
-		((old & 0x0000ff00) << 8) |
-		((old & 0x000000ff) << 24);
-	return (new);
-}
-
-/*
-** swap the bytes of 64bit integer to different endianness
-** @param {uint64_t} old integer to swap
-** @return {uint64_t} swapped integer
-*/
-
-uint64_t	swap_uint64(uint64_t old)
-{
-	uint64_t	new;
-
-	new = ((old & 0xff00000000000000ULL) >> 56) | \
-		((old & 0x00ff000000000000ULL) >> 40) | \
-		((old & 0x0000ff0000000000ULL) >> 24) | \
-		((old & 0x000000ff00000000ULL) >> 8) | \
-		((old & 0x00000000ff000000ULL) << 8) | \
-		((old & 0x0000000000ff0000ULL) << 24) | \
-		((old & 0x000000000000ff00ULL) << 40) | \
-		((old & 0x00000000000000ffULL) << 56);
-	return (new);
+	if (is_fat32(ctx, magic) == EXIT_SUCCESS)
+		return (EXIT_SUCCESS);
+	else if (is_fat64(ctx, magic) == EXIT_SUCCESS)
+		return (EXIT_SUCCESS);
+	else if (is_mach32(ctx, magic) == EXIT_SUCCESS)
+		return (EXIT_SUCCESS);
+	else if (is_mach64(ctx, magic) == EXIT_SUCCESS)
+		return (EXIT_SUCCESS);
+	else
+		return (is_archive(ctx));
 }
 
 /*

@@ -13,9 +13,9 @@ struct func		funcs[NUM_TESTS] = {
 	{ "test_determine_file_detects_invalid", test_determine_file_detects_invalid },
 	{ "test_determine_file_detects_macho64", test_determine_file_detects_macho64 },
 	{ "test_determine_file_detects_macho32", test_determine_file_detects_macho32 },
-	{ "test_determine_file_detects_fat32", test_determine_file_detects_fat32 },
-	{ "test_swap_32bit", test_swap_32bit },
-	{ "test_swap_64bit", test_swap_64bit },
+	{ "test_determine_file_detects_archive", test_determine_file_detects_archive },
+	{ "test_determine_file_detects_extended_archive", test_determine_file_detects_extended_archive, },
+	{ "test_determine_file_detects_fat", test_determine_file_detects_fat },
 };
 
 int		main(int argc, char *argv[], char *envp[])

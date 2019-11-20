@@ -62,7 +62,7 @@ should determine if given file mach-o 64 bit binary
 
 int		test_determine_file_detects_macho64(void) {
 	t_ctx ctx;
-	char *argv[2] = { NULL, "test/artifacts/simple_program" };
+	char *argv[2] = { NULL, "test/artifacts/simple_program_64" };
 
 	bzero(&ctx, sizeof(t_ctx));
 	if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
@@ -97,19 +97,19 @@ int		test_determine_file_detects_macho32(void) {
 }
 
 /*
-should determine if given file fat 64 bit binary
+should determine if given file standard archive
 */
 
-int		test_determine_file_detects_fat32(void) {
+int		test_determine_file_detects_archive(void) {
 	t_ctx ctx;
-	char *argv[2] = { NULL, "test/artifacts/simple_lib_fat.a" };
+	char *argv[2] = { NULL, "test/artifacts/archive_mixed_not_lib.a" };
 
 	bzero(&ctx, sizeof(t_ctx));
 	if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
 		return EXIT_FAILURE;
 	else if (determine_file(&ctx) == EXIT_FAILURE)
 		return EXIT_FAILURE;
-	else if (!(ctx.flags & IS_FAT))
+	else if (!(ctx.flags & IS_ARCHIVE))
 		return EXIT_FAILURE;
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return EXIT_FAILURE;
@@ -117,23 +117,41 @@ int		test_determine_file_detects_fat32(void) {
 }
 
 /*
-test reversing 32bit number
+should determine if given file standard archive
 */
 
-int		test_swap_32bit(void) {
-	uint32_t orig = swap_uint32(MH_MAGIC);
-	if (orig != MH_CIGAM)
+int		test_determine_file_detects_extended_archive(void) {
+	t_ctx ctx;
+	char *argv[2] = { NULL, "test/artifacts/extended_archive_multi_lib.a" };
+
+	bzero(&ctx, sizeof(t_ctx));
+	if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
+		return EXIT_FAILURE;
+	else if (determine_file(&ctx) == EXIT_FAILURE)
+		return EXIT_FAILURE;
+	else if (!(ctx.flags & IS_EXTENDED_ARCHIVE))
+		return EXIT_FAILURE;
+	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
 
 /*
-test reversing 64bit number
+should determine if given file fat bit binary
 */
 
-int		test_swap_64bit(void) {
-	uint64_t orig = swap_uint64(MH_MAGIC_64);
-	if (orig != OSSwapConstInt64(MH_MAGIC_64))
+int		test_determine_file_detects_fat(void) {
+	t_ctx ctx;
+	char *argv[2] = { NULL, "test/artifacts/simple_obj_fat.o" };
+
+	bzero(&ctx, sizeof(t_ctx));
+	if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
+		return EXIT_FAILURE;
+	else if (determine_file(&ctx) == EXIT_FAILURE)
+		return EXIT_FAILURE;
+	else if (!(ctx.flags & IS_FAT) || (ctx.flags & IS_32))
+		return EXIT_FAILURE;
+	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
