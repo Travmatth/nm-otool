@@ -87,7 +87,7 @@ $(OTOOL_NAME): $(LIBFT) $(COMMON_OBJ) $(OTOOL_OBJ)
 debug: set-debug $(COMMON_OBJ)
 
 # compile test program
-test: set-debug all $(TEST_OBJ)
+test: set-debug $(LIBFT) $(COMMON_OBJ) $(NM_OBJ) $(NM_OBJ) $(TEST_OBJ)
 	@echo -n 'Compiling nm-otool tests... '
 	@$(CC) $(IS_DEBUG) $(DEBUG) $(CFLAGS) $(LDFLAGS) $(TESTFLAGS) $(COMMON_OBJ) $(TEST_OBJ) $(TEST_FILE) -o $(TEST_NAME)
 	@echo "\033[32mdone\033[0m"
