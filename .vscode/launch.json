@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "generate refs",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceRoot}/test/generate_refs.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "otool launch",
             "type": "cppdbg",
             "request": "launch",
@@ -10,7 +17,7 @@
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "env": {
-				// "SHELL": "/bin/zsh"
+                // "SHELL": "/bin/zsh"
             },
             // "setupCommands": [
             //     { "text": "settings set target.input-path test/input.txt" }
@@ -50,7 +57,7 @@
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "env": {
-				// "SHELL": "/bin/zsh"
+                // "SHELL": "/bin/zsh"
             },
             // "setupCommands": [
             //     { "text": "settings set target.input-path test/input.txt" }

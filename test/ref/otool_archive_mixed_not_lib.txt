@@ -1,0 +1,1 @@
+test/artifacts/archive_mixed_not_lib.a: is not an object file

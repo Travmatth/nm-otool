@@ -1,0 +1,6 @@
+00001000 T __mh_execute_header
+00001f50 T _main
+00001f30 T _main_func
+         U _printf
+00001f00 T _simple_func
+         U dyld_stub_binder
