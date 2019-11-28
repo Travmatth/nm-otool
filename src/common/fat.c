@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/20 13:10:50 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/27 22:23:16 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,13 @@
 /*
 ** iterate over FAT binary and parse each archived binary
 ** @param{t_ctx*} program context containing binary file being parsed
-** @param{t_seg_func} function called with current segment being iterated over
-** @param{t_seg64_func} function called with current segment being iterated over
+** @param{t_seg_f} function called with current segment being iterated over
+** @param{t_sec_f} function called with current section being iterated over
 */
 
-int		dump_fat_lcmds(t_ctx *ctx, t_seg_func f, t_seg64_func f64)
+int		dump_fat_lcmds(t_ctx *ctx, t_dump_funcs *funcs)
 {
 	(void)ctx;
-	(void)f;
-	(void)f64;
+	(void)funcs;
 	return (EXIT_SUCCESS);
 }

@@ -1,0 +1,8 @@
+
+test/artifacts/archive_mixed_not_lib.a(simple_obj_64.o):
+                 U _printf
+0000000000000000 T _simple_func
+
+test/artifacts/archive_mixed_not_lib.a(simple_obj_32.o):
+         U _printf
+00000000 T _simple_func

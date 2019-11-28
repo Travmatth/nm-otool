@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/20 13:10:50 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/20 16:57:23 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,13 @@ int		main(int argc, char *argv[], char *envp[])
 	else if (determine_file(&ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	else if ((ctx.flags & IS_FAT) && dump_fat_lcmds(&ctx
-		, &print_section
-		, &print_section64) == EXIT_FAILURE)
+		, &print_text
+		, &print_text64) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if (dump_mach_lcmds(&ctx
-		, &print_section
-		, &print_section64) == EXIT_FAILURE)
+	else if ((ctx.flags & IS_32)
+		&& dump_mach_lcmds(&ctx, &print_text) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	else if (dump_mach_lcmds64(&ctx, &print_text64) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (cleanup_ctx(&ctx));
 }

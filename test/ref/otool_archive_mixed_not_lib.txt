@@ -1,1 +1,11 @@
-test/artifacts/archive_mixed_not_lib.a: is not an object file
+Archive : test/artifacts/archive_mixed_not_lib.a
+test/artifacts/archive_mixed_not_lib.a(simple_obj_64.o):
+Contents of (__TEXT,__text) section
+0000000000000000	55 48 89 e5 48 83 ec 10 48 8d 05 1b 00 00 00 48 
+0000000000000010	89 7d f8 48 8b 75 f8 48 89 c7 b0 00 e8 00 00 00 
+0000000000000020	00 89 45 f4 48 83 c4 10 5d c3 
+test/artifacts/archive_mixed_not_lib.a(simple_obj_32.o):
+Contents of (__TEXT,__text) section
+00000000	55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d 
+00000010	80 24 00 00 00 89 4d fc 8b 4d fc 89 04 24 89 4c 
+00000020	24 04 e8 d9 ff ff ff 89 45 f8 83 c4 18 5d c3 

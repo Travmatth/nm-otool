@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/20 13:13:28 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/27 22:20:08 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,12 @@
 # define MMAP_FLAGS (MAP_PRIVATE)
 
 /*
+** Macros used to calculate positions of data offsets in binaries
+*/
+
+# define SEG_POS(ctx, hdr, sc) (ctx->file + hdr->sizeofcmds + sc->fileoff)
+
+/*
 ** IS_SWAPPED: endianness of data opposite of current architecture
 ** IS_32: binary file targeted for 32bit systems
 ** IS_FAT: binary file is in FAT format
@@ -72,11 +78,31 @@ typedef struct	s_ctx
 }				t_ctx;
 
 /*
-** signature of functions passed into dump_*_lcmds functions
+** signature of functions passed into dump_* functions
 */
 
-typedef int		(*t_seg_func)(t_ctx *ctx, struct segment_command *segment);
-typedef int		(*t_seg64_func)(t_ctx *ctx, struct segment_command_64 *segment);
+typedef int		(*t_seg_f)(t_ctx *ctx
+							, struct segment_command *segment
+							, struct segment_command_64 *segment_64
+							, void *addr);
+typedef int		(*t_sec_f)(t_ctx *ctx
+							, struct section *section
+							, struct section_64 *section_64
+							, void *addr);
+typedef int		(*t_lc_f)(t_ctx *ctx
+							, struct load_command *lc
+							, void *addr);
+
+/*
+** struct containing functions called when dumping different parts of binary
+*/
+
+typedef struct	s_dump_funcs
+{
+	t_seg_f		segment;
+	t_sec_f		section;
+	t_lc_f		load;
+}				t_dump_funcs;
 
 /*
 ** common/magics.c
@@ -102,14 +128,14 @@ int				cleanup_ctx(t_ctx *ctx);
 ** common/mach-o.c
 */
 
-int				dump_mach_lcmds(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
-
+int				dump_mach_lcmds(t_ctx *ctx, t_dump_funcs *funcs);
+int				dump_mach_lcmds64(t_ctx *ctx, t_dump_funcs *funcs);
 
 /*
 ** common/fat.c
 */
 
-int				dump_fat_lcmds(t_ctx *ctx, t_seg_func f, t_seg64_func f64);
+int				dump_fat_lcmds(t_ctx *ctx, t_dump_funcs *funcs);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined
