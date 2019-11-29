@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/20 16:57:23 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/29 00:21:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,22 @@
 
 int		main(int argc, char *argv[], char *envp[])
 {
-	t_ctx	ctx;
+	t_ctx			ctx;
+	t_dump_funcs	func;
 
-	ft_bzero(&ctx, sizeof(t_ctx));
+	func.header = NULL;
+	func.segment = print_text_segment;
+	func.section = print_text_section;
+	func.load = NULL;
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	else if (determine_file(&ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if ((ctx.flags & IS_FAT) && dump_fat_lcmds(&ctx
-		, &print_text
-		, &print_text64) == EXIT_FAILURE)
+	else if ((ctx.flags & IS_FAT) && dump_fat_bin(&ctx, &func) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if ((ctx.flags & IS_32)
-		&& dump_mach_lcmds(&ctx, &print_text) == EXIT_FAILURE)
+	else if ((ctx.flags & IS_32) && dump_macho_bin(&ctx, &func) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if (dump_mach_lcmds64(&ctx, &print_text64) == EXIT_FAILURE)
+	else if (dump_macho_bin64(&ctx, &func) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (cleanup_ctx(&ctx));
 }

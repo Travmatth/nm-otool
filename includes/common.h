@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/27 22:20:08 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/29 00:26:20 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 ** Macros used to calculate positions of data offsets in binaries
 */
 
-# define SEG_POS(ctx, hdr, sc) (ctx->file + hdr->sizeofcmds + sc->fileoff)
+# define SEG_POS(ctx, sc) (ctx->file + sc->fileoff)
 
 /*
 ** IS_SWAPPED: endianness of data opposite of current architecture
@@ -72,6 +72,7 @@ enum	e_flags
 typedef struct	s_ctx
 {
 	char		*file;
+	char		*filename;
 	int			flags;
 	uint32_t	magic;
 	size_t		size;
@@ -81,14 +82,15 @@ typedef struct	s_ctx
 ** signature of functions passed into dump_* functions
 */
 
+typedef int		(*t_hdr_f)(t_ctx *ctx
+							, struct mach_header *header
+							, struct mach_header_64 *header_64);
 typedef int		(*t_seg_f)(t_ctx *ctx
 							, struct segment_command *segment
-							, struct segment_command_64 *segment_64
-							, void *addr);
+							, struct segment_command_64 *segment_64);
 typedef int		(*t_sec_f)(t_ctx *ctx
 							, struct section *section
-							, struct section_64 *section_64
-							, void *addr);
+							, struct section_64 *section_64);
 typedef int		(*t_lc_f)(t_ctx *ctx
 							, struct load_command *lc
 							, void *addr);
@@ -99,10 +101,34 @@ typedef int		(*t_lc_f)(t_ctx *ctx
 
 typedef struct	s_dump_funcs
 {
+	t_hdr_f		header;
 	t_seg_f		segment;
 	t_sec_f		section;
 	t_lc_f		load;
 }				t_dump_funcs;
+
+/*
+** struct containing important parts of mach-o binaries
+*/
+
+typedef struct				s_mach_o_32
+{
+	ptrdiff_t				offset;
+	uint32_t				num_commands;
+	struct mach_header		*hdr;
+	struct load_command		*lc;
+	struct segment_command	*sc;
+}							t_mach_o_32;
+
+/*
+** common/format.c
+*/
+
+void	format_pointer(uint32_t offset, char ptr_buf[], int is_64);
+void	format_mem(char *binary
+					, uint32_t *current
+					, uint32_t size
+					, char mem_buf[]);
 
 /*
 ** common/magics.c
@@ -128,14 +154,14 @@ int				cleanup_ctx(t_ctx *ctx);
 ** common/mach-o.c
 */
 
-int				dump_mach_lcmds(t_ctx *ctx, t_dump_funcs *funcs);
-int				dump_mach_lcmds64(t_ctx *ctx, t_dump_funcs *funcs);
+int				dump_macho_bin(t_ctx *ctx, t_dump_funcs *funcs);
+int				dump_macho_bin64(t_ctx *ctx, t_dump_funcs *funcs);
 
 /*
 ** common/fat.c
 */
 
-int				dump_fat_lcmds(t_ctx *ctx, t_dump_funcs *funcs);
+int				dump_fat_bin(t_ctx *ctx, t_dump_funcs *funcs);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

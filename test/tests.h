@@ -5,6 +5,24 @@
 #include "../includes/common.h"
 
 /*
+tests/test_mach_print.c
+*/
+
+# define MACH_PRINT_TESTS (2)
+int		test_print_text_contents(void);
+int		test_print_text_section(void);
+
+/*
+tests/test_format.c
+*/
+
+# define FORMAT_TESTS (4)
+int		test_format_pointer_makes_32bit_addr(void);
+int		test_format_pointer_makes_64bit_addr(void);
+int		test_format_mem_translates_16byte_mem(void);
+int		test_format_mem_translates_1byte_mem(void);
+
+/*
 tests/test_utils.c
 */
 
@@ -23,9 +41,19 @@ tests/test_utils.c
 */
 
 # define MACH_TESTS (3)
-int		test_dump_mach_lcmds_iters_all_segments(void);
-int		test_dump_mach_lcmds_iters_all_load_commands(void);
-int		test_dump_mach_lcmds_iters_all_segment_sections(void);
+int		test_dump_macho_bin_dumps_mach_32(void);
+int		test_mach32_segment_addr(void);
+int		test_mach32_section_addr(void);
 
-# define NUM_TESTS (UTILS_TESTS + MACH_TESTS)
+/*
+tests
+*/
+
+# define NUM_TESTS (MACH_PRINT_TESTS + FORMAT_TESTS + UTILS_TESTS + MACH_TESTS)
+
+struct test_func {
+	char	*name;
+	int		(*exec)(void);
+};
+
 #endif

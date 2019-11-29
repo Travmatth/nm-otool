@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/20 15:17:43 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/11/28 21:59:50 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int			get_file(int argc, char **argv, char **envp, t_ctx *ctx)
 		DEBUG_LOG("Error: failed mappping %s into memory\n", argv[1]);
 	else
 	{
+		ctx->filename = argv[1];
 		ctx->size = f_stat.st_size;
 		return (EXIT_SUCCESS);
 	}
