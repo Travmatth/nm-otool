@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/28 23:55:56 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/01 19:25:33 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 ** @param{t_sec_f} function called with current section being iterated over
 */
 
-int		dump_fat_bin(t_ctx *ctx, t_dump_funcs *funcs)
+int		dump_fat_bin(t_ctx *ctx, t_dump_fxs *fxs)
 {
 	(void)ctx;
-	(void)funcs;
+	(void)fxs;
 	return (EXIT_SUCCESS);
 }

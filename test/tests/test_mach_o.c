@@ -20,11 +20,10 @@ int		verify_header(t_ctx *ctx, struct mach_header *header, struct mach_header_64
 	return EXIT_SUCCESS;
 }
 
-int		verify_segments(t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64, void *addr) {
+int		verify_segments(t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
 	(void)ctx;
 	(void)segment;
 	(void)segment_64;
-	(void)addr;
 	g_segment_calls += 1;
 	return EXIT_SUCCESS;
 }
@@ -37,11 +36,10 @@ int		verify_load_command(t_ctx *ctx, struct load_command *lc, void *addr) {
 	return EXIT_SUCCESS;
 }
 
-int		verify_sections(t_ctx *ctx, struct section *sect, struct section_64 *sect64, void *addr) {
+int		verify_sections(t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
 	(void)ctx;
 	(void)sect;
 	(void)sect64;
-	(void)addr;
 	g_section_calls += 1;
 	return EXIT_SUCCESS;
 }
@@ -49,7 +47,7 @@ int		verify_sections(t_ctx *ctx, struct section *sect, struct section_64 *sect64
 int		test_dump_macho_bin_dumps_mach_32(void) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
-	t_dump_funcs funcs = {
+	t_dump_fxs funcs = {
 		verify_header,
 		verify_segments,
 		verify_sections,
@@ -86,11 +84,10 @@ int		test_dump_macho_bin_dumps_mach_32(void) {
 	verify segment address of mach-o 32 bit binary is correct
 */
 
-int		verify_segment_address(t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64, void *addr) {
-	(void)ctx;
+int		verify_segment_address(t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
 	(void)segment_64;
 	if (!strcmp(segment->segname, "__TEXT")) {
-		uint32_t magic = *(uint32_t *)addr;
+		uint32_t magic = *(uint32_t *)ctx->file + segment->fileoff;
 		if (magic == MH_MAGIC)
 			g_segment_calls += 1;
 	}
@@ -100,7 +97,7 @@ int		verify_segment_address(t_ctx *ctx, struct segment_command *segment, struct 
 int		test_mach32_segment_addr(void) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
-	t_dump_funcs funcs = { NULL, verify_segment_address, NULL, NULL	};
+	t_dump_fxs funcs = { NULL, verify_segment_address, NULL, NULL	};
 
 	bzero(&ctx, sizeof(t_ctx));
 	if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
@@ -123,14 +120,11 @@ int		test_mach32_segment_addr(void) {
 	verify section address of mach-o 32 bit binary is correct
 */
 
-int		verify_section_address(t_ctx *ctx, struct section *sect, struct section_64 *sect64, void *addr) {
-	(void)ctx;
-	(void)sect;
+int		verify_section_address(t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
 	(void)sect64;
-	(void)addr;
 	if (!strcmp("__text", sect->sectname)) {
-		uint64_t val = *(uint64_t*)addr;
-		if (val == 0xE818EC83E58955ULL)
+		uint64_t val = *(uint64_t*)(ctx->file + sect->offset);
+		if (val == 0x00E818EC83E58955ULL)
 			g_section_calls += 1;
 	}
 	return EXIT_SUCCESS;
@@ -139,7 +133,7 @@ int		verify_section_address(t_ctx *ctx, struct section *sect, struct section_64 
 int		test_mach32_section_addr(void) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
-	t_dump_funcs funcs = { NULL, NULL, verify_section_address, NULL	};
+	t_dump_fxs funcs = { NULL, NULL, verify_section_address, NULL	};
 
 	bzero(&ctx, sizeof(t_ctx));
 	if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)

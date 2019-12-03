@@ -3,13 +3,14 @@
 
 #include <string.h> // strcmp/bzero
 #include "../includes/common.h"
+#include "../includes/otool.h"
 
 /*
 tests/test_mach_print.c
 */
 
 # define MACH_PRINT_TESTS (2)
-int		test_print_text_contents(void);
+int		test_print_text_segment(void);
 int		test_print_text_section(void);
 
 /*

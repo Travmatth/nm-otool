@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/29 00:26:20 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/02 16:10:08 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@
 ** Options used when mmapping potential binary files to memory pointers
 */
 
-# define MMAP_PROT (PROT_READ | PROT_WRITE)
+# define MMAP_PROT (PROT_READ)
 # define MMAP_FLAGS (MAP_PRIVATE)
 
 /*
-** Macros used to calculate positions of data offsets in binaries
+** Translating memory into hex representation
 */
 
-# define SEG_POS(ctx, sc) (ctx->file + sc->fileoff)
+# define HEX_CHARS ("0123456789abcdef")
 
 /*
 ** IS_SWAPPED: endianness of data opposite of current architecture
@@ -99,13 +99,13 @@ typedef int		(*t_lc_f)(t_ctx *ctx
 ** struct containing functions called when dumping different parts of binary
 */
 
-typedef struct	s_dump_funcs
+typedef struct	s_dump_fxs
 {
 	t_hdr_f		header;
 	t_seg_f		segment;
 	t_sec_f		section;
 	t_lc_f		load;
-}				t_dump_funcs;
+}				t_dump_fxs;
 
 /*
 ** struct containing important parts of mach-o binaries
@@ -124,44 +124,49 @@ typedef struct				s_mach_o_32
 ** common/format.c
 */
 
-void	format_pointer(uint32_t offset, char ptr_buf[], int is_64);
-void	format_mem(char *binary
-					, uint32_t *current
-					, uint32_t size
-					, char mem_buf[]);
+void						format_pointer(uint64_t addr
+										, char ptr_buf[]
+										, int is_64);
+void						format_mem(char *binary
+										, uint64_t *offset
+										, uint64_t size
+										, char mem_buf[]);
 
 /*
 ** common/magics.c
 */
 
-int				is_fat32(t_ctx *ctx, uint32_t magic);
-int				is_fat64(t_ctx *ctx, uint32_t magic);
-int				is_mach64(t_ctx *ctx, uint32_t magic);
-int				is_mach32(t_ctx *ctx, uint32_t magic);
-int				is_archive(t_ctx *ctx);
+int							is_fat32(t_ctx *ctx, uint32_t magic);
+int							is_fat64(t_ctx *ctx, uint32_t magic);
+int							is_mach64(t_ctx *ctx, uint32_t magic);
+int							is_mach32(t_ctx *ctx, uint32_t magic);
+int							is_archive(t_ctx *ctx);
 
 /*
 ** common/utils.c
 */
 
-int				get_file(int argc, char **argv, char **envp, t_ctx *ctx);
-int				determine_file(t_ctx *ctx);
-uint32_t		swap_uint32(uint32_t old);
-uint64_t		swap_uint64(uint64_t old);
-int				cleanup_ctx(t_ctx *ctx);
+int							get_file(int argc
+									, char **argv
+									, char **envp
+									, t_ctx *ctx);
+int							determine_file(t_ctx *ctx);
+uint32_t					swap_uint32(uint32_t old);
+uint64_t					swap_uint64(uint64_t old);
+int							cleanup_ctx(t_ctx *ctx);
 
 /*
 ** common/mach-o.c
 */
 
-int				dump_macho_bin(t_ctx *ctx, t_dump_funcs *funcs);
-int				dump_macho_bin64(t_ctx *ctx, t_dump_funcs *funcs);
+int							dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs);
+int							dump_macho_bin64(t_ctx *ctx, t_dump_fxs *fxs);
 
 /*
 ** common/fat.c
 */
 
-int				dump_fat_bin(t_ctx *ctx, t_dump_funcs *funcs);
+int							dump_fat_bin(t_ctx *ctx, t_dump_fxs *fxs);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

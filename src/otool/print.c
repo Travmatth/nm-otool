@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/29 00:25:26 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/02 21:59:12 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,26 @@
 
 /*
 ** print __text section contents in 16 byte rows prefixed with pointer address
-** @param{t_sect} info on section to print
+** @param{t_addr} info on section to print
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_text_contents(t_sect *fmt)
+int		print_text_contents(t_addr *fmt)
 {
-	uint32_t	current;
+	uint64_t	current;
 	char		ptr_buf[17];
-	char		mem_buf[24];
+	char		mem_buf[49];
 
 	current = 0;
 	while (current < fmt->size)
 	{
-		if (current % 16)
+		if (!(current % 16))
 		{
-			format_pointer(fmt->addr, ptr_buf, fmt->is_64);
+			format_pointer(fmt->addr + current, ptr_buf, fmt->is_64);
 			ft_printf("%s        ", ptr_buf);
 		}
-		while (current < fmt->size && current % 16)
-			format_mem(fmt->binary + fmt->offset, &current, fmt->size, mem_buf);
-		ft_printf("%s", ptr_buf, mem_buf);
+		format_mem(fmt->binary + fmt->offset, &current, fmt->size, mem_buf);
+		ft_printf("%s\n", mem_buf);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -48,17 +47,17 @@ int		print_text_contents(t_sect *fmt)
 */
 
 int		print_text_section(t_ctx *ctx
-					, struct section *section
-					, struct section_64 *section_64)
+							, struct section *section
+							, struct section_64 *section_64)
 {
-	t_sect	section_fmt;
+	t_addr	section_fmt;
 
 	if (section && !ft_strcmp("__text", section->sectname))
 	{
 		section_fmt.binary = ctx->file;
-		section_fmt.addr = section->addr;
-		section_fmt.size = section->size;
-		section_fmt.offset = section->offset;
+		section_fmt.addr = (uint64_t)section->addr;
+		section_fmt.size = (uint64_t)section->size;
+		section_fmt.offset = (uint64_t)section->offset;
 		section_fmt.is_64 = FALSE;
 	}
 	else if (section_64 && !ft_strcmp("__text", section_64->sectname))
@@ -69,6 +68,8 @@ int		print_text_section(t_ctx *ctx
 		section_fmt.offset = section_64->offset;
 		section_fmt.is_64 = TRUE;
 	}
+	else
+		return (EXIT_SUCCESS);
 	return (print_text_contents(&section_fmt));
 }
 
@@ -87,7 +88,8 @@ int		print_text_segment(t_ctx *ctx
 	if ((segment && !ft_strcmp("__TEXT", segment->segname))
 		|| (segment_64 && !ft_strcmp("__TEXT", segment_64->segname)))
 	{
-		ft_printf("%s:\n", ctx->filename);
+		ft_putstr_fd(ctx->filename, STDOUT_FILENO);
+		ft_putendl_fd(":", STDOUT_FILENO);
 		ft_printf("Contents of (__TEXT,__text) section\n");
 	}
 	return (EXIT_SUCCESS);

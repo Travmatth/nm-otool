@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/28 23:56:24 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/02 21:37:33 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 int		dump_sections(t_ctx *ctx
 					, struct segment_command *sc
-					, t_dump_funcs *funcs
+					, t_dump_fxs *fxs
 					, ptrdiff_t offset)
 {
 	uint32_t		i;
@@ -36,8 +36,7 @@ int		dump_sections(t_ctx *ctx
 	{
 		section = (struct section*)(ctx->file + offset);
 		addr = ctx->file + section->offset;
-		if (funcs->section &&
-			funcs->section(ctx, section, NULL, addr) == EXIT_FAILURE)
+		if (fxs->section && fxs->section(ctx, section, NULL) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section);
 		i += 1;
@@ -53,29 +52,28 @@ int		dump_sections(t_ctx *ctx
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_macho_bin(t_ctx *ctx, t_dump_funcs *funcs)
+int		dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs)
 {
 	t_mach_o_32	mach;
 
 	mach.hdr = (struct mach_header *)ctx->file;
 	mach.num_commands = mach.hdr->ncmds;
 	mach.offset = sizeof(struct mach_header);
-	if (funcs->header && (funcs->header(ctx, mach.hdr, NULL) == EXIT_FAILURE))
+	if (fxs->header && (fxs->header(ctx, mach.hdr, NULL) == EXIT_FAILURE))
 		return (EXIT_FAILURE);
 	while (mach.num_commands-- &&
 		(mach.lc = (struct load_command *)(ctx->file + mach.offset)))
 	{
 		if (mach.lc->cmd != LC_SEGMENT)
 		{
-			if (funcs->load && (funcs->load(ctx, mach.lc, NULL) == EXIT_FAILURE))
+			if (fxs->load && (fxs->load(ctx, mach.lc, NULL) == EXIT_FAILURE))
 				return (EXIT_FAILURE);
 			mach.offset += mach.lc->cmdsize;
 			continue;
 		}
 		mach.sc = (struct segment_command*)(ctx->file + mach.offset);
-		if ((dump_sections(ctx, mach.sc, funcs, mach.offset) == EXIT_FAILURE)
-			|| (funcs->segment && funcs->segment(
-				ctx, mach.sc, NULL, SEG_POS(ctx, mach.sc)) == EXIT_FAILURE))
+		if ((fxs->segment && fxs->segment(ctx, mach.sc, NULL) == EXIT_FAILURE)
+			|| (dump_sections(ctx, mach.sc, fxs, mach.offset) == EXIT_FAILURE))
 			return (EXIT_FAILURE);
 		mach.offset += mach.sc->cmdsize;
 	}
@@ -90,9 +88,9 @@ int		dump_macho_bin(t_ctx *ctx, t_dump_funcs *funcs)
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_macho_bin64(t_ctx *ctx, t_dump_funcs *funcs)
+int		dump_macho_bin64(t_ctx *ctx, t_dump_fxs *fxs)
 {
 	(void)ctx;
-	(void)funcs;
+	(void)fxs;
 	return (EXIT_SUCCESS);
 }

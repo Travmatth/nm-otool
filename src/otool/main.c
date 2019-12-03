@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/29 00:21:07 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/01 19:19:48 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 int		main(int argc, char *argv[], char *envp[])
 {
 	t_ctx			ctx;
-	t_dump_funcs	func;
+	t_dump_fxs	func;
 
 	func.header = NULL;
 	func.segment = print_text_segment;
