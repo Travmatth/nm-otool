@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/02 16:10:08 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/03 22:56:18 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@
 ** IS_FAT: binary file is in FAT format
 */
 
-enum	e_flags
+enum							e_flags
 {
 	IS_SWAPPED = (1u << 0),
 	IS_32 = (1u << 1),
@@ -69,65 +69,74 @@ enum	e_flags
 ** size: size of binary file in bytes
 */
 
-typedef struct	s_ctx
+typedef struct					s_ctx
 {
-	char		*file;
-	char		*filename;
-	int			flags;
-	uint32_t	magic;
-	size_t		size;
-}				t_ctx;
+	char						*file;
+	char						*filename;
+	int							flags;
+	uint32_t					magic;
+	size_t						size;
+}								t_ctx;
 
 /*
 ** signature of functions passed into dump_* functions
 */
 
-typedef int		(*t_hdr_f)(t_ctx *ctx
-							, struct mach_header *header
-							, struct mach_header_64 *header_64);
-typedef int		(*t_seg_f)(t_ctx *ctx
-							, struct segment_command *segment
-							, struct segment_command_64 *segment_64);
-typedef int		(*t_sec_f)(t_ctx *ctx
-							, struct section *section
-							, struct section_64 *section_64);
-typedef int		(*t_lc_f)(t_ctx *ctx
-							, struct load_command *lc
-							, void *addr);
+typedef int						(*t_hdr_f)(t_ctx *ctx
+									, struct mach_header *header
+									, struct mach_header_64 *header_64);
+typedef int						(*t_seg_f)(t_ctx *ctx
+									, struct segment_command *segment
+									, struct segment_command_64 *segment_64);
+typedef int						(*t_sec_f)(t_ctx *ctx
+									, struct section *section
+									, struct section_64 *section_64);
+typedef int						(*t_lc_f)(t_ctx *ctx
+									, struct load_command *lc
+									, void *addr);
 
 /*
 ** struct containing functions called when dumping different parts of binary
 */
 
-typedef struct	s_dump_fxs
+typedef struct					s_dump_fxs
 {
-	t_hdr_f		header;
-	t_seg_f		segment;
-	t_sec_f		section;
-	t_lc_f		load;
-}				t_dump_fxs;
+	t_hdr_f						header;
+	t_seg_f						segment;
+	t_sec_f						section;
+	t_lc_f						load;
+}								t_dump_fxs;
 
 /*
 ** struct containing important parts of mach-o binaries
 */
 
-typedef struct				s_mach_o_32
+typedef struct					s_mach_o_32
 {
-	ptrdiff_t				offset;
-	uint32_t				num_commands;
-	struct mach_header		*hdr;
-	struct load_command		*lc;
-	struct segment_command	*sc;
-}							t_mach_o_32;
+	ptrdiff_t					offset;
+	uint32_t					num_commands;
+	struct mach_header			*hdr;
+	struct load_command			*lc;
+	struct segment_command		*sc;
+}								t_mach_o_32;
+
+typedef struct					s_mach_o_64
+{
+	ptrdiff_t					offset;
+	uint32_t					num_commands;
+	struct mach_header_64		*hdr;
+	struct load_command			*lc;
+	struct segment_command_64	*sc;
+}								t_mach_o_64;
 
 /*
 ** common/format.c
 */
 
-void						format_pointer(uint64_t addr
+void							format_pointer(uint64_t addr
 										, char ptr_buf[]
 										, int is_64);
-void						format_mem(char *binary
+void							format_mem(char *binary
 										, uint64_t *offset
 										, uint64_t size
 										, char mem_buf[]);
@@ -136,37 +145,37 @@ void						format_mem(char *binary
 ** common/magics.c
 */
 
-int							is_fat32(t_ctx *ctx, uint32_t magic);
-int							is_fat64(t_ctx *ctx, uint32_t magic);
-int							is_mach64(t_ctx *ctx, uint32_t magic);
-int							is_mach32(t_ctx *ctx, uint32_t magic);
-int							is_archive(t_ctx *ctx);
+int								is_fat32(t_ctx *ctx, uint32_t magic);
+int								is_fat64(t_ctx *ctx, uint32_t magic);
+int								is_mach64(t_ctx *ctx, uint32_t magic);
+int								is_mach32(t_ctx *ctx, uint32_t magic);
+int								is_archive(t_ctx *ctx);
 
 /*
 ** common/utils.c
 */
 
-int							get_file(int argc
-									, char **argv
-									, char **envp
-									, t_ctx *ctx);
-int							determine_file(t_ctx *ctx);
-uint32_t					swap_uint32(uint32_t old);
-uint64_t					swap_uint64(uint64_t old);
-int							cleanup_ctx(t_ctx *ctx);
+int								get_file(int argc
+										, char **argv
+										, char **envp
+										, t_ctx *ctx);
+int								determine_file(t_ctx *ctx);
+uint32_t						swap_uint32(uint32_t old);
+uint64_t						swap_uint64(uint64_t old);
+int								cleanup_ctx(t_ctx *ctx);
 
 /*
 ** common/mach-o.c
 */
 
-int							dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs);
-int							dump_macho_bin64(t_ctx *ctx, t_dump_fxs *fxs);
+int								dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs);
+int								dump_macho_bin64(t_ctx *ctx, t_dump_fxs *fxs);
 
 /*
 ** common/fat.c
 */
 
-int							dump_fat_bin(t_ctx *ctx, t_dump_fxs *fxs);
+int								dump_fat_bin(t_ctx *ctx, t_dump_fxs *fxs);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

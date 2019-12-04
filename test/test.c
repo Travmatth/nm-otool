@@ -18,6 +18,8 @@ struct test_func	test_funcs[NUM_TESTS] = {
 	{ "test_format_mem_translates_16byte_mem", test_format_mem_translates_16byte_mem },
 	{ "test_print_text_segment", test_print_text_segment },
 	{ "test_print_text_section", test_print_text_section },
+	{ "test_print_text_segment_64", test_print_text_segment_64 },
+	{ "test_print_text_section_64", test_print_text_section_64 },
 };
 
 int		main(int argc, char *argv[], char *envp[])

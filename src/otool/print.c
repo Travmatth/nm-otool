@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/02 21:59:12 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/04 00:05:27 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int		print_text_contents(t_addr *fmt)
 		if (!(current % 16))
 		{
 			format_pointer(fmt->addr + current, ptr_buf, fmt->is_64);
-			ft_printf("%s        ", ptr_buf);
+			ft_printf("%s	", ptr_buf);
 		}
 		format_mem(fmt->binary + fmt->offset, &current, fmt->size, mem_buf);
 		ft_printf("%s\n", mem_buf);

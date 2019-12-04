@@ -9,9 +9,11 @@
 tests/test_mach_print.c
 */
 
-# define MACH_PRINT_TESTS (2)
+# define MACH_PRINT_TESTS (4)
 int		test_print_text_segment(void);
+int		test_print_text_segment_64(void);
 int		test_print_text_section(void);
+int		test_print_text_section_64(void);
 
 /*
 tests/test_format.c
