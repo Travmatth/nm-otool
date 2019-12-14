@@ -33,22 +33,6 @@ int		main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	(void)argv;
 	(void)envp;
-	/***********************TEST********************************/
-    /* Mock the malloc function in the current module using
-       the `malloc_mock` blueprint. */
-    mmk_mock("malloc@self", malloc_mock);
-
-    /* Tell the mock to return NULL and set errno to ENOMEM
-       whatever the given parameter is. */
-    void *result = NULL;
-    mmk_when(malloc(mmk_any(size_t)),
-            .then_return = &result,
-            .then_errno = ENOMEM);
-
-    assert(malloc(42) == result && errno == ENOMEM);
-
-    mmk_reset(malloc);
-	/***********************TEST********************************/
 	int j = NUM_TESTS; (void)j;
 	for (int i = 0; i < NUM_TESTS; i++) {
 		if (test_funcs[i].exec() == EXIT_FAILURE) {
