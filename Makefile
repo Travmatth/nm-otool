@@ -38,7 +38,7 @@ OTOOL_SRC = $(addsuffix .c, $(OTOOL_FILES))
 OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 
 # test variables
-TESTFLAGS = -I./test -I ~/.include/Mimick/include -L ~/.include/Mimick -lmimick
+TESTFLAGS = -I./test -L test/Mimick -lmimick -L test/cbdd -lcbdd
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
 TESTS = test_format test_fat test_mach_o test_mach_print test_utils

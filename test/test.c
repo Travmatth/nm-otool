@@ -1,6 +1,4 @@
 #include "tests.h"
-#include <assert.h>
-#include <mimick.h>
 
 struct test_func	test_funcs[NUM_TESTS] = {
 	{ "test_get_file_fails_dir", test_get_file_fails_dir },
@@ -23,10 +21,6 @@ struct test_func	test_funcs[NUM_TESTS] = {
 	{ "test_print_text_segment_64", test_print_text_segment_64 },
 	{ "test_print_text_section_64", test_print_text_section_64 },
 };
-
-/* Define the blueprint of a mock identified by `malloc_proto`
-   that returns a `void *` and takes a `size_t` parameter. */
-mmk_mock_define (malloc_mock, void *, size_t);
 
 int		main(int argc, char *argv[], char *envp[])
 {
