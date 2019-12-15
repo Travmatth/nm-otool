@@ -3,7 +3,6 @@
 ._*
 *.out*
 **/.nfs*
-test/test
 ft_nm
 ft_otool
 test/run_test
