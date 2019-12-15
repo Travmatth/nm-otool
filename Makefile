@@ -38,11 +38,11 @@ OTOOL_SRC = $(addsuffix .c, $(OTOOL_FILES))
 OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 
 # test variables
-TESTFLAGS = -I./test -L test/Mimick -lmimick -L test/cbdd -lcbdd
+TESTFLAGS = -I./test -L test/Mimick -lmimick
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
 TESTS = test_format test_fat test_mach_o test_mach_print test_utils
-TEST_FILES = $(addprefix test/tests/, $(TESTS)) test/munit/munit.c 
+TEST_FILES = $(addprefix test/tests/, $(TESTS)) test/munit/munit 
 TEST_SRC = $(addsuffix .c, $(TEST_FILES))
 TEST_OBJ = $(TEST_SRC:.c=.o)
 
