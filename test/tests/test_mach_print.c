@@ -13,46 +13,51 @@ int		fd_to_str(int fd, char *out) {
 char *reference_segment_output = "test/artifacts/simple_program_32:\n\
 Contents of (__TEXT,__text) section\n";
 
-int		test_print_text_segment(void) {
+static MunitResult	test_print_text_segment(
+	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
-	int diff, orig = dup(STDOUT_FILENO), success, fds[2];
+	int orig = dup(STDOUT_FILENO), fds[2];
 	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 	t_dump_fxs funcs = { NULL, print_text_segment, NULL, NULL };
 
+	(void)params;
+	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
-		return EXIT_FAILURE;
+		return MUNIT_ERROR;
 	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_ERROR;
 	else if (determine_file(&ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// run func under test
 	else if (dump_macho_bin(&ctx, &funcs) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// close resources
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// evaluate test
-	else if ((fd_to_str(fds[0], out) == EXIT_SUCCESS)
-		&& !(diff = strcmp(reference_segment_output, out)))
-		success = EXIT_SUCCESS;
-	else
-		success = EXIT_FAILURE;
+	int status = fd_to_str(fds[0], out);
 	dup2(orig, STDOUT_FILENO);
 	close(fds[0]);
 	close(fds[1]);
-	return success;
+	if (status!= EXIT_SUCCESS)
+		return MUNIT_ERROR;
+	munit_assert_string_equal(reference_segment_output, out);
+	return MUNIT_OK;
 }
 
 char *reference_segment_output_64 = "test/artifacts/simple_program_64:\n\
 Contents of (__TEXT,__text) section\n";
 
-int		test_print_text_segment_64(void) {
+static MunitResult	test_print_text_segment_64(
+	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
-	int diff, orig = dup(STDOUT_FILENO), success, fds[2];
+	int orig = dup(STDOUT_FILENO), fds[2];
 	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_64" };
 	t_dump_fxs funcs = { NULL, print_text_segment, NULL, NULL };
 
+	(void)params;
+	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
 		return EXIT_FAILURE;
@@ -67,15 +72,14 @@ int		test_print_text_segment_64(void) {
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return EXIT_FAILURE;
 	// evaluate test
-	else if ((fd_to_str(fds[0], out) == EXIT_SUCCESS)
-		&& !(diff = strcmp(reference_segment_output_64, out)))
-		success = EXIT_SUCCESS;
-	else
-		success = EXIT_FAILURE;
+	int status = fd_to_str(fds[0], out);
 	dup2(orig, STDOUT_FILENO);
 	close(fds[0]);
 	close(fds[1]);
-	return success;
+	if (status != EXIT_SUCCESS)
+		return MUNIT_ERROR;
+	munit_assert_string_equal(reference_segment_output_64, out);
+	return MUNIT_OK;
 }
 
 char *reference_section_output = "00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d \n\
@@ -87,45 +91,37 @@ char *reference_section_output = "00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8
 00001f60	00 00 c7 45 fc 00 00 00 00 89 04 24 e8 bf ff ff \n\
 00001f70	ff 31 c0 83 c4 08 5d c3 \n";
 
-int		test_print_text_section(void) {
+static MunitResult	test_print_text_section(
+	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
-	int diff, orig = dup(STDOUT_FILENO), success, fds[2];
+	int orig = dup(STDOUT_FILENO), fds[2];
 	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
+	(void)params;
+	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
-		return EXIT_FAILURE;
+		return MUNIT_ERROR;
 	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	else if (determine_file(&ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// run func under test
 	else if (dump_macho_bin(&ctx, &funcs) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// close resources
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// evaluate test
-	else if ((fd_to_str(fds[0], out) == EXIT_SUCCESS)
-		&& !(diff = strcmp(reference_section_output, out)))
-		success = EXIT_SUCCESS;
-	else
-		success = EXIT_FAILURE;
+	int status = fd_to_str(fds[0], out);
 	dup2(orig, STDOUT_FILENO);
 	close(fds[0]);
 	close(fds[1]);
-	return success;
-}
-
-int		_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 == *s2 && *s1 != '\0')
-	{
-		s1 += 1;
-		s2 += 1;
-	}
-	return ((unsigned char)*s1 - (unsigned char)*s2);
+	if (status != EXIT_SUCCESS)
+		return MUNIT_ERROR;
+	munit_assert_string_equal(reference_section_output, out);
+	return MUNIT_OK;
 }
 
 char *reference_section_output_64 = "0000000100000f00	55 48 89 e5 48 83 ec 10 48 8d 05 87 00 00 00 48 \n\
@@ -137,33 +133,51 @@ char *reference_section_output_64 = "0000000100000f00	55 48 89 e5 48 83 ec 10 48
 0000000100000f60	45 fc 00 00 00 00 e8 c5 ff ff ff 31 c0 48 83 c4 \n\
 0000000100000f70	10 5d c3 \n";
 
-int		test_print_text_section_64(void) {
+static MunitResult	test_print_text_section_64(
+	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
-	int diff, orig = dup(STDOUT_FILENO), success, fds[2];
+	int orig = dup(STDOUT_FILENO), fds[2];
 	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_64" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
+	(void)params;
+	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
-		return EXIT_FAILURE;
+		return MUNIT_ERROR;
 	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	else if (determine_file(&ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// run func under test
 	else if (dump_macho_bin64(&ctx, &funcs) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// close resources
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return EXIT_FAILURE;
+		return MUNIT_FAIL;
 	// evaluate test
-	else if ((fd_to_str(fds[0], out) == EXIT_SUCCESS)
-		&& !(diff = strcmp(reference_section_output_64, out)))
-		success = EXIT_SUCCESS;
-	else
-		success = EXIT_FAILURE;
+	int status = fd_to_str(fds[0], out);
 	dup2(orig, STDOUT_FILENO);
 	close(fds[0]);
 	close(fds[1]);
-	return success;
+	if (status != EXIT_SUCCESS)
+		return MUNIT_ERROR;
+	munit_assert_string_equal(reference_section_output_64, out);
+	return MUNIT_OK;
 }
+
+static MunitTest tests[] = {
+//{ name , test , setup , tear_down , options, parameters },
+ { "test_print_text_segment", test_print_text_segment, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_segment_64", test_print_text_segment_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_section", test_print_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_section_64", test_print_text_section_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  /* Mark the end of the array with an entry where the test
+   * function is NULL */
+  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+};
+
+MunitSuite mach_print_suite = {
+	//{ name, tests, suites, iterations, options },
+    "/mach/print/", tests, NULL, 1, MUNIT_SUITE_OPTION_NONE
+};
