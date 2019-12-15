@@ -14,8 +14,8 @@ static MunitResult	test_get_file_fails_dir(
 	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	close(STDERR_FILENO);
-	dup2(orig, STDERR_FILENO);
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_FAILURE);
+	dup2(orig, STDERR_FILENO);
 	return MUNIT_OK;
 }
 
@@ -52,7 +52,7 @@ static MunitResult	test_determine_file_detects_invalid(
 	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(&ctx), ==, EXIT_FAILURE);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	return MUNIT_OK;
@@ -92,7 +92,7 @@ static MunitResult	test_determine_file_detects_macho32(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
-	munit_assert_false((ctx.flags & IS_FAT) || (ctx.flags & IS_32));
+	munit_assert_true(!(ctx.flags & IS_FAT) && (ctx.flags & IS_32));
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	return MUNIT_OK;
@@ -150,12 +150,12 @@ static MunitResult	test_determine_file_detects_fat(
 	(void)params;
 	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
-	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_FAILURE);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_FAILURE);
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
 	munit_assert_true(ctx.flags & IS_FAT);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return EXIT_FAILURE;
-	return EXIT_SUCCESS;
+		return MUNIT_FAIL;
+	return MUNIT_OK;
 }
 
 static MunitTest tests[] = {

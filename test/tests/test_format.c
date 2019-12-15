@@ -54,13 +54,12 @@ static MunitResult	test_format_mem_translates_16byte_mem(
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
-  /* Mark the end of the array with an entry where the test
-   * function is NULL */
  { "test_format_pointer_makes_32bit_addr", test_format_pointer_makes_32bit_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_format_pointer_makes_64bit_addr", test_format_pointer_makes_64bit_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_format_mem_translates_1byte_mem", test_format_mem_translates_1byte_mem, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_format_mem_translates_16byte_mem", test_format_mem_translates_16byte_mem, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
+ /* Mark the end of the array with an entry where the test function is NULL */
+ { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 
 MunitSuite common_format_suite = {

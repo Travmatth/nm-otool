@@ -42,9 +42,11 @@ TESTFLAGS = -I./test -L test/Mimick -lmimick
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
 TESTS = test_format test_fat test_mach_o test_mach_print test_utils
-TEST_FILES = $(addprefix test/tests/, $(TESTS)) test/munit/munit 
+TEST_LIB = test/munit/munit.c
+TEST_FILES = $(addprefix test/tests/, $(TESTS))  
 TEST_SRC = $(addsuffix .c, $(TEST_FILES))
 TEST_OBJ = $(TEST_SRC:.c=.o)
+TEST_LIB_OBJ = $(TEST_LIB:.c=.o)
 
 .PHONY = all clean fclean re
 
@@ -67,6 +69,10 @@ $(NM_OBJ): %.o: %.c
 $(OTOOL_OBJ): %.o: %.c
 	@$(CC) -c $(IS_DEBUG) $(DEBUG) -I. $(CFLAGS) $< -o $@
 
+# compile test munit library
+$(TEST_LIB_OBJ): %.o: %.c
+	@$(CC) -c $(IS_DEBUG) $(DEBUG) -I. $< -o $@
+
 # compile test object files
 $(TEST_OBJ): %.o: %.c
 	@$(CC) -c $(IS_DEBUG) $(DEBUG) -I. $(CFLAGS) $< -o $@
@@ -87,9 +93,9 @@ $(OTOOL_NAME): $(LIBFT) $(COMMON_OBJ) $(OTOOL_OBJ)
 debug: set-debug $(COMMON_OBJ)
 
 # compile test program
-test: set-debug $(LIBFT) $(COMMON_OBJ) $(NM_OBJ) $(OTOOL_OBJ) $(TEST_OBJ)
+test: set-debug $(LIBFT) $(COMMON_OBJ) $(NM_OBJ) $(OTOOL_OBJ) $(TEST_LIB_OBJ) $(TEST_OBJ)
 	@echo -n 'Compiling nm-otool tests... '
-	@$(CC) $(IS_DEBUG) $(DEBUG) $(CFLAGS) $(LDFLAGS) $(TESTFLAGS) $(COMMON_OBJ) $(NM_OBJ) $(OTOOL_OBJ) $(TEST_OBJ) $(TEST_FILE) -o $(TEST_NAME)
+	@$(CC) $(IS_DEBUG) $(DEBUG) $(CFLAGS) $(LDFLAGS) $(TESTFLAGS) $(COMMON_OBJ) $(NM_OBJ) $(OTOOL_OBJ) $(TEST_LIB_OBJ) $(TEST_OBJ) $(TEST_FILE) -o $(TEST_NAME)
 	@echo "\033[32mdone\033[0m"
 
 # run test program

@@ -93,7 +93,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/test/run_test",
-            "args": [],
+            "args": ["--no-fork"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}",
             "env": {
