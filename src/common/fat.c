@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 18:20:43 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 21:07:55 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ struct fat_arch		*extract_fat_arch(char *file, int flags, uint32_t i)
 	struct fat_arch	*arch;
 	size_t			offset;
 
-	arch = (struct fat_arch*)malloc(sizeof(struct fat_arch));
+	arch = (struct fat_arch*)ft_memalloc(sizeof(struct fat_arch));
 	if (arch== NULL)
 		return (NULL);
 	offset = sizeof(struct fat_header) + (i * sizeof(struct fat_arch));
@@ -64,9 +64,7 @@ int		dump_fat_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 	while (i < fat->nfat_arch)
 	{
 		arch = extract_fat_arch(file, ctx->flags, i);
-		if (arch->cputype == CPU_TYPE_I386 && HOST_32BIT)
-			dump_macho_bin(file + arch->offset, ctx, dump);
-		else if (arch->cputype == CPU_TYPE_I386 && HOST_64BIT)
+		if (arch->cputype == CPU_TYPE_X86_64 && HOST_64BIT)
 			dump_macho64_bin(file + arch->offset, ctx, dump);
 		free(arch);
 		i += 1;

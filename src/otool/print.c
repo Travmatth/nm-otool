@@ -6,11 +6,19 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 19:03:29 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 20:47:21 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/otool.h"
+
+/*
+** determine if given segment is __TEXT and print if it is.
+** @param{t_ctx*} program context containing binary file being parsed
+** @param{struct segment_command*} segment to print
+** @param{struct segment_command_64*} segment to print
+** @return {int} 0 on success, 1 on failure
+*/
 
 /*
 ** print __text section contents in 16 byte rows prefixed with pointer address
@@ -18,12 +26,15 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_text_contents(t_addr *fmt)
+int		print_text_contents(t_ctx *ctx, t_addr *fmt)
 {
 	uint64_t	current;
 	char		ptr_buf[17];
 	char		mem_buf[49];
 
+	ft_putstr_fd(ctx->filename, STDOUT_FILENO);
+	ft_putendl_fd(":", STDOUT_FILENO);
+	ft_printf("Contents of (__TEXT,__text) section\n");
 	current = 0;
 	while (current < fmt->size)
 	{
@@ -53,7 +64,6 @@ int		print_text_section(char *file
 {
 	t_addr	section_fmt;
 
-	(void)ctx;
 	if (section && !ft_strcmp("__text", section->sectname))
 	{
 		section_fmt.binary = file;
@@ -72,29 +82,5 @@ int		print_text_section(char *file
 	}
 	else
 		return (EXIT_SUCCESS);
-	return (print_text_contents(&section_fmt));
-}
-
-/*
-** determine if given segment is __TEXT and print if it is.
-** @param{t_ctx*} program context containing binary file being parsed
-** @param{struct segment_command*} segment to print
-** @param{struct segment_command_64*} segment to print
-** @return {int} 0 on success, 1 on failure
-*/
-
-int		print_text_segment(char *file
-					, t_ctx *ctx
-					, struct segment_command *segment
-					, struct segment_command_64 *segment_64)
-{
-	(void)file;
-	if ((segment && !ft_strcmp("__TEXT", segment->segname))
-		|| (segment_64 && !ft_strcmp("__TEXT", segment_64->segname)))
-	{
-		ft_putstr_fd(ctx->filename, STDOUT_FILENO);
-		ft_putendl_fd(":", STDOUT_FILENO);
-		ft_printf("Contents of (__TEXT,__text) section\n");
-	}
-	return (EXIT_SUCCESS);
+	return (print_text_contents(ctx, &section_fmt));
 }

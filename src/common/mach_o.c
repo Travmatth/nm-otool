@@ -6,28 +6,26 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 19:29:09 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 20:32:15 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
 
-void	extract_mach_header(char *file, t_macho32 *mach32, t_macho64 *mach64, int flags)
+void	extract_mach_header(char *file, t_macho32 *mach32, t_macho64 *mach64)
 {
 	if (mach32)
 	{
 		mach32->hdr = (struct mach_header *)ft_memalloc(sizeof(struct mach_header));
 		ft_memcpy(mach32->hdr, file, sizeof(struct mach_header));
-		mach32->num_commands = (flags & IS_SWAPPED) ?
-			OSSwapInt32(mach32->hdr->ncmds) : mach32->hdr->ncmds;
+		mach32->num_commands = mach32->hdr->ncmds;
 		mach32->offset = sizeof(struct mach_header);
 	}
 	else if (mach64)
 	{
 		mach64->hdr = (struct mach_header_64 *)ft_memalloc(sizeof(struct mach_header_64));
 		ft_memcpy(mach64->hdr, file, sizeof(struct mach_header_64));
-		mach64->num_commands = (flags & IS_SWAPPED) ?
-			OSSwapInt64(mach64->hdr->ncmds) : mach64->hdr->ncmds;
+		mach64->num_commands = mach64->hdr->ncmds;
 		mach64->offset = sizeof(struct mach_header_64);
 	}
 }
@@ -44,7 +42,7 @@ int		dump_macho_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 {
 	t_macho32	mach;
 
-	extract_mach_header(file, &mach, NULL, ctx->flags);
+	extract_mach_header(file, &mach, NULL);
 	if (dump->header && !OK(dump->header(file, ctx, mach.hdr, NULL)))
 		return (EXIT_FAILURE);
 	while (mach.num_commands-- &&
@@ -78,24 +76,24 @@ int		dump_macho64_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 {
 	t_macho64	mach;
 
-	extract_mach_header(file, NULL, &mach, ctx->flags);
+	extract_mach_header(file, NULL, &mach);
 	if (dump->header && !OK(dump->header(file, ctx, NULL, mach.hdr)))
 		return (EXIT_FAILURE);
 	while (mach.num_commands-- &&
-		(mach.lc = (struct load_command*)(ctx->file + mach.offset)))
+		(mach.lc = (struct load_command*)(file + mach.offset)))
 	{
-		if (mach.lc->cmd != LC_SEGMENT_64)
+		if (mach.lc->cmd == LC_SEGMENT_64)
 		{
-			if (dump->load && !OK(dump->load(file, ctx, NULL, mach.lc)))
+			mach.sc = (struct segment_command_64*)(file + mach.offset);
+			if ((dump->segment && !OK(dump->segment(file, ctx, NULL, mach.sc)))
+				|| (!OK(dump_sects_64(file, ctx, &mach, dump))))
 				return (EXIT_FAILURE);
-			mach.offset += mach.lc->cmdsize;
+			mach.offset += mach.sc->cmdsize;
 			continue;
 		}
-		mach.sc = (struct segment_command_64*)(ctx->file + mach.offset);
-		if ((dump->segment && !OK(dump->segment(file, ctx, NULL, mach.sc)))
-			|| (!OK(dump_sects_64(file, ctx, &mach, dump))))
+		if (dump->load && !OK(dump->load(file, ctx, NULL, mach.lc)))
 			return (EXIT_FAILURE);
-		mach.offset += mach.sc->cmdsize;
+		mach.offset += mach.lc->cmdsize;
 	}
 	return (EXIT_SUCCESS);
 }

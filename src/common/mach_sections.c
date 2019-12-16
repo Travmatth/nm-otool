@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/15 16:39:14 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 18:52:17 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 19:51:51 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ int		dump_sects_64(char *file, t_ctx *ctx, t_macho64 *mach, t_dump_fxs *dump)
 	offset = mach->offset + sizeof(struct segment_command_64);
 	while (i < mach->sc->nsects)
 	{
-		section = (struct section_64*)(ctx->file + offset);
-		addr = ctx->file + section->offset;
+		section = (struct section_64*)(file + offset);
+		addr = file + section->offset;
 		if (dump->section && !OK(dump->section(file, ctx, NULL, section)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section_64);

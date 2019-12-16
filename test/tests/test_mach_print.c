@@ -10,73 +10,9 @@ int		fd_to_str(int fd, char *out) {
 	return EXIT_SUCCESS;
 }
 
-char *reference_segment_output = "test/artifacts/simple_program_32:\n\
-Contents of (__TEXT,__text) section\n";
-
-static MunitResult	test_print_text_segment_32(
-	const MunitParameter params[], void *fixture) {
-	t_ctx ctx;
-	int orig = dup(STDOUT_FILENO), fds[2];
-	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_32" };
-	t_dump_fxs funcs = { NULL, print_text_segment, NULL, NULL };
-
-	(void)params;
-	(void)fixture;
-	bzero(&ctx, sizeof(t_ctx));
-	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
-		return MUNIT_ERROR;
-	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
-	// run func under test
-	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
-	// close resources
-	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return MUNIT_ERROR;
-	// evaluate test
-	int status = fd_to_str(fds[0], out);
-	dup2(orig, STDOUT_FILENO);
-	close(fds[0]);
-	close(fds[1]);
-	if (status!= EXIT_SUCCESS)
-		return MUNIT_ERROR;
-	munit_assert_string_equal(reference_segment_output, out);
-	return MUNIT_OK;
-}
-
-char *reference_segment_output_64 = "test/artifacts/simple_program_64:\n\
-Contents of (__TEXT,__text) section\n";
-
-static MunitResult	test_print_text_segment_64(
-	const MunitParameter params[], void *fixture) {
-	t_ctx ctx;
-	int orig = dup(STDOUT_FILENO), fds[2];
-	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_64" };
-	t_dump_fxs funcs = { NULL, print_text_segment, NULL, NULL };
-
-	(void)params;
-	(void)fixture;
-	bzero(&ctx, sizeof(t_ctx));
-	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
-		return MUNIT_ERROR;
-	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
-	// run func under test
-	munit_assert_int(dump_macho64_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
-	// close resources
-	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return MUNIT_ERROR;
-	// evaluate test
-	int status = fd_to_str(fds[0], out);
-	dup2(orig, STDOUT_FILENO);
-	close(fds[0]);
-	close(fds[1]);
-	if (status != EXIT_SUCCESS)
-		return MUNIT_ERROR;
-	munit_assert_string_equal(reference_segment_output_64, out);
-	return MUNIT_OK;
-}
-
-char *reference_section_output = "00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d \n\
+char *reference_32_output = "test/artifacts/simple_program_32:\n\
+Contents of (__TEXT,__text) section\n\
+00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d \n\
 00001f10	80 8b 00 00 00 89 4d fc 8b 4d fc 89 04 24 89 4c \n\
 00001f20	24 04 e8 51 00 00 00 89 45 f8 83 c4 18 5d c3 90 \n\
 00001f30	55 89 e5 83 ec 08 8b 45 08 89 45 fc 8b 45 fc 89 \n\
@@ -114,11 +50,13 @@ static MunitResult	test_print_text_section_32(
 	close(fds[1]);
 	if (status != EXIT_SUCCESS)
 		return MUNIT_ERROR;
-	munit_assert_string_equal(reference_section_output, out);
+	munit_assert_string_equal(reference_32_output, out);
 	return MUNIT_OK;
 }
 
-char *reference_section_output_64 = "0000000100000f00	55 48 89 e5 48 83 ec 10 48 8d 05 87 00 00 00 48 \n\
+char *reference_64_output = "test/artifacts/simple_program_64:\n\
+Contents of (__TEXT,__text) section\n\
+0000000100000f00	55 48 89 e5 48 83 ec 10 48 8d 05 87 00 00 00 48 \n\
 0000000100000f10	89 7d f8 48 8b 75 f8 48 89 c7 b0 00 e8 53 00 00 \n\
 0000000100000f20	00 89 45 f4 48 83 c4 10 5d c3 90 90 90 90 90 90 \n\
 0000000100000f30	55 48 89 e5 48 83 ec 10 48 89 7d f8 48 8b 7d f8 \n\
@@ -156,14 +94,12 @@ static MunitResult	test_print_text_section_64(
 	close(fds[1]);
 	if (status != EXIT_SUCCESS)
 		return MUNIT_ERROR;
-	munit_assert_string_equal(reference_section_output_64, out);
+	munit_assert_string_equal(reference_64_output, out);
 	return MUNIT_OK;
 }
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
- { "test_print_text_segment_32", test_print_text_segment_32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
- { "test_print_text_segment_64", test_print_text_segment_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_print_text_section_32", test_print_text_section_32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_print_text_section_64", test_print_text_section_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   /* Mark the end of the array with an entry where the test

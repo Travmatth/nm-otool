@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 18:50:40 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 21:09:03 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,16 @@
 # include <ar.h>
 # include <mach/machine.h>
 
+/*
+** Check that function exits successfully
+*/
+
 # define OK(x) ((x == EXIT_SUCCESS))
 
 /*
-** Detect computer is 32/64bit
+** Detect computer is 64bit
 */
 
-# define HOST_32BIT (sizeof(void*) == 4)
 # define HOST_64BIT (sizeof(void*) == 8)
 
 /*
