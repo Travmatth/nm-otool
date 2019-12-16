@@ -1,9 +1,5 @@
 #include "../tests.h"
 
-/*
-should detect and fail to open dir passed as arg
-*/
-
 static MunitResult	test_get_file_fails_dir(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
@@ -18,10 +14,6 @@ static MunitResult	test_get_file_fails_dir(
 	dup2(orig, STDERR_FILENO);
 	return MUNIT_OK;
 }
-
-/*
-should open valid filename into mmapped pointer
-*/
 
 static MunitResult	test_get_file_opens_file(
 	const MunitParameter params[], void *fixture) {
@@ -39,10 +31,6 @@ static MunitResult	test_get_file_opens_file(
 	return MUNIT_OK;
 }
 
-/*
-should determine if given file not mach-o or fat formatted
-*/
-
 static MunitResult	test_determine_file_detects_invalid(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
@@ -57,10 +45,6 @@ static MunitResult	test_determine_file_detects_invalid(
 		return MUNIT_ERROR;
 	return MUNIT_OK;
 }
-
-/*
-should determine if given file mach-o 64 bit binary
-*/
 
 static MunitResult	test_determine_file_detects_macho64(
 	const MunitParameter params[], void *fixture) {
@@ -78,10 +62,6 @@ static MunitResult	test_determine_file_detects_macho64(
 	return MUNIT_OK;
 }
 
-/*
-should determine if given file mach-o 32 bit binary
-*/
-
 static MunitResult	test_determine_file_detects_macho32(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
@@ -97,10 +77,6 @@ static MunitResult	test_determine_file_detects_macho32(
 		return MUNIT_FAIL;
 	return MUNIT_OK;
 }
-
-/*
-should determine if given file standard archive
-*/
 
 static MunitResult	test_determine_file_detects_archive(
 	const MunitParameter params[], void *fixture) {
@@ -118,10 +94,6 @@ static MunitResult	test_determine_file_detects_archive(
 	return MUNIT_OK;
 }
 
-/*
-should determine if given file standard archive
-*/
-
 static MunitResult	test_determine_file_detects_extended_archive(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
@@ -137,10 +109,6 @@ static MunitResult	test_determine_file_detects_extended_archive(
 		return MUNIT_ERROR;
 	return MUNIT_OK;
 }
-
-/*
-should determine if given file fat bit binary
-*/
 
 static MunitResult	test_determine_file_detects_fat(
 	const MunitParameter params[], void *fixture) {

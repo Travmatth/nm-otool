@@ -1,93 +1,16 @@
 #include "../tests.h"
 #include <inttypes.h>
 
-static int	g_header_calls = 0;
-static int	g_segment_calls = 0;
-static int	g_lc_calls = 0;
-static int	g_section_calls = 0;
-
-static int		verify_segments(char *file, t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
-	(void)file;
-	(void)ctx;
-	(void)segment;
-	(void)segment_64;
-	g_segment_calls += 1;
-	return EXIT_SUCCESS;
-}
-
-static int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *addr) {
-	(void)file;
-	(void)ctx;
-	(void)lc;
-	(void)addr;
-	g_lc_calls += 1;
-	return EXIT_SUCCESS;
-}
-
-static int		verify_sections(char *file, t_ctx *ctx, struct section *section, struct section_64 *section_64) {
-	(void)file;
-	(void)ctx;
-	(void)section;
-	(void)section_64;
-	g_section_calls += 1;
-	return EXIT_SUCCESS;
-}
-
-/*
-	verify dumping header, load commands, segments and sections of a mach-o 32 bit binary
-*/
-
-/*
-	verify segment address of mach-o 32 bit binary is correct
-*/
-
-static int		verify_segment_address(char *file, t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
-	(void)ctx;
-	(void)segment_64;
-	if (!strcmp(segment->segname, "__TEXT")) {
-		uint32_t magic = *(uint32_t *)file + segment->fileoff;
-		if (magic == MH_MAGIC)
-			g_segment_calls += 1;
-	}
-	return EXIT_SUCCESS;
-}
-
-/*
-	verify section address of mach-o 32 bit binary is correct
-*/
-
-static int		verify_section_address(char *file, t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
-	(void)ctx;
-	(void)sect64;
-	if (!strcmp("__text", sect->sectname)) {
-		uint64_t val = *(uint64_t*)(file + sect->offset);
-		if (val == 0x00E818EC83E58955ULL)
-			g_section_calls += 1;
-	}
-	return EXIT_SUCCESS;
-}
-
-static int		verify_header(char *file, t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64) {
-	(void)file;
-	(void)ctx;
-	(void)header_64;
-	if (header) {
-		if (header->magic == MH_MAGIC)
-			g_header_calls += 1;
-	}
-	return EXIT_SUCCESS;
-}
+extern int	g_header_calls;
+extern int	g_segment_calls;
+extern int	g_lc_calls;
+extern int	g_section_calls;
 
 static MunitResult	test_dump_macho_bin_dumps_mach_32(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
-	t_dump_fxs funcs = {
-		verify_header,
-		verify_segments,
-		verify_sections,
-		verify_load_command
-	};
+	t_dump_fxs funcs = {verify_header, verify_segments, verify_sections, verify_load_command };
 
 	(void)params;
 	(void)fixture;

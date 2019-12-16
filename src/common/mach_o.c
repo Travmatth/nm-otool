@@ -6,11 +6,19 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 20:32:15 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 22:09:00 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
+
+/*
+** extract header from 32 & 64 bit mach-o binary files
+** @param{char*} binary file being parsed
+** @param{t_macho32} struct to file with binary's options
+** @param{t_macho64} struct to file with binary's options
+** @return {void}
+*/
 
 void	extract_mach_header(char *file, t_macho32 *mach32, t_macho64 *mach64)
 {

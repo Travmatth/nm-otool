@@ -1,15 +1,6 @@
 #include "../tests.h"
 #include <errno.h>
 
-int		fd_to_str(int fd, char *out) {
-	int bytes = 0;
-
-	if ((bytes = read(fd, out, BUFSIZ)) == -1)
-		return EXIT_FAILURE;
-	out[bytes] = '\0';
-	return EXIT_SUCCESS;
-}
-
 char *reference_32_output = "test/artifacts/simple_program_32:\n\
 Contents of (__TEXT,__text) section\n\
 00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d \n\
