@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/01 19:19:48 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 18:19:40 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int		main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	else if ((ctx.flags & IS_32) && dump_macho_bin(&ctx, &func) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if (dump_macho_bin64(&ctx, &func) == EXIT_FAILURE)
+	else if (dump_macho64_bin(&ctx, &func) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (cleanup_ctx(&ctx));
 }

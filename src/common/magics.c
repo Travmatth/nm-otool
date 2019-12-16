@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/20 12:35:51 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/20 13:09:42 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 16:12:47 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int		is_mach32(t_ctx *ctx, uint32_t magic)
 
 int		is_archive(t_ctx *ctx)
 {
-	char	name[SARMAG + 2];
+	char	name[SARMAG + 4];
 
 	ft_strcpy(name, ARMAG);
 	ft_strcat(name, AR_EFMT1);

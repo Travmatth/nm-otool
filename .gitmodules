@@ -4,3 +4,6 @@
 [submodule "test/Mimick"]
 	path = test/Mimick
 	url = https://github.com/diacritic/Mimick.git
+[submodule "test/fff"]
+	path = test/fff
+	url = https://github.com/meekrosoft/fff.git

@@ -6,21 +6,8 @@ static int	g_segment_calls = 0;
 static int	g_lc_calls = 0;
 static int	g_section_calls = 0;
 
-/*
-	verify dumping header, load commands, segments and sections of a mach-o 32 bit binary
-*/
-
-int		verify_header(t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64) {
-	(void)ctx;
-	(void)header_64;
-	if (header) {
-		if (header->magic == MH_MAGIC)
-			g_header_calls += 1;
-	}
-	return EXIT_SUCCESS;
-}
-
-int		verify_segments(t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
+static int		verify_segments(char *file, t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
+	(void)file;
 	(void)ctx;
 	(void)segment;
 	(void)segment_64;
@@ -28,7 +15,8 @@ int		verify_segments(t_ctx *ctx, struct segment_command *segment, struct segment
 	return EXIT_SUCCESS;
 }
 
-int		verify_load_command(t_ctx *ctx, struct load_command *lc, void *addr) {
+static int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *addr) {
+	(void)file;
 	(void)ctx;
 	(void)lc;
 	(void)addr;
@@ -36,22 +24,28 @@ int		verify_load_command(t_ctx *ctx, struct load_command *lc, void *addr) {
 	return EXIT_SUCCESS;
 }
 
-int		verify_sections(t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
+static int		verify_sections(char *file, t_ctx *ctx, struct section *section, struct section_64 *section_64) {
+	(void)file;
 	(void)ctx;
-	(void)sect;
-	(void)sect64;
+	(void)section;
+	(void)section_64;
 	g_section_calls += 1;
 	return EXIT_SUCCESS;
 }
 
 /*
+	verify dumping header, load commands, segments and sections of a mach-o 32 bit binary
+*/
+
+/*
 	verify segment address of mach-o 32 bit binary is correct
 */
 
-int		verify_segment_address(t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
+static int		verify_segment_address(char *file, t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
+	(void)ctx;
 	(void)segment_64;
 	if (!strcmp(segment->segname, "__TEXT")) {
-		uint32_t magic = *(uint32_t *)ctx->file + segment->fileoff;
+		uint32_t magic = *(uint32_t *)file + segment->fileoff;
 		if (magic == MH_MAGIC)
 			g_segment_calls += 1;
 	}
@@ -62,12 +56,24 @@ int		verify_segment_address(t_ctx *ctx, struct segment_command *segment, struct 
 	verify section address of mach-o 32 bit binary is correct
 */
 
-int		verify_section_address(t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
+static int		verify_section_address(char *file, t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
+	(void)ctx;
 	(void)sect64;
 	if (!strcmp("__text", sect->sectname)) {
-		uint64_t val = *(uint64_t*)(ctx->file + sect->offset);
+		uint64_t val = *(uint64_t*)(file + sect->offset);
 		if (val == 0x00E818EC83E58955ULL)
 			g_section_calls += 1;
+	}
+	return EXIT_SUCCESS;
+}
+
+static int		verify_header(char *file, t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64) {
+	(void)file;
+	(void)ctx;
+	(void)header_64;
+	if (header) {
+		if (header->magic == MH_MAGIC)
+			g_header_calls += 1;
 	}
 	return EXIT_SUCCESS;
 }
@@ -88,7 +94,7 @@ static MunitResult	test_dump_macho_bin_dumps_mach_32(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_macho_bin(&ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_header_calls, ==, 1);
@@ -113,7 +119,7 @@ static MunitResult	test_mach32_segment_addr(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_macho_bin(&ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_segment_calls, ==, 1);
@@ -132,7 +138,7 @@ static MunitResult	test_mach32_section_addr(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_macho_bin(&ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_section_calls, ==, 1);

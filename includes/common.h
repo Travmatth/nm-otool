@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/03 22:56:18 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 18:50:40 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,26 @@
 ** mach-o/fat.h - FAT_MAGIC/FAT_CIGAM
 ** mach-o/loader.h - MH_MAGIC/MH_CIGAM/MH_MAGIC_64/MH_CIGAM_64
 ** ar.h - ARMAG/SARMAG/AR_EFMT1/struct ar_hdr
+** mach/machine.h - cpu_type, cpu_subtype_t
 */
 
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <sys/mman.h>
 # include <mach-o/fat.h>
+# include <mach-o/swap.h>
 # include <mach-o/loader.h>
 # include <ar.h>
+# include <mach/machine.h>
+
+# define OK(x) ((x == EXIT_SUCCESS))
+
+/*
+** Detect computer is 32/64bit
+*/
+
+# define HOST_32BIT (sizeof(void*) == 4)
+# define HOST_64BIT (sizeof(void*) == 8)
 
 /*
 ** Options used when mmapping potential binary files to memory pointers
@@ -82,16 +94,20 @@ typedef struct					s_ctx
 ** signature of functions passed into dump_* functions
 */
 
-typedef int						(*t_hdr_f)(t_ctx *ctx
+typedef int						(*t_hdr_f)(char *file
+									, t_ctx *ctx
 									, struct mach_header *header
 									, struct mach_header_64 *header_64);
-typedef int						(*t_seg_f)(t_ctx *ctx
+typedef int						(*t_seg_f)(char *file
+									, t_ctx *ctx
 									, struct segment_command *segment
 									, struct segment_command_64 *segment_64);
-typedef int						(*t_sec_f)(t_ctx *ctx
+typedef int						(*t_sec_f)(char *file
+									, t_ctx *ctx
 									, struct section *section
 									, struct section_64 *section_64);
-typedef int						(*t_lc_f)(t_ctx *ctx
+typedef int						(*t_lc_f)(char *file
+									, t_ctx *ctx
 									, struct load_command *lc
 									, void *addr);
 
@@ -118,7 +134,7 @@ typedef struct					s_mach_o_32
 	struct mach_header			*hdr;
 	struct load_command			*lc;
 	struct segment_command		*sc;
-}								t_mach_o_32;
+}								t_macho32;
 
 typedef struct					s_mach_o_64
 {
@@ -127,7 +143,7 @@ typedef struct					s_mach_o_64
 	struct mach_header_64		*hdr;
 	struct load_command			*lc;
 	struct segment_command_64	*sc;
-}								t_mach_o_64;
+}								t_macho64;
 
 /*
 ** common/format.c
@@ -160,22 +176,43 @@ int								get_file(int argc
 										, char **envp
 										, t_ctx *ctx);
 int								determine_file(t_ctx *ctx);
-uint32_t						swap_uint32(uint32_t old);
-uint64_t						swap_uint64(uint64_t old);
 int								cleanup_ctx(t_ctx *ctx);
+
+
+/*
+** common/mach_sections
+*/
+
+int								dump_sects(char *file
+										, t_ctx *ctx
+										, t_macho32 *mach
+										, t_dump_fxs *dump);
+int								dump_sects_64(char *file
+										, t_ctx *ctx
+										, t_macho64 *mach
+										, t_dump_fxs *dump);
 
 /*
 ** common/mach-o.c
 */
 
-int								dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs);
-int								dump_macho_bin64(t_ctx *ctx, t_dump_fxs *fxs);
+int								dump_macho_bin(char *file
+										, t_ctx *ctx
+										, t_dump_fxs *fxs);
+int								dump_macho64_bin(char *file
+										, t_ctx *ctx
+										, t_dump_fxs *fxs);
 
 /*
 ** common/fat.c
 */
 
-int								dump_fat_bin(t_ctx *ctx, t_dump_fxs *fxs);
+int								dump_fat_bin(char *file
+										, t_ctx *ctx
+										, t_dump_fxs *fxs);
+int								dump_fat64_bin(char *file
+										, t_ctx *ctx
+										, t_dump_fxs *fxs);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

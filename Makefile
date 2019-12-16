@@ -16,7 +16,7 @@ LDFLAGS = -Llibftprintf -lftprintf -I./includes
 IS_DEBUG =
 
 # common variables
-COMMON = format fat mach_o magics utils
+COMMON = format fat mach_o mach_sections magics utils
 COMMON_FILES = $(addprefix src/common/, $(COMMON))
 COMMON_SRC = $(addsuffix .c, $(COMMON_FILES))
 COMMON_OBJ = $(COMMON_SRC:.c=.o)
@@ -38,7 +38,7 @@ OTOOL_SRC = $(addsuffix .c, $(OTOOL_FILES))
 OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 
 # test variables
-TESTFLAGS = -I./test -L test/Mimick -lmimick
+TESTFLAGS = -I./test -I./test/fff
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
 TESTS = test_format test_fat test_mach_o test_mach_print test_utils

@@ -6,75 +6,30 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/03 23:43:24 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 19:29:09 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
 
-/*
-** iterate over 32bit sections and with callback function
-** @param{t_ctx*} program context containing binary file being parsed
-** @param{struct segment_command} current segment being iterated over
-** @param{t_sec_f} function called with current section being iterated over
-** @param{ptrdiff_t} offset of section within binary file
-** @return {int} 0 on success, 1 on failure
-*/
-
-int		dump_sects(t_ctx *ctx
-					, struct segment_command *sc
-					, t_dump_fxs *fxs
-					, ptrdiff_t offset)
+void	extract_mach_header(char *file, t_macho32 *mach32, t_macho64 *mach64, int flags)
 {
-	uint32_t		i;
-	struct section	*section;
-	void			*addr;
-
-	i = 0;
-	offset += sizeof(struct segment_command);
-	while (i < sc->nsects)
+	if (mach32)
 	{
-		section = (struct section*)(ctx->file + offset);
-		addr = ctx->file + section->offset;
-		if (fxs->section && fxs->section(ctx, section, NULL) == EXIT_FAILURE)
-				return (EXIT_FAILURE);
-		offset += sizeof(struct section);
-		i += 1;
+		mach32->hdr = (struct mach_header *)ft_memalloc(sizeof(struct mach_header));
+		ft_memcpy(mach32->hdr, file, sizeof(struct mach_header));
+		mach32->num_commands = (flags & IS_SWAPPED) ?
+			OSSwapInt32(mach32->hdr->ncmds) : mach32->hdr->ncmds;
+		mach32->offset = sizeof(struct mach_header);
 	}
-	return (EXIT_SUCCESS);
-}
-
-
-/*
-** iterate over 64bit sections and with callback function
-** @param{t_ctx*} program context containing binary file being parsed
-** @param{struct segment_command_64} current segment being iterated over
-** @param{t_sec_f} function called with current section being iterated over
-** @param{ptrdiff_t} offset of section within binary file
-** @return {int} 0 on success, 1 on failure
-*/
-
-int		dump_sects_64(t_ctx *ctx
-					, struct segment_command_64 *sc
-					, t_dump_fxs *fxs
-					, ptrdiff_t offset)
-{
-	uint32_t			i;
-	struct section_64	*section;
-	void				*addr;
-
-	i = 0;
-	offset += sizeof(struct segment_command_64);
-	while (i < sc->nsects)
+	else if (mach64)
 	{
-		section = (struct section_64*)(ctx->file + offset);
-		addr = ctx->file + section->offset;
-		if (fxs->section && fxs->section(ctx, NULL, section) == EXIT_FAILURE)
-				return (EXIT_FAILURE);
-		offset += sizeof(struct section_64);
-		i += 1;
+		mach64->hdr = (struct mach_header_64 *)ft_memalloc(sizeof(struct mach_header_64));
+		ft_memcpy(mach64->hdr, file, sizeof(struct mach_header_64));
+		mach64->num_commands = (flags & IS_SWAPPED) ?
+			OSSwapInt64(mach64->hdr->ncmds) : mach64->hdr->ncmds;
+		mach64->offset = sizeof(struct mach_header_64);
 	}
-	return (EXIT_SUCCESS);
 }
 
 /*
@@ -85,31 +40,30 @@ int		dump_sects_64(t_ctx *ctx
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs)
+int		dump_macho_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 {
-	t_mach_o_32	mach;
+	t_macho32	mach;
 
-	mach.hdr = (struct mach_header *)ctx->file;
-	mach.num_commands = mach.hdr->ncmds;
-	mach.offset = sizeof(struct mach_header);
-	if (fxs->header && (fxs->header(ctx, mach.hdr, NULL) == EXIT_FAILURE))
+	extract_mach_header(file, &mach, NULL, ctx->flags);
+	if (dump->header && !OK(dump->header(file, ctx, mach.hdr, NULL)))
 		return (EXIT_FAILURE);
 	while (mach.num_commands-- &&
-		(mach.lc = (struct load_command *)(ctx->file + mach.offset)))
+		(mach.lc = (struct load_command *)(file + mach.offset)))
 	{
 		if (mach.lc->cmd != LC_SEGMENT)
 		{
-			if (fxs->load && (fxs->load(ctx, mach.lc, NULL) == EXIT_FAILURE))
+			if (dump->load && !OK(dump->load(file, ctx, mach.lc, NULL)))
 				return (EXIT_FAILURE);
 			mach.offset += mach.lc->cmdsize;
 			continue;
 		}
-		mach.sc = (struct segment_command*)(ctx->file + mach.offset);
-		if ((fxs->segment && fxs->segment(ctx, mach.sc, NULL) == EXIT_FAILURE)
-			|| (dump_sects(ctx, mach.sc, fxs, mach.offset) == EXIT_FAILURE))
+		mach.sc = (struct segment_command*)(file + mach.offset);
+		if ((dump->segment && !OK(dump->segment(file, ctx, mach.sc, NULL)))
+			|| !OK(dump_sects(file, ctx, &mach, dump)))
 			return (EXIT_FAILURE);
 		mach.offset += mach.sc->cmdsize;
 	}
+	free(mach.hdr);
 	return (EXIT_SUCCESS);
 }
 
@@ -120,28 +74,26 @@ int		dump_macho_bin(t_ctx *ctx, t_dump_fxs *fxs)
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_macho_bin64(t_ctx *ctx, t_dump_fxs *fxs)
+int		dump_macho64_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 {
-	t_mach_o_64	mach;
+	t_macho64	mach;
 
-	mach.hdr = (struct mach_header_64*)ctx->file;
-	mach.num_commands = mach.hdr->ncmds;
-	mach.offset = sizeof(struct mach_header_64);
-	if (fxs->header && (fxs->header(ctx, NULL, mach.hdr) == EXIT_FAILURE))
+	extract_mach_header(file, NULL, &mach, ctx->flags);
+	if (dump->header && !OK(dump->header(file, ctx, NULL, mach.hdr)))
 		return (EXIT_FAILURE);
 	while (mach.num_commands-- &&
 		(mach.lc = (struct load_command*)(ctx->file + mach.offset)))
 	{
 		if (mach.lc->cmd != LC_SEGMENT_64)
 		{
-			if (fxs->load && (fxs->load(ctx, NULL, mach.lc) == EXIT_FAILURE))
+			if (dump->load && !OK(dump->load(file, ctx, NULL, mach.lc)))
 				return (EXIT_FAILURE);
 			mach.offset += mach.lc->cmdsize;
 			continue;
 		}
 		mach.sc = (struct segment_command_64*)(ctx->file + mach.offset);
-		if ((fxs->segment && fxs->segment(ctx, NULL, mach.sc) == EXIT_FAILURE)
-			|| (dump_sects_64(ctx, mach.sc, fxs, mach.offset) == EXIT_FAILURE))
+		if ((dump->segment && !OK(dump->segment(file, ctx, NULL, mach.sc)))
+			|| (!OK(dump_sects_64(file, ctx, &mach, dump))))
 			return (EXIT_FAILURE);
 		mach.offset += mach.sc->cmdsize;
 	}

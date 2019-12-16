@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:51:03 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/02 11:31:12 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 19:02:38 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,12 @@ typedef struct	s_sect
 	int			is_64;
 }				t_addr;
 
-int		print_text_section(t_ctx *ctx
+int		print_text_section(char *file
+						, t_ctx *ctx
 						, struct section *section
-						, struct section_64 *section_64);
-int		print_text_segment(t_ctx *ctx
+						, struct section_64 *section_64)/* __attribute__((weak))*/;
+int		print_text_segment(char *file
+						, t_ctx *ctx
 						, struct segment_command *segment_command
 						, struct segment_command_64 *segment_command_64);
 #endif

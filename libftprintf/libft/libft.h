@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 12:34:43 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/11/15 17:08:16 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 18:13:46 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@
 # define EOL '\n'
 # define ERR(x) (x == -1)
 # define NONE(x) (x == 0)
-# define OK(x) (x > 0)
 # define NIL 0
 # define ERROR -1
 # define SUCCESS 1

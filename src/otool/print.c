@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/04 00:05:27 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/15 19:03:29 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,17 @@ int		print_text_contents(t_addr *fmt)
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_text_section(t_ctx *ctx
+int		print_text_section(char *file
+							, t_ctx *ctx
 							, struct section *section
 							, struct section_64 *section_64)
 {
 	t_addr	section_fmt;
 
+	(void)ctx;
 	if (section && !ft_strcmp("__text", section->sectname))
 	{
-		section_fmt.binary = ctx->file;
+		section_fmt.binary = file;
 		section_fmt.addr = (uint64_t)section->addr;
 		section_fmt.size = (uint64_t)section->size;
 		section_fmt.offset = (uint64_t)section->offset;
@@ -62,7 +64,7 @@ int		print_text_section(t_ctx *ctx
 	}
 	else if (section_64 && !ft_strcmp("__text", section_64->sectname))
 	{
-		section_fmt.binary = ctx->file;
+		section_fmt.binary = file;
 		section_fmt.addr = section_64->addr;
 		section_fmt.size = section_64->size;
 		section_fmt.offset = section_64->offset;
@@ -81,10 +83,12 @@ int		print_text_section(t_ctx *ctx
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_text_segment(t_ctx *ctx
+int		print_text_segment(char *file
+					, t_ctx *ctx
 					, struct segment_command *segment
 					, struct segment_command_64 *segment_64)
 {
+	(void)file;
 	if ((segment && !ft_strcmp("__TEXT", segment->segname))
 		|| (segment_64 && !ft_strcmp("__TEXT", segment_64->segname)))
 	{

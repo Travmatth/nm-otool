@@ -13,7 +13,7 @@ int		fd_to_str(int fd, char *out) {
 char *reference_segment_output = "test/artifacts/simple_program_32:\n\
 Contents of (__TEXT,__text) section\n";
 
-static MunitResult	test_print_text_segment(
+static MunitResult	test_print_text_segment_32(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
 	int orig = dup(STDOUT_FILENO), fds[2];
@@ -25,16 +25,13 @@ static MunitResult	test_print_text_segment(
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
 		return MUNIT_ERROR;
-	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return MUNIT_ERROR;
-	else if (determine_file(&ctx) == EXIT_FAILURE)
-		return MUNIT_FAIL;
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
 	// run func under test
-	else if (dump_macho_bin(&ctx, &funcs) == EXIT_FAILURE)
-		return MUNIT_FAIL;
+	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	// close resources
-	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return MUNIT_FAIL;
+	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
+		return MUNIT_ERROR;
 	// evaluate test
 	int status = fd_to_str(fds[0], out);
 	dup2(orig, STDOUT_FILENO);
@@ -60,17 +57,14 @@ static MunitResult	test_print_text_segment_64(
 	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
-		return EXIT_FAILURE;
-	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
-	else if (determine_file(&ctx) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+		return MUNIT_ERROR;
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
 	// run func under test
-	else if (dump_macho_bin64(&ctx, &funcs) == EXIT_FAILURE)
-		return EXIT_FAILURE;
+	munit_assert_int(dump_macho64_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	// close resources
-	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return EXIT_FAILURE;
+	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
+		return MUNIT_ERROR;
 	// evaluate test
 	int status = fd_to_str(fds[0], out);
 	dup2(orig, STDOUT_FILENO);
@@ -91,7 +85,7 @@ char *reference_section_output = "00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8
 00001f60	00 00 c7 45 fc 00 00 00 00 89 04 24 e8 bf ff ff \n\
 00001f70	ff 31 c0 83 c4 08 5d c3 \n";
 
-static MunitResult	test_print_text_section(
+static MunitResult	test_print_text_section_32(
 	const MunitParameter params[], void *fixture) {
 	t_ctx ctx;
 	int orig = dup(STDOUT_FILENO), fds[2];
@@ -108,7 +102,7 @@ static MunitResult	test_print_text_section(
 	else if (determine_file(&ctx) == EXIT_FAILURE)
 		return MUNIT_FAIL;
 	// run func under test
-	else if (dump_macho_bin(&ctx, &funcs) == EXIT_FAILURE)
+	else if (dump_macho_bin(ctx.file, &ctx, &funcs) == EXIT_FAILURE)
 		return MUNIT_FAIL;
 	// close resources
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
@@ -150,7 +144,7 @@ static MunitResult	test_print_text_section_64(
 	else if (determine_file(&ctx) == EXIT_FAILURE)
 		return MUNIT_FAIL;
 	// run func under test
-	else if (dump_macho_bin64(&ctx, &funcs) == EXIT_FAILURE)
+	else if (dump_macho64_bin(ctx.file, &ctx, &funcs) == EXIT_FAILURE)
 		return MUNIT_FAIL;
 	// close resources
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
@@ -168,9 +162,9 @@ static MunitResult	test_print_text_section_64(
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
- { "test_print_text_segment", test_print_text_segment, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_segment_32", test_print_text_segment_32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_print_text_segment_64", test_print_text_segment_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
- { "test_print_text_section", test_print_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_section_32", test_print_text_section_32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_print_text_section_64", test_print_text_section_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   /* Mark the end of the array with an entry where the test
    * function is NULL */
