@@ -7,3 +7,6 @@
 [submodule "test/fff"]
 	path = test/fff
 	url = https://github.com/meekrosoft/fff.git
+[submodule "test/artifacts"]
+	path = test/artifacts
+	url = https://github.com/bnoufel/nm-otool-test.git
