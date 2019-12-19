@@ -5,8 +5,10 @@ extern int	g_segment_calls;
 extern int	g_lc_calls;
 extern int	g_section_calls;
 
-static MunitResult	test_dump_fat_bin_dumps(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_dump_fat_bin_dumps(
+	MUNIT_UNUSED const MunitParameter params[],
+	MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_obj_fat.o" };
 	t_dump_fxs funcs = { verify_header64, verify_segments, verify_sections, verify_load_command };
@@ -30,14 +32,14 @@ static MunitResult	test_dump_fat_bin_dumps(
 	return EXIT_SUCCESS;
 }
 
-static MunitResult	test_fat_section_addr(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_fat_section_addr(
+	MUNIT_UNUSED const MunitParameter params[],
+	MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_obj_fat.o" };
 	t_dump_fxs funcs = { NULL, NULL, verify_section64_address, NULL	};
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);

@@ -12,15 +12,14 @@ Contents of (__TEXT,__text) section\n\
 00001f60	00 00 c7 45 fc 00 00 00 00 89 04 24 e8 bf ff ff \n\
 00001f70	ff 31 c0 83 c4 08 5d c3 \n";
 
-static MunitResult	test_print_text_section_32(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_print_text_section_32(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	int orig = dup(STDOUT_FILENO), fds[2];
 	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
 		return MUNIT_ERROR;
@@ -56,15 +55,14 @@ Contents of (__TEXT,__text) section\n\
 0000000100000f60	45 fc 00 00 00 00 e8 c5 ff ff ff 31 c0 48 83 c4 \n\
 0000000100000f70	10 5d c3 \n";
 
-static MunitResult	test_print_text_section_64(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_print_text_section_64(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	int orig = dup(STDOUT_FILENO), fds[2];
 	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_64" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	if (pipe(fds) == -1 || dup2(fds[1], STDOUT_FILENO) == -1)
 		return MUNIT_ERROR;

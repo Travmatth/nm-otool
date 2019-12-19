@@ -1,13 +1,12 @@
 #include "../tests.h"
 
-static MunitResult	test_get_file_fails_dir(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_get_file_fails_dir(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/" };
 	int orig = dup(STDOUT_FILENO);
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	close(STDERR_FILENO);
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_FAILURE);
@@ -15,13 +14,12 @@ static MunitResult	test_get_file_fails_dir(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_get_file_opens_file(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_get_file_opens_file(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/text.txt" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_string_equal(ctx.file, "test");
@@ -31,13 +29,12 @@ static MunitResult	test_get_file_opens_file(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_determine_file_detects_invalid(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_determine_file_detects_invalid(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/text.txt" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_FAILURE);
@@ -46,13 +43,12 @@ static MunitResult	test_determine_file_detects_invalid(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_determine_file_detects_macho64(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_determine_file_detects_macho64(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_64" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -62,13 +58,12 @@ static MunitResult	test_determine_file_detects_macho64(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_determine_file_detects_macho32(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_determine_file_detects_macho32(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -78,13 +73,12 @@ static MunitResult	test_determine_file_detects_macho32(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_determine_file_detects_archive(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_determine_file_detects_archive(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/archive_mixed_not_lib.a" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -94,13 +88,12 @@ static MunitResult	test_determine_file_detects_archive(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_determine_file_detects_extended_archive(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_determine_file_detects_extended_archive(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/extended_archive_multi_lib.a" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -110,13 +103,12 @@ static MunitResult	test_determine_file_detects_extended_archive(
 	return MUNIT_OK;
 }
 
-static MunitResult	test_determine_file_detects_fat(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_determine_file_detects_fat(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_obj_fat.o" };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -136,8 +128,7 @@ static MunitTest tests[] = {
  { "test_determine_file_detects_archive", test_determine_file_detects_archive, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_determine_file_detects_extended_archive", test_determine_file_detects_extended_archive, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_determine_file_detects_fat", test_determine_file_detects_fat, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  /* Mark the end of the array with an entry where the test
-   * function is NULL */
+  /* Mark the end of the array with an entry where the test function is NULL */
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
 

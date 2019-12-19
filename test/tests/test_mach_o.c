@@ -6,14 +6,14 @@ extern int	g_segment_calls;
 extern int	g_lc_calls;
 extern int	g_section_calls;
 
-static MunitResult	test_dump_macho_bin_dumps_mach_32(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_dump_macho_bin_dumps_mach_32(
+	MUNIT_UNUSED const MunitParameter params[],
+	MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 	t_dump_fxs funcs = {verify_header, verify_segments, verify_sections, verify_load_command };
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -31,14 +31,14 @@ static MunitResult	test_dump_macho_bin_dumps_mach_32(
 	return EXIT_SUCCESS;
 }
 
-static MunitResult	test_mach32_segment_addr(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_mach32_segment_addr(
+	MUNIT_UNUSED const MunitParameter params[],
+	MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 	t_dump_fxs funcs = { NULL, verify_segment_address, NULL, NULL	};
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
@@ -50,14 +50,14 @@ static MunitResult	test_mach32_segment_addr(
 	return EXIT_SUCCESS;
 }
 
-static MunitResult	test_mach32_section_addr(
-	const MunitParameter params[], void *fixture) {
+static MunitResult
+test_mach32_section_addr(
+	MUNIT_UNUSED const MunitParameter params[],
+	MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
 	t_dump_fxs funcs = { NULL, NULL, verify_section_address, NULL	};
 
-	(void)params;
-	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);

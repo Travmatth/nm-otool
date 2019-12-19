@@ -117,7 +117,7 @@ shallow_clean:
 clean:
 	@$(MAKE) clean -C libftprintf
 	@echo -n 'Cleaning nm-otool object files... '
-	@rm -rf $(COMMON_OBJ) $(OTOOL_OBJ) $(NM_OBJ) $(TEST_OBJ) *.dSYM test/*.dSYM *.DS_Store
+	@rm -rf $(COMMON_OBJ) $(OTOOL_OBJ) $(NM_OBJ) $(TEST_OBJ) *.dSYM test/*.dSYM *.DS_Store test/munit/munit.o
 	@echo "\033[32mdone\033[0m"
 
 # remove executables, object files, debugging dirs, archives
