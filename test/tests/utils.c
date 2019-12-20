@@ -1,5 +1,45 @@
 #include "../tests.h"
 
+char* fat_file_params[] = {
+	"test/artifacts/fat/fat_hard",
+	"test/artifacts/fat/fat_alone",
+	"test/artifacts/fat/audiodevice_offset_plus_un_v2",
+	"test/artifacts/fat/audiodevice_arch_plus_1",
+	"test/artifacts/fat/big_fat",
+	"test/artifacts/fat/why_are_you_crashing",
+	"test/artifacts/fat/python_returns",
+	"test/artifacts/fat/python",
+	"test/artifacts/fat/audiodevice_without_last_arch",
+	"test/artifacts/fat/appsleepd",
+	"test/artifacts/fat/fat_corr2",
+	"test/artifacts/fat/fat_corr5",
+	"test/artifacts/fat/audiodevice_offset_plus_un",
+	"test/artifacts/fat/pboard",
+	"test/artifacts/fat/audiodevice_arch_plus_10",
+	"test/artifacts/fat/fat_corr4",
+	"test/artifacts/fat/fat_corr3",
+	"test/artifacts/fat/audiodevice_offset_plus_quatre_v2",
+	"test/artifacts/fat/distnoted",
+	"test/artifacts/fat/audiodevice_with_partial_last_arch",
+	"test/artifacts/fat/audiodevice",
+	"test/artifacts/fat/audiodevice_offset_plus_quatre",
+	"test/artifacts/fat/fat_hard_corupted",
+	"test/artifacts/fat/the_revengeance_of_python",
+	"test/artifacts/fat/sqlite3",
+	"test/artifacts/fat/cfprefsd",
+	"test/artifacts/fat/audiodevice_arch_plus_2",
+	"test/artifacts/fat/fatbin",
+	"test/artifacts/fat/fat_corr6",
+	"test/artifacts/fat/fat_corr1",
+	"test/artifacts/fat/fat_stackoverflow",
+	"test/artifacts/fat/fat_corr7",
+	"test/artifacts/fat/fat",
+	"test/artifacts/fat/hmmm_je_met_mon_gros_doigt_de_pied",
+	"test/artifacts/fat/audiodevice_corupted",
+	"test/artifacts/fat/uuidgen",
+	NULL
+};
+
 /*
 ** Mock callbacks to test various functions
 */
