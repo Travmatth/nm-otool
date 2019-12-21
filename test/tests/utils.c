@@ -208,6 +208,33 @@ char* binary_file_params[] = {
 	NULL,
 };
 
+char	*archive_file_params[] = {
+	"test/artifacts/archive/macho_lft_macho.a",
+	"test/artifacts/archive/libft32.a",
+	"test/artifacts/archive/libmlx.a",
+	"test/artifacts/archive/libftprintf32.a",
+	"test/artifacts/archive/ar_corr6.a",
+	"test/artifacts/archive/ar_corr2.a",
+	"test/artifacts/archive/libftprintf.a",
+	"test/artifacts/archive/fat_binary_ar.a",
+	"test/artifacts/archive/macho_fat.a",
+	"test/artifacts/archive/test.a",
+	"test/artifacts/archive/libft.a",
+	"test/artifacts/archive/ar_corr5.a",
+	"test/artifacts/archive/macho_lft.a",
+	"test/artifacts/archive/ar_corr1.a",
+	"test/artifacts/archive/fat_macho.a",
+	"test/artifacts/archive/ar_corr4.a",
+	"test/artifacts/archive/archiveception_niv2.a",
+	"test/artifacts/archive/_lft.a",
+	"test/artifacts/archive/macho.a",
+	"test/artifacts/archive/fat_file.a",
+	"test/artifacts/archive/archive_fat.a",
+	"test/artifacts/archive/ar_corr3.a",
+	"test/artifacts/archive/archiveception_niv1.a",
+	NULL
+};
+
 char* i386_file_params[] = {
 	"test/artifacts/binary/void32",
 	"test/artifacts/binary/main32",
@@ -277,5 +304,36 @@ char* binary_unknown_file_params[] = {
 	"test/artifacts/binary/test_de_la_muerte",
 	"test/artifacts/binary/ds_store",
 	"test/artifacts/binary/ppc_only",
+	NULL,
+};
+
+char	*ar_extended_file_params[] = {
+	"test/artifacts/archive/macho_lft_macho.a",
+	"test/artifacts/archive/libft32.a",
+	"test/artifacts/archive/libmlx.a",
+	"test/artifacts/archive/libftprintf32.a",
+	"test/artifacts/archive/ar_corr6.a",
+	"test/artifacts/archive/ar_corr2.a",
+	"test/artifacts/archive/libftprintf.a",
+	"test/artifacts/archive/test.a",
+	"test/artifacts/archive/ar_corr4.a",
+	"test/artifacts/archive/archiveception_niv2.a",
+	"test/artifacts/archive/macho.a",
+	"test/artifacts/archive/libft.a",
+	"test/artifacts/archive/ar_corr5.a",
+	"test/artifacts/archive/macho_lft.a",
+	NULL,
+};
+
+char	*ar_file_params[] = {
+	"test/artifacts/archive/_lft.a",
+	"test/artifacts/archive/fat_binary_ar.a",
+	"test/artifacts/archive/macho_fat.a",
+	"test/artifacts/archive/ar_corr1.a",
+	"test/artifacts/archive/fat_macho.a",
+	"test/artifacts/archive/fat_file.a",
+	"test/artifacts/archive/archive_fat.a",
+	"test/artifacts/archive/ar_corr3.a",
+	"test/artifacts/archive/archiveception_niv1.a",
 	NULL,
 };

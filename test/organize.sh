@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for f in $(find binary)
+for f in $(find artifacts/archive)
 do
 	string=$(file $f);
 	if [[ $string =~ "x86_64" ]]

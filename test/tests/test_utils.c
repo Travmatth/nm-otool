@@ -129,11 +129,18 @@ test_determine_file_detects_x86_64(
 	return MUNIT_OK;
 }
 
+extern char	*ar_file_params[];
+
+static MunitParameterEnum detect_ar_params[] = {
+  { "archive_file", ar_file_params },
+  { NULL, NULL },
+};
+
 static MunitResult
 test_determine_file_detects_archive(
-	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
+	const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
-	char *argv[2] = { NULL, "test/artifacts/archive_mixed_not_lib.a" };
+	char *argv[2] = { NULL, params->value };
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
@@ -144,11 +151,18 @@ test_determine_file_detects_archive(
 	return MUNIT_OK;
 }
 
+extern char	*ar_extended_file_params[];
+
+static MunitParameterEnum detect_ar_extended_params[] = {
+  { "archive_file", ar_extended_file_params },
+  { NULL, NULL },
+};
+
 static MunitResult
 test_determine_file_detects_extended_archive(
-	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
+	const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
-	char *argv[2] = { NULL, "test/artifacts/extended_archive_multi_lib.a" };
+	char *argv[2] = { NULL, params->value };
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
@@ -167,8 +181,8 @@ static MunitTest tests[] = {
 { "test_determine_file_detects_fat", test_determine_file_detects_fat, detect_fat_file_test_setup, detect_fat_file_test_teardown, MUNIT_TEST_OPTION_NONE, detect_fat_params },
 { "test_determine_file_detects_i386", test_determine_file_detects_i386, NULL, NULL, MUNIT_TEST_OPTION_NONE, detect_i386_params },
 { "test_determine_file_detects_x86_64", test_determine_file_detects_x86_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, detect_x86_64_params },
-{ "test_determine_file_detects_archive", test_determine_file_detects_archive, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-{ "test_determine_file_detects_extended_archive", test_determine_file_detects_extended_archive, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+{ "test_determine_file_detects_archive", test_determine_file_detects_archive, NULL, NULL, MUNIT_TEST_OPTION_NONE, detect_ar_params },
+{ "test_determine_file_detects_extended_archive", test_determine_file_detects_extended_archive, NULL, NULL, MUNIT_TEST_OPTION_NONE, detect_ar_extended_params },
 /* Mark the end of the array with an entry where the test function is NULL */
 { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
