@@ -31,11 +31,10 @@ test_dump_macho_bin_dumps_machi386(
 }
 
 static MunitResult
-test_mach32_segment_addr(
-	MUNIT_UNUSED const MunitParameter params[],
-	MUNIT_UNUSED void *fixture) {
+test_machi386_segment_addr(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
-	char *argv[2] = { NULL, "test/artifacts/simple_program_32" };
+	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
 	t_dump_fxs funcs = { NULL, verify_segment_address, NULL, NULL	};
 
 	bzero(&ctx, sizeof(t_ctx));
@@ -71,7 +70,7 @@ test_mach32_section_addr(
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
  { "test_dump_macho_bin_dumps_machi386", test_dump_macho_bin_dumps_machi386, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
- { "test_mach32_segment_addr", test_mach32_segment_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_machi386_segment_addr", test_machi386_segment_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_mach32_section_addr", test_mach32_section_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  /* Mark the end of the array with an entry where the test function is NULL */
  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
