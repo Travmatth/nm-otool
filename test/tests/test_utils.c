@@ -46,6 +46,20 @@ test_determine_file_detects_invalid(
 }
 
 static MunitResult
+test_determine_file_detects_corrupt_magic(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
+	t_ctx ctx;
+	char *argv[2] = { NULL, "test/artifacts/fat/fat_corr7" };
+
+	bzero(&ctx, sizeof(t_ctx));
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(&ctx), ==, EXIT_FAILURE);
+	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
+		return MUNIT_ERROR;
+	return MUNIT_OK;
+}
+
+static MunitResult
 test_determine_file_detects_fat(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
@@ -125,6 +139,7 @@ static MunitTest tests[] = {
 { "test_get_file_fails_dir", test_get_file_fails_dir, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 { "test_get_file_opens_file", test_get_file_opens_file, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 { "test_determine_file_detects_invalid", test_determine_file_detects_invalid, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+{ "test_determine_file_detects_corrupt_magic", test_determine_file_detects_corrupt_magic, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 { "test_determine_file_detects_fat", test_determine_file_detects_fat, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 { "test_determine_file_detects_i386", test_determine_file_detects_i386, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
 { "test_determine_file_detects_x86_64", test_determine_file_detects_x86_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
