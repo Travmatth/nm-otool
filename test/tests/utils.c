@@ -52,7 +52,7 @@ int		verify_section_address(char *file, t_ctx *ctx, struct section *sect, struct
 	(void)sect64;
 	if (!strcmp("__text", sect->sectname)) {
 		uint64_t val = *(uint64_t*)(file + sect->offset);
-		if (val == 0x00E818EC83E58955ULL)
+		if (val == 0xe824ec8353e58955ULL)
 			g_section_calls += 1;
 	}
 	return EXIT_SUCCESS;
