@@ -1,23 +1,31 @@
 #include "../tests.h"
 #include <errno.h>
 
-char *reference_32_output = "test/artifacts/simple_program_32:\n\
+char *ref_i386_output = "test/artifacts/binary/main32:\n\
 Contents of (__TEXT,__text) section\n\
-00001f00	55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d \n\
-00001f10	80 8b 00 00 00 89 4d fc 8b 4d fc 89 04 24 89 4c \n\
-00001f20	24 04 e8 51 00 00 00 89 45 f8 83 c4 18 5d c3 90 \n\
-00001f30	55 89 e5 83 ec 08 8b 45 08 89 45 fc 8b 45 fc 89 \n\
-00001f40	04 24 e8 b9 ff ff ff 83 c4 08 5d c3 0f 1f 40 00 \n\
-00001f50	55 89 e5 83 ec 08 e8 00 00 00 00 58 8d 80 3e 00 \n\
-00001f60	00 00 c7 45 fc 00 00 00 00 89 04 24 e8 bf ff ff \n\
-00001f70	ff 31 c0 83 c4 08 5d c3 \n";
+00001e63	55 89 e5 53 83 ec 24 e8 df 00 00 00 c7 45 f4 01 \n\
+00001e73	00 00 00 c7 45 f0 02 00 00 00 c7 45 ec 04 00 00 \n\
+00001e83	00 c7 45 e8 08 00 00 00 c7 45 e4 07 00 00 00 8b \n\
+00001e93	45 f4 0b 45 f0 83 ec 08 50 8d 83 ff 00 00 00 50 \n\
+00001ea3	e8 aa 00 00 00 83 c4 10 8b 45 f4 0b 45 f0 0b 45 \n\
+00001eb3	ec 83 ec 08 50 8d 83 09 01 00 00 50 e8 8e 00 00 \n\
+00001ec3	00 83 c4 10 8b 45 f4 23 45 f0 83 ec 08 50 8d 83 \n\
+00001ed3	17 01 00 00 50 e8 75 00 00 00 83 c4 10 8b 45 e4 \n\
+00001ee3	23 45 f4 83 ec 08 50 8d 83 21 01 00 00 50 e8 5c \n\
+00001ef3	00 00 00 83 c4 10 8b 45 e4 23 45 f0 83 ec 08 50 \n\
+00001f03	8d 83 21 01 00 00 50 e8 43 00 00 00 83 c4 10 8b \n\
+00001f13	45 e4 23 45 ec 83 ec 08 50 8d 83 21 01 00 00 50 \n\
+00001f23	e8 2a 00 00 00 83 c4 10 8b 45 e4 23 45 e8 83 ec \n\
+00001f33	08 50 8d 83 21 01 00 00 50 e8 11 00 00 00 83 c4 \n\
+00001f43	10 b8 00 00 00 00 8b 5d fc c9 c3 8b 1c 24 c3 \n"; 
 
 static MunitResult
-test_print_text_section_32(
+test_print_text_section_i386(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	int orig = dup(STDOUT_FILENO), fds[2];
-	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_32" };
+	// char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_32" };
+	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/binary/main32" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
@@ -40,27 +48,23 @@ test_print_text_section_32(
 	close(fds[1]);
 	if (status != EXIT_SUCCESS)
 		return MUNIT_ERROR;
-	munit_assert_string_equal(reference_32_output, out);
+	munit_assert_string_equal(ref_i386_output, out);
 	return MUNIT_OK;
 }
 
-char *reference_64_output = "test/artifacts/simple_program_64:\n\
+char *ref_x86_64_output = "test/artifacts/binary/a.out:\n\
 Contents of (__TEXT,__text) section\n\
-0000000100000f00	55 48 89 e5 48 83 ec 10 48 8d 05 87 00 00 00 48 \n\
-0000000100000f10	89 7d f8 48 8b 75 f8 48 89 c7 b0 00 e8 53 00 00 \n\
-0000000100000f20	00 89 45 f4 48 83 c4 10 5d c3 90 90 90 90 90 90 \n\
-0000000100000f30	55 48 89 e5 48 83 ec 10 48 89 7d f8 48 8b 7d f8 \n\
-0000000100000f40	e8 bb ff ff ff 48 83 c4 10 5d c3 0f 1f 44 00 00 \n\
-0000000100000f50	55 48 89 e5 48 83 ec 10 48 8d 3d 3a 00 00 00 c7 \n\
-0000000100000f60	45 fc 00 00 00 00 e8 c5 ff ff ff 31 c0 48 83 c4 \n\
-0000000100000f70	10 5d c3 \n";
+0000000100000f50	55 48 89 e5 48 83 ec 10 bf 01 00 00 00 48 8d 35 \n\
+0000000100000f60	42 00 00 00 b8 0c 00 00 00 89 c2 c7 45 fc 00 00 \n\
+0000000100000f70	00 00 e8 0f 00 00 00 31 ff 48 89 45 f0 89 f8 48 \n\
+0000000100000f80	83 c4 10 5d c3 \n"; 
 
 static MunitResult
-test_print_text_section_64(
+test_print_text_section_x86_64(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	int orig = dup(STDOUT_FILENO), fds[2];
-	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/simple_program_64" };
+	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/binary/a.out" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
@@ -83,14 +87,14 @@ test_print_text_section_64(
 	close(fds[1]);
 	if (status != EXIT_SUCCESS)
 		return MUNIT_ERROR;
-	munit_assert_string_equal(reference_64_output, out);
+	munit_assert_string_equal(ref_x86_64_output, out);
 	return MUNIT_OK;
 }
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
- { "test_print_text_section_32", test_print_text_section_32, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
- { "test_print_text_section_64", test_print_text_section_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_section_i386", test_print_text_section_i386, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_text_section_x86_64", test_print_text_section_x86_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   /* Mark the end of the array with an entry where the test
    * function is NULL */
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
