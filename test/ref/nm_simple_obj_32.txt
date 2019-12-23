@@ -1,2 +1,0 @@
-         U _printf
-00000000 T _simple_func

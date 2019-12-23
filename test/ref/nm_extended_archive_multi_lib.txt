@@ -1,8 +1,0 @@
-
-test/artifacts/extended_archive_multi_lib.a(another_simple_obj_64.o):
-0000000000000000 T _another_simple_func
-                 U _printf
-
-test/artifacts/extended_archive_multi_lib.a(simple_obj_64.o):
-                 U _printf
-0000000000000000 T _simple_func

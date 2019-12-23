@@ -1,4 +1,0 @@
-
-test/artifacts/extended_archive_single_lib.a(simple_obj_64.o):
-                 U _printf
-0000000000000000 T _simple_func
