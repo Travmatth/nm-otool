@@ -50,8 +50,7 @@ test_machi386_segment_addr(
 
 static MunitResult
 test_machi386_section_addr(
-	MUNIT_UNUSED const MunitParameter params[],
-	MUNIT_UNUSED void *fixture) {
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
 	t_dump_fxs funcs = { NULL, NULL, verify_section_address, NULL	};
