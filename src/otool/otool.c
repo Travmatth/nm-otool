@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   otool.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/22 16:38:08 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/22 16:45:01 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,24 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		main(int argc, char *argv[], char *envp[])
+int		otool_main(int argc, char *argv[], char *envp[])
 {
-	return (otool_main(argc, argv, envp));
+	t_ctx			ctx;
+	t_dump_fxs	func;
+
+	func.header = NULL;
+	func.segment = NULL;
+	func.section = print_text_section;
+	func.load = NULL;
+	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	else if (determine_file(&ctx) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	else if ((ctx.flags & IS_FAT) && dump_fat_bin(ctx.file, &ctx, &func) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	else if ((ctx.flags & IS_32) && dump_macho_bin(ctx.file, &ctx, &func) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	else if (dump_macho64_bin(ctx.file, &ctx, &func) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	return (cleanup_ctx(&ctx));
 }

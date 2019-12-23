@@ -7,6 +7,20 @@
 #include "../includes/otool.h"
 
 /*
+** test struct used for swapping & saving stdout output
+*/
+
+struct fixture {
+	int		stdout;
+	int		exit_status;
+	char	*otool_output;
+	int		fds[2];
+};
+
+int		swap_stdout(struct fixture *s);
+int		restore_stdout(struct fixture *s);
+
+/*
 ** test/tests/utils.c
 */
 

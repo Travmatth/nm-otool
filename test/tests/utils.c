@@ -103,3 +103,20 @@ int		fd_to_str(int fd, char *out) {
 	out[bytes] = '\0';
 	return EXIT_SUCCESS;
 }
+
+int		swap_stdout(struct fixture *s) {
+	s->stdout = dup(STDOUT_FILENO);
+	if (pipe(s->fds) == -1)
+		return EXIT_FAILURE;
+	if (dup2(s->fds[1], STDOUT_FILENO) == -1)
+		return MUNIT_ERROR;
+	return EXIT_SUCCESS;
+}
+
+int		restore_stdout(struct fixture *s) {
+	if (dup2(s->stdout, STDOUT_FILENO) == -1
+		|| close(s->fds[0]) == -1
+		|| close(s->fds[1]) == -1)
+		return EXIT_FAILURE;
+	return EXIT_SUCCESS;
+}

@@ -32,7 +32,7 @@ NM_OBJ = $(NM_SRC:.c=.o)
 # otool variables
 OTOOL_NAME = ft_otool
 OTOOL_MAIN = src/otool/main.c
-OTOOL = utils print
+OTOOL = utils print otool
 OTOOL_FILES = $(addprefix src/otool/, $(OTOOL))
 OTOOL_SRC = $(addsuffix .c, $(OTOOL_FILES))
 OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
@@ -41,7 +41,7 @@ OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 TESTFLAGS = -I./test -I./test/fff
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
-TESTS = utils test_utils test_format test_mach_o test_mach_print test_fat test_dir_structs
+TESTS = utils test_utils test_format test_mach_o test_mach_print test_fat test_dir_structs test_otool
 TEST_LIB = test/munit/munit.c
 TEST_FILES = $(addprefix test/tests/, $(TESTS))  
 TEST_SRC = $(addsuffix .c, $(TEST_FILES))
