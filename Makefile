@@ -41,7 +41,7 @@ OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 TESTFLAGS = -I./test -I./test/fff
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
-TESTS = utils test_utils test_format test_mach_o test_mach_print
+TESTS = utils test_utils test_format test_mach_o test_mach_print test_fat
 TEST_LIB = test/munit/munit.c
 TEST_FILES = $(addprefix test/tests/, $(TESTS))  
 TEST_SRC = $(addsuffix .c, $(TEST_FILES))
