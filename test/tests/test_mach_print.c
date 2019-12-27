@@ -32,7 +32,7 @@ test_print_text_section_i386(
 		return MUNIT_ERROR;
 	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
 		return MUNIT_FAIL;
-	else if (determine_file(&ctx) == EXIT_FAILURE)
+	else if (determine_file(ctx.file, &ctx) == EXIT_FAILURE)
 		return MUNIT_FAIL;
 	// run func under test
 	else if (dump_macho_bin(ctx.file, &ctx, &funcs) == EXIT_FAILURE)
@@ -68,7 +68,7 @@ test_print_text_section_x86_64(
 		return MUNIT_ERROR;
 	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
 		return MUNIT_FAIL;
-	else if (determine_file(&ctx) == EXIT_FAILURE)
+	else if (determine_file(ctx.file, &ctx) == EXIT_FAILURE)
 		return MUNIT_FAIL;
 	// run func under test
 	else if (dump_macho64_bin(ctx.file, &ctx, &funcs) == EXIT_FAILURE)

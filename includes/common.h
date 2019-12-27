@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 21:09:03 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/26 15:23:43 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,7 @@ int								get_file(int argc
 										, char **argv
 										, char **envp
 										, t_ctx *ctx);
-int								determine_file(t_ctx *ctx);
+int								determine_file(char *file, t_ctx *ctx);
 int								cleanup_ctx(t_ctx *ctx);
 
 
@@ -194,6 +194,14 @@ int								dump_sects_64(char *file
 										, t_ctx *ctx
 										, t_macho64 *mach
 										, t_dump_fxs *dump);
+
+/*
+** common/file_multiplexer
+*/
+
+int								file_multiplexer(char *file
+									, t_ctx *ctx
+									, t_dump_fxs *dump);
 
 /*
 ** common/mach-o.c

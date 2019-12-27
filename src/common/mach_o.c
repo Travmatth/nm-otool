@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 22:09:00 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/26 15:48:25 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ void	extract_mach_header(char *file, t_macho32 *mach32, t_macho64 *mach64)
 {
 	if (mach32)
 	{
-		mach32->hdr = (struct mach_header *)ft_memalloc(sizeof(struct mach_header));
+		mach32->hdr = ft_memalloc(sizeof(struct mach_header));
 		ft_memcpy(mach32->hdr, file, sizeof(struct mach_header));
 		mach32->num_commands = mach32->hdr->ncmds;
 		mach32->offset = sizeof(struct mach_header);
 	}
 	else if (mach64)
 	{
-		mach64->hdr = (struct mach_header_64 *)ft_memalloc(sizeof(struct mach_header_64));
+		mach64->hdr = ft_memalloc(sizeof(struct mach_header_64));
 		ft_memcpy(mach64->hdr, file, sizeof(struct mach_header_64));
 		mach64->num_commands = mach64->hdr->ncmds;
 		mach64->offset = sizeof(struct mach_header_64);

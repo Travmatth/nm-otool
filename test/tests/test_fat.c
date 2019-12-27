@@ -7,8 +7,7 @@ extern int	g_section_calls;
 
 static MunitResult
 test_dump_fat_bin_dumps(
-	MUNIT_UNUSED const MunitParameter params[],
-	MUNIT_UNUSED void *fixture) {
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/fat/fatbin" };
 	t_dump_fxs funcs = { verify_header64, verify_segments, verify_sections, verify_load_command };
@@ -17,7 +16,7 @@ test_dump_fat_bin_dumps(
 	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(dump_fat_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;

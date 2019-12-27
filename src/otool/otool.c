@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/22 16:45:01 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/26 15:24:30 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@
 
 int		otool_main(int argc, char *argv[], char *envp[])
 {
-	t_ctx			ctx;
+	char		*file;
+	t_ctx		ctx;
 	t_dump_fxs	func;
 
 	func.header = NULL;
@@ -37,13 +38,8 @@ int		otool_main(int argc, char *argv[], char *envp[])
 	func.load = NULL;
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	else if (determine_file(&ctx) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	else if ((ctx.flags & IS_FAT) && dump_fat_bin(ctx.file, &ctx, &func) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	else if ((ctx.flags & IS_32) && dump_macho_bin(ctx.file, &ctx, &func) == EXIT_FAILURE)
-		return (EXIT_FAILURE);
-	else if (dump_macho64_bin(ctx.file, &ctx, &func) == EXIT_FAILURE)
+	file = ctx.file;
+	if (file_multiplexer(file, &ctx, &func) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (cleanup_ctx(&ctx));
 }

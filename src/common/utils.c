@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/02 21:37:35 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/26 15:45:42 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,11 @@ int			get_file(int argc, char **argv, char **envp, t_ctx *ctx)
 ** @return {int} 0 on success, 1 on error
 */
 
-int			determine_file(t_ctx *ctx)
+int			determine_file(char *file, t_ctx *ctx)
 {
 	uint32_t	magic;
 
-	magic = *(uint32_t*)ctx->file;
+	magic = *(uint32_t*)file;
 	if (is_fat32(ctx, magic) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
 	else if (is_fat64(ctx, magic) == EXIT_SUCCESS)
@@ -66,8 +66,7 @@ int			determine_file(t_ctx *ctx)
 		return (EXIT_SUCCESS);
 	else if (is_mach64(ctx, magic) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
-	else
-		return (is_archive(ctx));
+	return (is_archive(ctx));
 }
 
 /*
