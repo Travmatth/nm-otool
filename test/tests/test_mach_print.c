@@ -24,7 +24,7 @@ test_print_text_section_i386(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	struct fixture s;
-	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/binary/main32" };
+	char *out, *argv[2] = { NULL, "test/artifacts/binary/main32" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
@@ -41,7 +41,7 @@ test_print_text_section_i386(
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	// evaluate test
-	int status = fd_to_str(s.stdout_fds[0], out);
+	int status = fd_to_str(s.stdout_fds[0], &out);
 	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
 		return MUNIT_ERROR;
 	munit_assert_string_equal(ref_i386_output, out);
@@ -60,7 +60,7 @@ test_print_text_section_x86_64(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	struct fixture s;
-	char out[BUFSIZ], *argv[2] = { NULL, "test/artifacts/binary/a.out" };
+	char *out, *argv[2] = { NULL, "test/artifacts/binary/a.out" };
 	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
@@ -77,7 +77,7 @@ test_print_text_section_x86_64(
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	// evaluate test
-	int status = fd_to_str(s.stdout_fds[0], out);
+	int status = fd_to_str(s.stdout_fds[0], &out);
 	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
 		return MUNIT_ERROR;
 	munit_assert_string_equal(ref_x86_64_output, out);

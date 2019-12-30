@@ -2,8 +2,13 @@
 
 extern char	*binary_file_params[];
 
-static void
-*test_setup(const MunitParameter params[], MUNIT_UNUSED void *data) {
+static MunitParameterEnum binary_params[] = {
+	{"file", binary_file_params},
+	{NULL, NULL},
+};
+
+static void*
+test_setup(const MunitParameter params[], MUNIT_UNUSED void *data) {
 	int	val;
 	pid_t ret, pid;
 	struct fixture *s = malloc(sizeof(struct fixture));
@@ -13,15 +18,18 @@ static void
 	if ((pid = fork()) == -1) {
 		return NULL;
 	} else if (pid == 0) { // child
-		execlp("otool", "-t", params->value);
+		printf("Execlp");
+		execlp("otool", "otool", "-t", params->value, NULL);
 		printf("Execlp Error");
 		_exit(EXIT_FAILURE);
 	}
 	while ((ret = waitpid(pid, &val, WNOHANG)) != pid) {}
 	if (WIFEXITED(val))
 		s->exit_status = WEXITSTATUS(val);
-	if (s->exit_status == EXIT_SUCCESS)
-		s->output = fd_to_str(STDOUT_FILENO, s->output)
+	int valid __attribute__((unused)) = fcntl(STDERR_FILENO, F_GETFD);
+	if (s->exit_status == EXIT_SUCCESS &&
+		fd_to_str(s->stdout_fds[0], &s->otool_output) == EXIT_FAILURE)
+		return NULL;
 	return (void*)s;
 }
 
@@ -34,16 +42,21 @@ test_teardown(void *fixture) {
 
 static MunitResult
 test_otool_main_binary_files(
-	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
-	// char *argv[2] = { "./ft_otool", "test/artifacts/binary/main32" };
+	const MunitParameter params[], void *fix) {
+	struct fixture *fixture = (struct fixture *)fix;
+	char *out, *argv[2] = { "./ft_otool", params->value };
 
-	munit_assert_int(1, ==, 1);
-	return EXIT_SUCCESS;
+	int status = otool_main(2, argv, NULL);
+	munit_assert_int(fixture->exit_status, ==, status);
+	if (fd_to_str(STDOUT_FILENO, &out))
+		return MUNIT_ERROR;
+	munit_assert_string_equal(fixture->otool_output, out);
+	return MUNIT_OK;
 }
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
- { "test_otool_main_binary_files", test_otool_main_binary_files, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_otool_main_binary_files", test_otool_main_binary_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, binary_params },
  /* Mark the end of the array with an entry where the test function is NULL */
  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };

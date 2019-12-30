@@ -95,18 +95,30 @@ int		verify_header64(char *file, t_ctx *ctx, struct mach_header *header, struct 
 ** test utils
 */
 
-int		fd_to_str(int fd, char *out) {
-	int bytes = 0;
+int		fd_to_str(int fd, char **out) {
+	int c, bytes = 0;
+	struct pollfd fds = {fd, POLLIN, 0};
+	char *str = calloc(1, sizeof(char)), tmp[BUFSIZ];
 
-	if ((bytes = read(fd, out, BUFSIZ)) == -1)
-		return EXIT_FAILURE;
-	out[bytes] = '\0';
+	do {
+		c = read(fd, tmp, BUFSIZ);
+		if (c == -1){
+			char *err __attribute__((unused)) = strerror(errno);
+			return EXIT_FAILURE;
+		}
+		tmp[c] = '\0';
+		char *next = malloc(c + bytes + 1);
+		strcpy(next, str);
+		strcat(next, tmp);
+		free(str);
+		str = next;
+	} while (poll(&fds, 1, 0));
+	*out = str;
 	return EXIT_SUCCESS;
 }
 
 int		swap_stdout(struct fixture *s) {
-	s->stdout = dup(STDOUT_FILENO);
-	if (pipe(s->stdout_fds) == -1)
+	if ((s->stdout = dup(STDOUT_FILENO) == -1) || pipe(s->stdout_fds) == -1)
 		return EXIT_FAILURE;
 	if (dup2(s->stdout_fds[1], STDOUT_FILENO) == -1)
 		return MUNIT_ERROR;
@@ -114,8 +126,7 @@ int		swap_stdout(struct fixture *s) {
 }
 
 int		swap_stderr(struct fixture *s) {
-	s->stderr = dup(STDERR_FILENO);
-	if (pipe(s->stderr_fds) == -1)
+	if ((s->stderr = dup(STDERR_FILENO)) == -1 || pipe(s->stderr_fds) == -1)
 		return EXIT_FAILURE;
 	if (dup2(s->stderr_fds[1], STDERR_FILENO) == -1)
 		return MUNIT_ERROR;

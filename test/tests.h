@@ -2,7 +2,9 @@
 # define TESTS_H
 
 #include "munit/munit.h"
-#include <string.h> // bzero
+#include <errno.h> // errno
+#include <string.h> // bzero, strcpy, strcat
+#include <poll.h> // poll
 #include "../includes/common.h"
 #include "../includes/otool.h"
 
@@ -36,5 +38,5 @@ int		verify_section_address(char *file, t_ctx *ctx, struct section *sect, struct
 int		verify_header(char *file, t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64);
 int		verify_section64_address(char *file, t_ctx *ctx, struct section *sect, struct section_64 *sect64);
 int		verify_header64(char *file, t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64);
-int		fd_to_str(int fd, char *out);
+int		fd_to_str(int fd, char **out);
 #endif
