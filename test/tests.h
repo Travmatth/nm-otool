@@ -11,14 +11,18 @@
 */
 
 struct fixture {
-	int		stdout;
-	int		exit_status;
 	char	*otool_output;
-	int		fds[2];
+	int		stdout_fds[2];
+	int		stderr_fds[2];
+	int		stdout;
+	int		stderr;
+	int		exit_status;
 };
 
 int		swap_stdout(struct fixture *s);
+int		swap_stderr(struct fixture *s);
 int		restore_stdout(struct fixture *s);
+int		restore_stderr(struct fixture *s);
 
 /*
 ** test/tests/utils.c

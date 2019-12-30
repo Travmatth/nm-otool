@@ -41,7 +41,7 @@ test_print_text_section_i386(
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	// evaluate test
-	int status = fd_to_str(s.fds[0], out);
+	int status = fd_to_str(s.stdout_fds[0], out);
 	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
 		return MUNIT_ERROR;
 	munit_assert_string_equal(ref_i386_output, out);
@@ -77,7 +77,7 @@ test_print_text_section_x86_64(
 	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	// evaluate test
-	int status = fd_to_str(s.fds[0], out);
+	int status = fd_to_str(s.stdout_fds[0], out);
 	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
 		return MUNIT_ERROR;
 	munit_assert_string_equal(ref_x86_64_output, out);

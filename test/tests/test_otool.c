@@ -2,15 +2,35 @@
 
 extern char	*binary_file_params[];
 
-// static void
-// *test_setup(const MunitParameter params[], MUNIT_UNUSED void *data) {
-// 	struct fixture *s = malloc(sizeof(struct fixture));
-// 	return (void*)s;
-// }
+static void
+*test_setup(const MunitParameter params[], MUNIT_UNUSED void *data) {
+	int	val;
+	pid_t ret, pid;
+	struct fixture *s = malloc(sizeof(struct fixture));
 
-// static void
-// test_teardown(void *fixture) {
-// }
+	swap_stdout(s);
+	swap_stderr(s);
+	if ((pid = fork()) == -1) {
+		return NULL;
+	} else if (pid == 0) { // child
+		execlp("otool", "-t", params->value);
+		printf("Execlp Error");
+		_exit(EXIT_FAILURE);
+	}
+	while ((ret = waitpid(pid, &val, WNOHANG)) != pid) {}
+	if (WIFEXITED(val))
+		s->exit_status = WEXITSTATUS(val);
+	if (s->exit_status == EXIT_SUCCESS)
+		s->output = fd_to_str(STDOUT_FILENO, s->output)
+	return (void*)s;
+}
+
+static void
+test_teardown(void *fixture) {
+	restore_stdout((struct fixture*)fixture);
+	restore_stderr((struct fixture*)fixture);
+	free(fixture);
+}
 
 static MunitResult
 test_otool_main_binary_files(

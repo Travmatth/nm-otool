@@ -106,17 +106,34 @@ int		fd_to_str(int fd, char *out) {
 
 int		swap_stdout(struct fixture *s) {
 	s->stdout = dup(STDOUT_FILENO);
-	if (pipe(s->fds) == -1)
+	if (pipe(s->stdout_fds) == -1)
 		return EXIT_FAILURE;
-	if (dup2(s->fds[1], STDOUT_FILENO) == -1)
+	if (dup2(s->stdout_fds[1], STDOUT_FILENO) == -1)
+		return MUNIT_ERROR;
+	return EXIT_SUCCESS;
+}
+
+int		swap_stderr(struct fixture *s) {
+	s->stderr = dup(STDERR_FILENO);
+	if (pipe(s->stderr_fds) == -1)
+		return EXIT_FAILURE;
+	if (dup2(s->stderr_fds[1], STDERR_FILENO) == -1)
 		return MUNIT_ERROR;
 	return EXIT_SUCCESS;
 }
 
 int		restore_stdout(struct fixture *s) {
 	if (dup2(s->stdout, STDOUT_FILENO) == -1
-		|| close(s->fds[0]) == -1
-		|| close(s->fds[1]) == -1)
+		|| close(s->stdout_fds[0]) == -1
+		|| close(s->stdout_fds[1]) == -1)
+		return EXIT_FAILURE;
+	return EXIT_SUCCESS;
+}
+
+int		restore_stderr(struct fixture *s) {
+	if (dup2(s->stderr, STDERR_FILENO) == -1
+		|| close(s->stderr_fds[0]) == -1
+		|| close(s->stderr_fds[1]) == -1)
 		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
