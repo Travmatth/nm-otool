@@ -15,7 +15,7 @@ test_dump_macho_bin_dumps_machi386(
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
@@ -39,7 +39,7 @@ test_machi386_segment_addr(
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
@@ -57,7 +57,7 @@ test_machi386_section_addr(
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(determine_file(&ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;

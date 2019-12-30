@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 21:53:05 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/26 15:22:41 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int		dump_fat_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		if (!OK(extract_fat_arch(file + offset, ctx->flags, &arch)))
 			return (EXIT_FAILURE);
 		if (arch->cputype == CPU_TYPE_X86_64 && HOST_64BIT)
-			dump_macho64_bin(file + arch->offset, ctx, dump);
+			file_multiplexer(file + arch->offset, ctx, dump);
 		free(arch);
 		i += 1;
 	}
@@ -138,7 +138,7 @@ int		dump_fat64_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		if (!OK(extract_fat_arch_64(file + offset, ctx->flags, &arch)))
 			return (EXIT_FAILURE);
 		if (arch->cputype == CPU_TYPE_X86_64 && HOST_64BIT)
-			dump_macho64_bin(file + arch->offset, ctx, dump);
+			file_multiplexer(file + arch->offset, ctx, dump);
 		free(arch);
 		i += 1;
 	}
