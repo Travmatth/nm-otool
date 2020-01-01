@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/15 16:39:14 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 22:09:59 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/31 19:51:27 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_sects(char *file, t_ctx *ctx, t_macho32 *mach, t_dump_fxs *dump)
+int		dump_sects(char *file, struct segment_command *segment, t_dump_fxs *dump)
 {
 	uint32_t		i;
 	uint32_t		offset;
@@ -29,12 +29,12 @@ int		dump_sects(char *file, t_ctx *ctx, t_macho32 *mach, t_dump_fxs *dump)
 	void			*addr;
 
 	i = 0;
-	offset = mach->offset + sizeof(struct segment_command);
-	while (i < mach->sc->nsects)
+	offset = ((char*)segment - file) + sizeof(struct segment_command);
+	while (i < segment->nsects)
 	{
-		section = (struct section*)(ctx->file + offset);
-		addr = ctx->file + section->offset;
-		if (dump->section && !OK(dump->section(file, ctx, section, NULL)))
+		section = (struct section*)(file + offset);
+		addr = file + section->offset;
+		if (dump->section && !OK(dump->section(file, section, NULL)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section);
 		i += 1;
@@ -52,7 +52,7 @@ int		dump_sects(char *file, t_ctx *ctx, t_macho32 *mach, t_dump_fxs *dump)
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_sects_64(char *file, t_ctx *ctx, t_macho64 *mach, t_dump_fxs *dump)
+int		dump_sects_64(char *file, struct segment_command_64 *segment, t_dump_fxs *dump)
 {
 	uint64_t			i;
 	uint64_t			offset;
@@ -60,12 +60,12 @@ int		dump_sects_64(char *file, t_ctx *ctx, t_macho64 *mach, t_dump_fxs *dump)
 	void				*addr;
 
 	i = 0;
-	offset = mach->offset + sizeof(struct segment_command_64);
-	while (i < mach->sc->nsects)
+	offset = ((char*)segment - file) + sizeof(struct segment_command_64);
+	while (i < segment->nsects)
 	{
 		section = (struct section_64*)(file + offset);
 		addr = file + section->offset;
-		if (dump->section && !OK(dump->section(file, ctx, NULL, section)))
+		if (dump->section && !OK(dump->section(file, NULL, section)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section_64);
 		i += 1;

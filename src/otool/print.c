@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 22:09:37 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/31 19:24:22 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,12 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_text_contents(t_ctx *ctx, t_addr *fmt)
+int		print_text_contents(t_addr *fmt)
 {
 	uint64_t	current;
 	char		ptr_buf[17];
 	char		mem_buf[49];
 
-	ft_putstr_fd(ctx->filename, STDOUT_FILENO);
-	ft_putendl_fd(":", STDOUT_FILENO);
 	ft_printf("Contents of (__TEXT,__text) section\n");
 	current = 0;
 	while (current < fmt->size)
@@ -34,10 +32,11 @@ int		print_text_contents(t_ctx *ctx, t_addr *fmt)
 		if (!(current % 16))
 		{
 			format_pointer(fmt->addr + current, ptr_buf, fmt->is_64);
-			ft_printf("%s	", ptr_buf);
+			ft_putstr(ptr_buf);
+			ft_putstr("	");
 		}
 		format_mem(fmt->binary + fmt->offset, &current, fmt->size, mem_buf);
-		ft_printf("%s\n", mem_buf);
+		ft_putendl(mem_buf);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -51,13 +50,12 @@ int		print_text_contents(t_ctx *ctx, t_addr *fmt)
 */
 
 int		print_text_section(char *file
-							, t_ctx *ctx
 							, struct section *section
 							, struct section_64 *section_64)
 {
 	t_addr	section_fmt;
 
-	if (section && !ft_strcmp("__text", section->sectname))
+	if (section && !ft_strcmp(SECT_TEXT, section->sectname))
 	{
 		section_fmt.binary = file;
 		section_fmt.addr = (uint64_t)section->addr;
@@ -65,7 +63,7 @@ int		print_text_section(char *file
 		section_fmt.offset = (uint64_t)section->offset;
 		section_fmt.is_64 = FALSE;
 	}
-	else if (section_64 && !ft_strcmp("__text", section_64->sectname))
+	else if (section_64 && !ft_strcmp(SECT_TEXT, section_64->sectname))
 	{
 		section_fmt.binary = file;
 		section_fmt.addr = section_64->addr;
@@ -75,5 +73,5 @@ int		print_text_section(char *file
 	}
 	else
 		return (EXIT_SUCCESS);
-	return (print_text_contents(ctx, &section_fmt));
+	return (print_text_contents(&section_fmt));
 }

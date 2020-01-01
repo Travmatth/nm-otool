@@ -18,7 +18,6 @@ test_setup(const MunitParameter params[], MUNIT_UNUSED void *data) {
 	if ((pid = fork()) == -1) {
 		return NULL;
 	} else if (pid == 0) { // child
-		printf("Execlp");
 		execlp("otool", "otool", "-t", params->value, NULL);
 		printf("Execlp Error");
 		_exit(EXIT_FAILURE);
@@ -48,9 +47,11 @@ test_otool_main_binary_files(
 
 	int status = otool_main(2, argv, NULL);
 	munit_assert_int(fixture->exit_status, ==, status);
-	if (fd_to_str(STDOUT_FILENO, &out))
-		return MUNIT_ERROR;
-	munit_assert_string_equal(fixture->otool_output, out);
+	if (fixture->exit_status == EXIT_SUCCESS) {
+		if (fd_to_str(fixture->stdout_fds[0], &out))
+			return MUNIT_ERROR;
+		munit_assert_string_equal(fixture->otool_output, out);
+	}
 	return MUNIT_OK;
 }
 

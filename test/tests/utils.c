@@ -27,9 +27,8 @@ int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *
 	return EXIT_SUCCESS;
 }
 
-int		verify_sections(char *file, t_ctx *ctx, struct section *section, struct section_64 *section_64) {
+int		verify_sections(char *file, struct section *section, struct section_64 *section_64) {
 	(void)file;
-	(void)ctx;
 	(void)section;
 	(void)section_64;
 	g_section_calls += 1;
@@ -47,8 +46,7 @@ int		verify_segment_address(char *file, t_ctx *ctx, struct segment_command *segm
 	return EXIT_SUCCESS;
 }
 
-int		verify_section_address(char *file, t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
-	(void)ctx;
+int		verify_section_address(char *file, struct section *sect, struct section_64 *sect64) {
 	(void)sect64;
 	if (!strcmp("__text", sect->sectname)) {
 		uint64_t val = *(uint64_t*)(file + sect->offset);
@@ -98,10 +96,10 @@ int		verify_header64(char *file, t_ctx *ctx, struct mach_header *header, struct 
 int		fd_to_str(int fd, char **out) {
 	int c, bytes = 0;
 	struct pollfd fds = {fd, POLLIN, 0};
-	char *str = calloc(1, sizeof(char)), tmp[BUFSIZ];
+	char *str = calloc(1, sizeof(char)), tmp[BUFSIZ] = {0};
 
 	do {
-		c = read(fd, tmp, BUFSIZ);
+		c = read(fd, tmp, BUFSIZ - 1);
 		if (c == -1){
 			char *err __attribute__((unused)) = strerror(errno);
 			return EXIT_FAILURE;
@@ -112,6 +110,7 @@ int		fd_to_str(int fd, char **out) {
 		strcat(next, tmp);
 		free(str);
 		str = next;
+		bytes += c;
 	} while (poll(&fds, 1, 0));
 	*out = str;
 	return EXIT_SUCCESS;

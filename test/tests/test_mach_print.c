@@ -1,8 +1,7 @@
 #include "../tests.h"
 #include <errno.h>
 
-char *ref_i386_output = "test/artifacts/binary/main32:\n\
-Contents of (__TEXT,__text) section\n\
+char *ref_i386_output = "Contents of (__TEXT,__text) section\n\
 00001e63	55 89 e5 53 83 ec 24 e8 df 00 00 00 c7 45 f4 01 \n\
 00001e73	00 00 00 c7 45 f0 02 00 00 00 c7 45 ec 04 00 00 \n\
 00001e83	00 c7 45 e8 08 00 00 00 c7 45 e4 07 00 00 00 8b \n\
@@ -48,8 +47,7 @@ test_print_text_section_i386(
 	return MUNIT_OK;
 }
 
-char *ref_x86_64_output = "test/artifacts/binary/a.out:\n\
-Contents of (__TEXT,__text) section\n\
+char *ref_x86_64_output = "Contents of (__TEXT,__text) section\n\
 0000000100000f50	55 48 89 e5 48 83 ec 10 bf 01 00 00 00 48 8d 35 \n\
 0000000100000f60	42 00 00 00 b8 0c 00 00 00 89 c2 c7 45 fc 00 00 \n\
 0000000100000f70	00 00 e8 0f 00 00 00 31 ff 48 89 45 f0 89 f8 48 \n\

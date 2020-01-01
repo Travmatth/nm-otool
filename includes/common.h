@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/26 15:23:43 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/31 19:50:54 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,14 @@
 ** IS_FAT: binary file is in FAT format
 */
 
-enum							e_flags
+enum								e_flags
 {
 	IS_SWAPPED = (1u << 0),
 	IS_32 = (1u << 1),
 	IS_FAT = (1u << 2),
 	IS_ARCHIVE = (1u << 3),
 	IS_EXTENDED_ARCHIVE = (1u << 4),
+	IS_64 = (1u << 5),
 };
 
 /*
@@ -84,146 +85,183 @@ enum							e_flags
 ** size: size of binary file in bytes
 */
 
-typedef struct					s_ctx
+typedef struct						s_ctx
 {
-	char						*file;
-	char						*filename;
-	int							flags;
-	uint32_t					magic;
-	size_t						size;
-}								t_ctx;
+	char							*file;
+	char							*filename;
+	int								flags;
+	uint32_t						magic;
+	size_t							size;
+}									t_ctx;
 
 /*
 ** signature of functions passed into dump_* functions
 */
 
-typedef int						(*t_hdr_f)(char *file
-									, t_ctx *ctx
-									, struct mach_header *header
-									, struct mach_header_64 *header_64);
-typedef int						(*t_seg_f)(char *file
-									, t_ctx *ctx
-									, struct segment_command *segment
-									, struct segment_command_64 *segment_64);
-typedef int						(*t_sec_f)(char *file
-									, t_ctx *ctx
-									, struct section *section
-									, struct section_64 *section_64);
-typedef int						(*t_lc_f)(char *file
-									, t_ctx *ctx
-									, struct load_command *lc
-									, void *addr);
+typedef int							(*t_hdr_f)(char *file
+										, t_ctx *ctx
+										, struct mach_header *header
+										, struct mach_header_64 *header_64);
+typedef int							(*t_seg_f)(char *file
+										, t_ctx *ctx
+										, struct segment_command *segment
+										, struct segment_command_64 *segment_64);
+typedef int							(*t_sec_f)(char *file
+										, struct section *section
+										, struct section_64 *section_64);
+typedef int							(*t_lc_f)(char *file
+										, t_ctx *ctx
+										, struct load_command *lc
+										, void *addr);
 
 /*
 ** struct containing functions called when dumping different parts of binary
 */
 
-typedef struct					s_dump_fxs
+typedef struct						s_dump_fxs
 {
-	t_hdr_f						header;
-	t_seg_f						segment;
-	t_sec_f						section;
-	t_lc_f						load;
-}								t_dump_fxs;
+	t_hdr_f							header;
+	t_seg_f							segment;
+	t_sec_f							section;
+	t_lc_f							load;
+}									t_dump_fxs;
 
 /*
 ** struct containing important parts of mach-o binaries
 */
 
-typedef struct					s_mach_o_32
+typedef struct						s_mach_o_32
 {
-	ptrdiff_t					offset;
-	uint32_t					num_commands;
-	struct mach_header			*hdr;
-	struct load_command			*lc;
-	struct segment_command		*sc;
-}								t_macho32;
+	ptrdiff_t						offset;
+	uint32_t						num_commands;
+	struct mach_header				*hdr;
+	struct load_command				*lc;
+	struct segment_command			*sc;
+}									t_macho32;
 
-typedef struct					s_mach_o_64
+typedef struct						s_mach_o_64
 {
-	ptrdiff_t					offset;
-	uint32_t					num_commands;
-	struct mach_header_64		*hdr;
-	struct load_command			*lc;
-	struct segment_command_64	*sc;
-}								t_macho64;
+	ptrdiff_t						offset;
+	uint32_t						num_commands;
+	struct mach_header_64			*hdr;
+	struct load_command				*lc;
+	struct segment_command_64		*sc;
+}									t_macho64;
+
+typedef	union							u_nlist
+{
+	struct nlist						*nlist;
+	struct nlist_64						*nlist64;
+}										t_nlist;
+
+typedef union							u_section
+{
+	struct section						*section;
+	struct section_64					*section64;
+}										t_section;
+
+typedef union							u_lcommand
+{
+	struct load_command					*load;
+	struct segment_command				*segment;
+	struct segment_command_64			*segment64;
+	struct symtab_command				*symtab;
+	struct symseg_command				*symseg;
+	struct thread_command				*thread;
+	struct fvmlib_command				*fvmlib;
+	struct ident_command				*ident;
+	struct fvmfile_command				*fvmfile;
+	struct dysymtab_command				*dysymtab;
+	struct dylib_command				*dylib;
+	struct dylinker_command				*dylinker;
+	struct prebound_dylib_command		*prebound;
+	struct routines_command				*routines;
+	struct routines_command_64			*routines64;
+	struct encryption_info_command		*info;
+	struct encryption_info_command_64	*info64;
+}										t_lcommand;
+
+/*
+** common/validate_file.c
+*/
+
+int										validate_file(char *file, t_ctx *ctx);
 
 /*
 ** common/format.c
 */
 
-void							format_pointer(uint64_t addr
-										, char ptr_buf[]
-										, int is_64);
-void							format_mem(char *binary
-										, uint64_t *offset
-										, uint64_t size
-										, char mem_buf[]);
+void									format_pointer(uint64_t addr
+											, char ptr_buf[]
+											, int is_64);
+void									format_mem(char *binary
+											, uint64_t *offset
+											, uint64_t size
+											, char mem_buf[]);
 
 /*
 ** common/magics.c
 */
 
-int								is_fat32(t_ctx *ctx, uint32_t magic);
-int								is_fat64(t_ctx *ctx, uint32_t magic);
-int								is_mach64(t_ctx *ctx, uint32_t magic);
-int								is_mach32(t_ctx *ctx, uint32_t magic);
-int								is_archive(t_ctx *ctx);
+int										is_fat32(t_ctx *ctx, uint32_t magic);
+int										is_fat64(t_ctx *ctx, uint32_t magic);
+int										is_mach64(t_ctx *ctx, uint32_t magic);
+int										is_mach32(t_ctx *ctx, uint32_t magic);
+int										is_archive(t_ctx *ctx);
 
 /*
 ** common/utils.c
 */
 
-int								get_file(int argc
-										, char **argv
-										, char **envp
-										, t_ctx *ctx);
-int								determine_file(char *file, t_ctx *ctx);
-int								cleanup_ctx(t_ctx *ctx);
+int										get_file(int argc
+											, char **argv
+											, char **envp
+											, t_ctx *ctx);
+int										determine_file(char *file, t_ctx *ctx);
+int										cleanup_ctx(t_ctx *ctx);
 
 
 /*
 ** common/mach_sections
 */
 
-int								dump_sects(char *file
-										, t_ctx *ctx
-										, t_macho32 *mach
-										, t_dump_fxs *dump);
-int								dump_sects_64(char *file
-										, t_ctx *ctx
-										, t_macho64 *mach
-										, t_dump_fxs *dump);
+int										dump_sects(char *file
+											, struct segment_command *segment
+											, t_dump_fxs *dump);
+int										dump_sects_64(char *file
+											, struct segment_command_64 *segment
+											, t_dump_fxs *dump);
 
 /*
 ** common/file_multiplexer
 */
 
-int								file_multiplexer(char *file
-									, t_ctx *ctx
-									, t_dump_fxs *dump);
+int										file_multiplexer(char *file
+											, t_ctx *ctx
+											, t_dump_fxs *dump
+											, int validate);
 
 /*
 ** common/mach-o.c
 */
 
-int								dump_macho_bin(char *file
-										, t_ctx *ctx
-										, t_dump_fxs *fxs);
-int								dump_macho64_bin(char *file
-										, t_ctx *ctx
-										, t_dump_fxs *fxs);
+int										dump_macho_bin(char *file
+											, t_ctx *ctx
+											, t_dump_fxs *fxs);
+int										dump_macho64_bin(char *file
+											, t_ctx *ctx
+											, t_dump_fxs *fxs);
 
 /*
 ** common/fat.c
 */
 
-int								dump_fat_bin(char *file
-										, t_ctx *ctx
-										, t_dump_fxs *fxs);
-int								dump_fat64_bin(char *file
-										, t_ctx *ctx
-										, t_dump_fxs *fxs);
+int										dump_fat_bin(char *file
+											, t_ctx *ctx
+											, t_dump_fxs *fxs);
+int										dump_fat64_bin(char *file
+											, t_ctx *ctx
+											, t_dump_fxs *fxs);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

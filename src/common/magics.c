@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/20 12:35:51 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/15 16:12:47 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/01 00:45:00 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ int		is_fat32(t_ctx *ctx, uint32_t magic)
 	}
 	else if (magic == FAT_CIGAM)
 	{
+		ctx->flags |= IS_32;
 		ctx->flags |= IS_FAT;
 		ctx->flags |= IS_SWAPPED;
 	}
@@ -67,10 +68,17 @@ int		is_fat64(t_ctx *ctx, uint32_t magic)
 int		is_mach64(t_ctx *ctx, uint32_t magic)
 {
 	if (magic == MH_CIGAM_64)
+	{
+		ctx->flags |= IS_64;
 		ctx->flags |= IS_SWAPPED;
-	else if (magic != MH_MAGIC_64)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+		return (EXIT_SUCCESS);
+	}
+	else if (magic == MH_MAGIC_64)
+	{
+		ctx->flags |= IS_64;
+		return (EXIT_SUCCESS);
+	}
+	return (EXIT_FAILURE);
 }
 
 /*

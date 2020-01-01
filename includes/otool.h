@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:51:03 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/22 16:45:09 by tmatthew         ###   ########.fr       */
+/*   Updated: 2019/12/31 19:25:22 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ typedef struct	s_sect
 }				t_addr;
 
 int		print_text_section(char *file
-						, t_ctx *ctx
 						, struct section *section
 						, struct section_64 *section_64);
 int		otool_main(int argc, char *argv[], char *envp[]);

@@ -16,7 +16,7 @@ LDFLAGS = -Llibftprintf -lftprintf -I./includes
 IS_DEBUG =
 
 # common variables
-COMMON = file_multiplexer format fat mach_o mach_sections magics utils
+COMMON = file_multiplexer format fat mach_o mach_sections magics utils validate_file
 COMMON_FILES = $(addprefix src/common/, $(COMMON))
 COMMON_SRC = $(addsuffix .c, $(COMMON_FILES))
 COMMON_OBJ = $(COMMON_SRC:.c=.o)
