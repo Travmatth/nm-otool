@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 14:22:21 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/31 20:59:59 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/01 17:58:01 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ int		file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int validate)
 		return (EXIT_FAILURE);
 	else if ((ctx->flags & IS_32) && !OK(dump_macho_bin(file, ctx, dump)))
 		return (EXIT_FAILURE);
-	else if ((ctx->flags & IS_64) && !OK(dump_macho64_bin(file, ctx, dump)))
+	else if ((ctx->flags & IS_64) && !(ctx->flags & IS_SWAPPED)
+		&& !OK(dump_macho64_bin(file, ctx, dump)))
 		return (EXIT_FAILURE);
 	ctx->flags = flags;
 	return (EXIT_SUCCESS);
