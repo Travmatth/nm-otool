@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/01 17:36:12 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/01 18:04:17 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ int		validate_mach64(char *file, t_ctx *ctx)
 			(file + sizeof(struct mach_header_64) + hdr->sizeofcmds))
 			return (EXIT_FAILURE);
 		u.load = (struct load_command*)(file + offset);
+		if (u.load->cmdsize % 8)
+			return (EXIT_FAILURE);
 		if (u.load->cmd == LC_SEGMENT_64)
 		{
 			if ((u.segment64->fileoff + u.segment64->filesize > ctx->size)
