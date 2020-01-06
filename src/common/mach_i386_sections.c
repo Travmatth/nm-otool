@@ -36,7 +36,7 @@ int		dump_i386_sections(char *file, t_ctx *ctx, struct segment_command *segment,
 	{
 		section = (struct section*)(file + offset);
 		addr = file + (rev ? OSSwapInt32(section->offset) : section->offset);
-		if (dump->i386_section && !OK(dump->i386_section(file, section, NULL)))
+		if (dump->i386_section && !OK(dump->i386_section(file, ctx, section)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section);
 	}

@@ -32,7 +32,7 @@ NM_OBJ = $(NM_SRC:.c=.o)
 # otool variables
 OTOOL_NAME = ft_otool
 OTOOL_MAIN = src/otool/main.c
-OTOOL = utils print otool
+OTOOL = utils print_x86_64 print_i386 otool
 OTOOL_FILES = $(addprefix src/otool/, $(OTOOL))
 OTOOL_SRC = $(addsuffix .c, $(OTOOL_FILES))
 OTOOL_OBJ = $(OTOOL_SRC:.c=.o)

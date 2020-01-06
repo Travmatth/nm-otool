@@ -33,7 +33,7 @@ test_format_mem_translates_1byte_mem(
 	uint64_t	current = 0;
 
 	format_mem((void*)&val, &current, 1, mem_buf);
-	munit_assert_string_equal("55 ", mem_buf);
+	munit_assert_string_equal("55", mem_buf);
 	return (MUNIT_OK);
 }
 
@@ -42,7 +42,7 @@ test_format_mem_translates_16byte_mem(
 	MUNIT_UNUSED const MunitParameter params[],
 	MUNIT_UNUSED void *fixture) {
 	uint64_t 	val[2] = { 0x00E818EC83E58955ULL, 0x8d084d8b58000000ULL };
-	char		*mem = "55 89 e5 83 ec 18 e8 00 00 00 00 58 8b 4d 08 8d ";
+	char		*mem = "5589e583ec18e800000000588b4d088d";
 	char		mem_buf[49] = {'1'};
 	uint64_t	current = 0;
 

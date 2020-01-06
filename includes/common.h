@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 17:44:24 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/06 11:46:23 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,9 +106,11 @@ typedef int							(*t_seg_f)(char *file
 										, t_ctx *ctx
 										, struct segment_command *segment
 										, struct segment_command_64 *segment_64);
-typedef int							(*t_sec_f)(char *file
-										, struct section *section
-										, struct section_64 *section_64);
+typedef int							(*t_sec_i386_f)(char *file
+										, t_ctx *ctx
+										, struct section *section);
+typedef int							(*t_sec_x86_64_f)(char *file
+										, struct section_64 *section);
 typedef int							(*t_lc_f)(char *file
 										, t_ctx *ctx
 										, struct load_command *lc
@@ -122,8 +124,8 @@ typedef struct						s_dump_fxs
 {
 	t_hdr_f							header;
 	t_seg_f							segment;
-	t_sec_f							i386_section;
-	t_sec_f							x86_64_section;
+	t_sec_i386_f					i386_section;
+	t_sec_x86_64_f					x86_64_section;
 	t_lc_f							load;
 }									t_dump_fxs;
 
@@ -192,6 +194,8 @@ int										validate_file(char *file, t_ctx *ctx);
 ** common/format.c
 */
 
+int										print_memory_buf(int swapped
+											, char mem_buf[33]);
 void									format_pointer(uint64_t addr
 											, char ptr_buf[]
 											, int is_64);

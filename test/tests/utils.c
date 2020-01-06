@@ -27,10 +27,17 @@ int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *
 	return EXIT_SUCCESS;
 }
 
-int		verify_sections(char *file, struct section *section, struct section_64 *section_64) {
+int		verify_i386_sections(char *file, t_ctx *ctx, struct section *section) {
+	(void)file;
+	(void)ctx;
+	(void)section;
+	g_section_calls += 1;
+	return EXIT_SUCCESS;
+}
+
+int		verify_x86_64_sections(char *file, struct section_64 *section) {
 	(void)file;
 	(void)section;
-	(void)section_64;
 	g_section_calls += 1;
 	return EXIT_SUCCESS;
 }
@@ -46,8 +53,17 @@ int		verify_segment_address(char *file, t_ctx *ctx, struct segment_command *segm
 	return EXIT_SUCCESS;
 }
 
-int		verify_section_address(char *file, struct section *sect, struct section_64 *sect64) {
-	(void)sect64;
+int		verify_section_i386_address(char *file, t_ctx *ctx, struct section *sect) {
+	(void)ctx;
+	if (!strcmp("__text", sect->sectname)) {
+		uint64_t val = *(uint64_t*)(file + sect->offset);
+		if (val == 0xe824ec8353e58955ULL)
+			g_section_calls += 1;
+	}
+	return EXIT_SUCCESS;
+}
+
+int		verify_section_x86_64_address(char *file, struct section_64 *sect) {
 	if (!strcmp("__text", sect->sectname)) {
 		uint64_t val = *(uint64_t*)(file + sect->offset);
 		if (val == 0xe824ec8353e58955ULL)

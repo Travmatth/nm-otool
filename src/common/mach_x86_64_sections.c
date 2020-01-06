@@ -35,7 +35,7 @@ int		dump_x86_64_sections(char *file, struct segment_command_64 *segment, t_dump
 	{
 		section = (struct section_64*)(file + offset);
 		addr = file + section->offset;
-		if (dump->x86_64_section && !OK(dump->x86_64_section(file, NULL, section)))
+		if (dump->x86_64_section && !OK(dump->x86_64_section(file, section)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section_64);
 		i += 1;

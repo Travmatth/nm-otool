@@ -47,6 +47,39 @@ test_print_i386_text_section(
 	return MUNIT_OK;
 }
 
+static MunitResult
+test_print_swapped_i386_text_section(
+	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
+	t_ctx ctx;
+	struct fixture s;
+	char *out, *argv[2] = { NULL, "test/artifacts/binary/ppc_only" };
+	t_dump_fxs funcs = { NULL, NULL, print_i386_text_section, NULL, NULL };
+
+	bzero(&ctx, sizeof(t_ctx));
+	if (swap_stdout(&s) == EXIT_FAILURE)
+		return MUNIT_ERROR;
+	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
+		return MUNIT_FAIL;
+	else if (determine_file(ctx.file, &ctx) == EXIT_FAILURE)
+		return MUNIT_FAIL;
+	// run func under test
+	else if (dump_macho_bin(ctx.file, &ctx, &funcs) == EXIT_FAILURE)
+		return MUNIT_FAIL;
+	// close resources
+	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
+		return MUNIT_FAIL;
+	// evaluate test
+	struct stat buf;
+	int b = open("test/tests/swapped_ref.txt", O_RDONLY);
+	fstat(b, &buf);
+	char *ref_swapped_i386_output = mmap(NULL, buf.st_size, MMAP_PROT, MMAP_FLAGS, b, 0);
+	int status = fd_to_str(s.stdout_fds[0], &out);
+	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
+		return MUNIT_ERROR;
+	munit_assert_string_equal(ref_swapped_i386_output, out);
+	return MUNIT_OK;
+}
+
 char *ref_x86_64_output = "Contents of (__TEXT,__text) section\n\
 0000000100000f50	55 48 89 e5 48 83 ec 10 bf 01 00 00 00 48 8d 35 \n\
 0000000100000f60	42 00 00 00 b8 0c 00 00 00 89 c2 c7 45 fc 00 00 \n\
@@ -85,6 +118,7 @@ test_print_x86_64_text_section(
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
  { "test_print_i386_text_section", test_print_i386_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_swapped_i386_text_section", test_print_swapped_i386_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_print_x86_64_text_section", test_print_x86_64_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   /* Mark the end of the array with an entry where the test
    * function is NULL */
