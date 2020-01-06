@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/01 18:04:17 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 16:43:20 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,7 @@ int		validate_file(char *file, t_ctx *ctx)
 {
 	if (ctx->flags & IS_64)
 		return (validate_mach64(file, ctx));
-	return (EXIT_SUCCESS);
+	else if (ctx->flags & IS_32)
+		return (EXIT_SUCCESS);
+	return (EXIT_FAILURE);
 }

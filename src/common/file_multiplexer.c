@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 14:22:21 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/01 17:58:01 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 16:38:02 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,8 @@ int		file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int validate)
 
 	flags = ctx->flags;
 	ctx->flags = 0;
-	if (!OK(determine_file(file, ctx)))
-		return (EXIT_FAILURE);
-	else if (validate && !OK(validate_file(file, ctx)))
+	determine_file(file, ctx);
+	if (validate && !OK(validate_file(file, ctx)))
 		return (EXIT_FAILURE);
 	ft_putstr_fd(ctx->filename, STDOUT_FILENO);
 	ft_putendl_fd(":", STDOUT_FILENO);

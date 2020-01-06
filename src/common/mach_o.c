@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/31 21:09:47 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:18:57 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,26 +50,28 @@ int		dump_macho_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 {
 	struct mach_header	*hdr;
 	t_lcommand			u;
-	uint64_t			i;
+	int					rev;
+	uint64_t			ncmds;
 	uint64_t			offset;
 
-	i = 0;
+	rev = (ctx->flags & IS_SWAPPED);
 	hdr = (struct mach_header*)file;
+	ncmds = rev ? OSSwapInt32(hdr->ncmds) : hdr->ncmds;
 	offset = sizeof(struct mach_header);
 	if (dump->header && !OK(dump->header(file, ctx, hdr, NULL)))
 		return (EXIT_FAILURE);
-	while (i++ < hdr->ncmds)
+	while (ncmds--)
 	{
 		u.load = (struct load_command*)(file + offset);
-		if (u.load->cmd == LC_SEGMENT)
+		if (rev ? (OSSwapInt32(u.load->cmd) == LC_SEGMENT) : (u.load->cmd == LC_SEGMENT))
 		{
 			if ((dump->segment && !OK(dump->segment(file, ctx, u.segment, NULL)))
-				|| (!OK(dump_sects(file, u.segment, dump))))
+				|| (!OK(dump_sects(file, ctx, u.segment, dump))))
 				return (EXIT_FAILURE);
 		}
 		else if (dump->load && !OK(dump->load(file, ctx, NULL, u.load)))
 			return (EXIT_FAILURE);
-		offset += u.load->cmdsize;
+		offset += rev ? OSSwapInt32(u.load->cmdsize) : u.load->cmdsize;
 	}
 	return (EXIT_SUCCESS);
 }

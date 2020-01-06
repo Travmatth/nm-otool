@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/15 16:39:14 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/31 19:51:27 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:32:47 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,24 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_sects(char *file, struct segment_command *segment, t_dump_fxs *dump)
+int		dump_sects(char *file, t_ctx *ctx, struct segment_command *segment, t_dump_fxs *dump)
 {
-	uint32_t		i;
+	int				rev;
+	uint32_t		nsects;
 	uint32_t		offset;
 	struct section	*section;
 	void			*addr;
 
-	i = 0;
+	rev = (ctx->flags & IS_SWAPPED);
+	nsects = rev ? OSSwapInt32(segment->nsects) : segment->nsects;
 	offset = ((char*)segment - file) + sizeof(struct segment_command);
-	while (i < segment->nsects)
+	while (nsects--)
 	{
 		section = (struct section*)(file + offset);
-		addr = file + section->offset;
+		addr = file + (rev ? OSSwapInt32(section->offset) : section->offset);
 		if (dump->section && !OK(dump->section(file, section, NULL)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section);
-		i += 1;
 	}
 	return (EXIT_SUCCESS);
 }

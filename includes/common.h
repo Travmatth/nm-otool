@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/31 19:50:54 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:19:13 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,7 @@ int										cleanup_ctx(t_ctx *ctx);
 */
 
 int										dump_sects(char *file
+											, t_ctx *ctx
 											, struct segment_command *segment
 											, t_dump_fxs *dump);
 int										dump_sects_64(char *file
