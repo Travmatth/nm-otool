@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/20 12:35:51 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/01 00:45:00 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:39:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int		is_fat32(t_ctx *ctx, uint32_t magic)
 	{
 		ctx->flags |= IS_32;
 		ctx->flags |= IS_FAT;
-		ctx->flags |= IS_SWAPPED;
+		ctx->flags |= SWAP;
 	}
 	else
 		return (EXIT_FAILURE);
@@ -51,7 +51,7 @@ int		is_fat64(t_ctx *ctx, uint32_t magic)
 	else if (magic == FAT_CIGAM_64)
 	{
 		ctx->flags |= IS_FAT;
-		ctx->flags |= IS_SWAPPED;
+		ctx->flags |= SWAP;
 	}
 	else
 		return (EXIT_FAILURE);
@@ -70,7 +70,7 @@ int		is_mach64(t_ctx *ctx, uint32_t magic)
 	if (magic == MH_CIGAM_64)
 	{
 		ctx->flags |= IS_64;
-		ctx->flags |= IS_SWAPPED;
+		ctx->flags |= SWAP;
 		return (EXIT_SUCCESS);
 	}
 	else if (magic == MH_MAGIC_64)
@@ -95,7 +95,7 @@ int		is_mach32(t_ctx *ctx, uint32_t magic)
 	else if (magic == MH_CIGAM)
 	{
 		ctx->flags |= IS_32;
-		ctx->flags |= IS_SWAPPED;
+		ctx->flags |= SWAP;
 	}
 	else
 		return (EXIT_FAILURE);

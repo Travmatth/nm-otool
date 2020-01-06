@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/30 19:04:19 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:39:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ struct fat_header	*extract_fat_header(char *file, int flags)
 	if (fat == NULL)
 		return (NULL);
 	ft_memcpy(fat, file, sizeof(struct fat_header));
-	if ((flags & IS_SWAPPED))
+	if ((flags & SWAP))
 		fat->nfat_arch = OSSwapInt32(fat->nfat_arch);
 	return (fat);
 }
@@ -46,7 +46,7 @@ int		extract_fat_arch(char *file, int flags, struct fat_arch	**arch)
 	if (arch== NULL)
 		return (EXIT_FAILURE);
 	ft_memcpy(*arch, file, sizeof(struct fat_arch));
-	if ((flags & IS_SWAPPED))
+	if ((flags & SWAP))
 	{
 		(*arch)->cputype = OSSwapInt32((*arch)->cputype);
 		(*arch)->cpusubtype = OSSwapInt32((*arch)->cputype);
@@ -71,7 +71,7 @@ int		extract_fat_arch_64(char *file, int flags, struct fat_arch_64 **arch)
 	if (arch== NULL)
 		return (EXIT_FAILURE);
 	ft_memcpy(*arch, file, sizeof(struct fat_arch_64));
-	if ((flags & IS_SWAPPED))
+	if ((flags & SWAP))
 	{
 		(*arch)->cputype = OSSwapInt32((*arch)->cputype);
 		(*arch)->cpusubtype = OSSwapInt32((*arch)->cputype);

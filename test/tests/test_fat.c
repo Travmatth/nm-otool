@@ -10,7 +10,7 @@ test_dump_fat_bin_dumps(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[3] = { NULL, "test/artifacts/fat/fatbin", NULL };
-	t_dump_fxs funcs = { verify_header64, verify_segments, verify_sections, verify_load_command };
+	t_dump_fxs funcs = { verify_header64, verify_segments, NULL, verify_sections, verify_load_command };
 
 	(void)params;
 	(void)fixture;

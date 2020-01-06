@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 17:19:13 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:44:24 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,14 @@
 # define HEX_CHARS ("0123456789abcdef")
 
 /*
-** IS_SWAPPED: endianness of data opposite of current architecture
+** SWAP: endianness of data opposite of current architecture
 ** IS_32: binary file targeted for 32bit systems
 ** IS_FAT: binary file is in FAT format
 */
 
 enum								e_flags
 {
-	IS_SWAPPED = (1u << 0),
+	SWAP = (1u << 0),
 	IS_32 = (1u << 1),
 	IS_FAT = (1u << 2),
 	IS_ARCHIVE = (1u << 3),
@@ -122,7 +122,8 @@ typedef struct						s_dump_fxs
 {
 	t_hdr_f							header;
 	t_seg_f							segment;
-	t_sec_f							section;
+	t_sec_f							i386_section;
+	t_sec_f							x86_64_section;
 	t_lc_f							load;
 }									t_dump_fxs;
 
@@ -222,14 +223,14 @@ int										cleanup_ctx(t_ctx *ctx);
 
 
 /*
-** common/mach_sections
+** common/mach_x86_64_sections
 */
 
-int										dump_sects(char *file
+int										dump_i386_sections(char *file
 											, t_ctx *ctx
 											, struct segment_command *segment
 											, t_dump_fxs *dump);
-int										dump_sects_64(char *file
+int										dump_x86_64_sections(char *file
 											, struct segment_command_64 *segment
 											, t_dump_fxs *dump);
 

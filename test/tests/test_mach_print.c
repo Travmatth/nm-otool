@@ -19,12 +19,12 @@ char *ref_i386_output = "Contents of (__TEXT,__text) section\n\
 00001f43	10 b8 00 00 00 00 8b 5d fc c9 c3 8b 1c 24 c3 \n";
 
 static MunitResult
-test_print_text_section_i386(
+test_print_i386_text_section(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	struct fixture s;
 	char *out, *argv[2] = { NULL, "test/artifacts/binary/main32" };
-	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
+	t_dump_fxs funcs = { NULL, NULL, print_i386_text_section, NULL, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
 	if (swap_stdout(&s) == EXIT_FAILURE)
@@ -54,12 +54,12 @@ char *ref_x86_64_output = "Contents of (__TEXT,__text) section\n\
 0000000100000f80	83 c4 10 5d c3 \n";
 
 static MunitResult
-test_print_text_section_x86_64(
+test_print_x86_64_text_section(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	struct fixture s;
 	char *out, *argv[2] = { NULL, "test/artifacts/binary/a.out" };
-	t_dump_fxs funcs = { NULL, NULL, print_text_section, NULL };
+	t_dump_fxs funcs = { NULL, NULL, NULL, print_x86_64_text_section, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
 	if (swap_stdout(&s) == EXIT_FAILURE)
@@ -84,8 +84,8 @@ test_print_text_section_x86_64(
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
- { "test_print_text_section_i386", test_print_text_section_i386, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
- { "test_print_text_section_x86_64", test_print_text_section_x86_64, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_i386_text_section", test_print_i386_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_print_x86_64_text_section", test_print_x86_64_text_section, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   /* Mark the end of the array with an entry where the test
    * function is NULL */
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }

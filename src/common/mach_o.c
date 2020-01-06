@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 17:18:57 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:39:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int		dump_macho_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 	uint64_t			ncmds;
 	uint64_t			offset;
 
-	rev = (ctx->flags & IS_SWAPPED);
+	rev = (ctx->flags & SWAP);
 	hdr = (struct mach_header*)file;
 	ncmds = rev ? OSSwapInt32(hdr->ncmds) : hdr->ncmds;
 	offset = sizeof(struct mach_header);
@@ -66,7 +66,7 @@ int		dump_macho_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		if (rev ? (OSSwapInt32(u.load->cmd) == LC_SEGMENT) : (u.load->cmd == LC_SEGMENT))
 		{
 			if ((dump->segment && !OK(dump->segment(file, ctx, u.segment, NULL)))
-				|| (!OK(dump_sects(file, ctx, u.segment, dump))))
+				|| (!OK(dump_i386_sections(file, ctx, u.segment, dump))))
 				return (EXIT_FAILURE);
 		}
 		else if (dump->load && !OK(dump->load(file, ctx, NULL, u.load)))
@@ -101,7 +101,7 @@ int		dump_macho64_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		if (u.load->cmd == LC_SEGMENT_64)
 		{
 			if ((dump->segment && !OK(dump->segment(file, ctx, NULL, u.segment64)))
-				|| (!OK(dump_sects_64(file, u.segment64, dump))))
+				|| (!OK(dump_x86_64_sections(file, u.segment64, dump))))
 				return (EXIT_FAILURE);
 		}
 		else if (dump->load && !OK(dump->load(file, ctx, NULL, u.load)))

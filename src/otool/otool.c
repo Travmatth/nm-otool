@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2019/12/31 19:22:47 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/05 17:42:26 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ int		otool_main(int argc, char *argv[], char *envp[])
 
 	func.header = NULL;
 	func.segment = NULL;
-	func.section = print_text_section;
+	func.x86_64_section = print_x86_64_text_section;
+	func.i386_section = print_i386_text_section;
 	func.load = NULL;
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
