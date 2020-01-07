@@ -37,10 +37,10 @@ char	*archive_file_params[] = {
 	// "test/artifacts/binary/emacs-undumped",
 
 char	*binary_file_params[] = {
-	"test/artifacts/binary/hard_test_1",
-	"test/artifacts/binary/sa_seg",
-	"test/artifacts/binary/ls_string_table_corr5",
-	"test/artifacts/binary/ls_string_table_corr2",
+// 	"test/artifacts/binary/hard_test_1",
+// 	"test/artifacts/binary/sa_seg",
+// 	"test/artifacts/binary/ls_string_table_corr5",
+// 	"test/artifacts/binary/ls_string_table_corr2",
 	"test/artifacts/binary/void32",
 	"test/artifacts/binary/ls_text_overwritten",
 	"test/artifacts/binary/hello_je_diff",

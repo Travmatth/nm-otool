@@ -6,13 +6,18 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 16:43:20 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/06 16:19:46 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/otool.h"
 
-int		validate_symtab_entries(char *file, struct symtab_command *symtab, int flags)
+uint32_t	swap(t_ctx *ctx, uint32_t val)
+{
+	return ((ctx->flags & SWAP) ? OSSwapInt32(val) : val);
+}
+
+int		validate_symtab_entries(char *file, t_ctx *ctx, struct symtab_command *symtab)
 {
 	uint32_t		i;
 	uint32_t		offset;
@@ -23,14 +28,14 @@ int		validate_symtab_entries(char *file, struct symtab_command *symtab, int flag
 	offset = symtab->symoff;
 	while (i++ < symtab->nsyms)
 	{
-		if (flags & IS_32)
+		if (ctx->flags & IS_32)
 		{
 			nlist = (struct nlist *)(file + offset);
-			if (symtab->stroff + nlist->n_un.n_strx > symtab->strsize)
+			if (swap(ctx, nlist->n_un.n_strx) > swap(ctx, symtab->strsize))
 				return (EXIT_FAILURE);
 			offset += sizeof(struct nlist);
 		}
-		else if (flags & IS_64)
+		else if (ctx->flags & IS_64)
 		{
 			nlist64 = (struct nlist_64 *)(file + offset);
 			if (nlist64->n_un.n_strx > symtab->strsize)
@@ -41,7 +46,55 @@ int		validate_symtab_entries(char *file, struct symtab_command *symtab, int flag
 	return (EXIT_SUCCESS);
 }
 
-int		validate_mach64(char *file, t_ctx *ctx)
+int		validate_mach_i386(char *file, t_ctx *ctx)
+{
+	struct mach_header	*hdr;
+	t_lcommand				u;
+	uint64_t				i;
+	uint64_t				offset;
+
+	i = 0;
+	hdr = (struct mach_header*)file;
+	offset = sizeof(struct mach_header);
+	while (i++ < swap(ctx, hdr->ncmds))
+	{
+		if ((file + offset + sizeof(struct load_command)) >
+			(file + sizeof(struct mach_header) + swap(ctx, hdr->sizeofcmds)))
+			return (EXIT_FAILURE);
+		u.load = (struct load_command*)(file + offset);
+		if (swap(ctx, u.load->cmdsize) % 4)
+			return (EXIT_FAILURE);
+		if (u.load->cmd == LC_SEGMENT)
+		{
+			if ((swap(ctx, u.segment->nsects) * sizeof(struct section) >
+				swap(ctx, u.segment->cmdsize) - sizeof(struct segment_command))
+				|| (swap(ctx, u.segment->fileoff) + swap(ctx, u.segment->filesize) > ctx->size)
+				|| (swap(ctx, u.segment->filesize) > swap(ctx, u.segment->vmsize)))
+				return (EXIT_FAILURE);
+		}
+		else if (u.load->cmd == LC_SYMTAB)
+		{
+			// if symtab starts before end of load commands
+			if (swap(ctx, u.symtab->symoff) >= 0 && swap(ctx, u.symtab->symoff) < (sizeof(struct mach_header_64) + hdr->sizeofcmds))
+				return (EXIT_FAILURE);
+			// if symtab ends before end of load commands
+			if (swap(ctx, u.symtab->symoff) + (swap(ctx, u.symtab->nsyms) * sizeof(struct nlist_64)) > 0 &&
+				swap(ctx, u.symtab->symoff) + (swap(ctx, u.symtab->nsyms) * sizeof(struct nlist_64)) < (sizeof(struct mach_header_64) + hdr->sizeofcmds))
+				return (EXIT_FAILURE);
+			// symtab starts before the header and end of symtab is after end of load commands
+			if (swap(ctx, u.symtab->symoff) <= 0 &&
+				swap(ctx, u.symtab->symoff) + (swap(ctx, u.symtab->nsyms) * sizeof(struct nlist_64)) >= (sizeof(struct mach_header_64) + hdr->sizeofcmds))
+				return (EXIT_FAILURE);
+			if ((swap(ctx, u.symtab->stroff) + swap(ctx, u.symtab->strsize) > ctx->size)
+				|| validate_symtab_entries(file, ctx, u.symtab))
+				return (EXIT_FAILURE);
+		}
+		offset += swap(ctx, u.load->cmdsize);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int		validate_mach_x86_64(char *file, t_ctx *ctx)
 {
 	struct mach_header_64	*hdr;
 	t_lcommand				u;
@@ -61,14 +114,27 @@ int		validate_mach64(char *file, t_ctx *ctx)
 			return (EXIT_FAILURE);
 		if (u.load->cmd == LC_SEGMENT_64)
 		{
-			if ((u.segment64->fileoff + u.segment64->filesize > ctx->size)
+			if ((u.segment64->nsects * sizeof(struct section_64) >
+				u.segment64->cmdsize - sizeof(struct segment_command_64))
+				|| (u.segment64->fileoff + u.segment64->filesize > ctx->size)
 				|| (u.segment64->filesize > u.segment64->vmsize))
 				return (EXIT_FAILURE);
 		}
 		else if (u.load->cmd == LC_SYMTAB)
 		{
+			// if symtab starts before end of load commands
+			if (u.symtab->symoff >= 0 && u.symtab->symoff < (sizeof(struct mach_header_64) + hdr->sizeofcmds))
+				return (EXIT_FAILURE);
+			// if symtab ends before end of load commands
+			if (u.symtab->symoff + (u.symtab->nsyms * sizeof(struct nlist_64)) > 0 &&
+				u.symtab->symoff + (u.symtab->nsyms * sizeof(struct nlist_64)) < (sizeof(struct mach_header_64) + hdr->sizeofcmds))
+				return (EXIT_FAILURE);
+			// symtab starts before the header and end of symtab is after end of load commands
+			if (u.symtab->symoff <= 0 &&
+				u.symtab->symoff + (u.symtab->nsyms * sizeof(struct nlist_64)) >= (sizeof(struct mach_header_64) + hdr->sizeofcmds))
+				return (EXIT_FAILURE);
 			if ((u.symtab->stroff + u.symtab->strsize > ctx->size)
-				|| validate_symtab_entries(file, u.symtab, ctx->flags))
+				|| validate_symtab_entries(file, ctx, u.symtab))
 				return (EXIT_FAILURE);
 		}
 		offset += u.load->cmdsize;
@@ -79,8 +145,8 @@ int		validate_mach64(char *file, t_ctx *ctx)
 int		validate_file(char *file, t_ctx *ctx)
 {
 	if (ctx->flags & IS_64)
-		return (validate_mach64(file, ctx));
+		return (validate_mach_x86_64(file, ctx));
 	else if (ctx->flags & IS_32)
-		return (EXIT_SUCCESS);
+		return (validate_mach_i386(file, ctx));
 	return (EXIT_FAILURE);
 }
