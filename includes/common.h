@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/06 14:32:33 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/07 14:06:50 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ enum								e_flags
 	IS_ARCHIVE = (1u << 3),
 	IS_EXTENDED_ARCHIVE = (1u << 4),
 	IS_64 = (1u << 5),
+	IS_MACH = (1u << 6),
 };
 
 /*

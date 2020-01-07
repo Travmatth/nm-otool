@@ -68,7 +68,7 @@ test_determine_file_detects_fat(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_true(ctx.flags & IS_FAT);
+	munit_assert_true((ctx.flags & IS_FAT) && !(ctx.flags & IS_MACH));
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	return MUNIT_OK;
@@ -83,7 +83,7 @@ test_determine_file_detects_i386(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_true(!(ctx.flags & IS_FAT) && (ctx.flags & IS_32));
+	munit_assert_true(!(ctx.flags & IS_FAT)&& (ctx.flags & IS_MACH) && (ctx.flags & IS_32));
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_FAIL;
 	return MUNIT_OK;
@@ -99,6 +99,7 @@ test_determine_file_detects_x86_64(
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_false((ctx.flags & IS_FAT) || (ctx.flags & IS_32));
+	munit_assert_true((ctx.flags & IS_MACH) && (ctx.flags & IS_64));
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	return MUNIT_OK;

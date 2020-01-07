@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/20 12:35:51 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 17:39:07 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/07 14:12:48 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,12 @@ int		is_mach64(t_ctx *ctx, uint32_t magic)
 	{
 		ctx->flags |= IS_64;
 		ctx->flags |= SWAP;
+		ctx->flags |= IS_MACH;
 		return (EXIT_SUCCESS);
 	}
 	else if (magic == MH_MAGIC_64)
 	{
+		ctx->flags |= IS_MACH;
 		ctx->flags |= IS_64;
 		return (EXIT_SUCCESS);
 	}
@@ -91,11 +93,15 @@ int		is_mach64(t_ctx *ctx, uint32_t magic)
 int		is_mach32(t_ctx *ctx, uint32_t magic)
 {
 	if (magic == MH_MAGIC)
+	{
 		ctx->flags |= IS_32;
+		ctx->flags |= IS_MACH;
+	}
 	else if (magic == MH_CIGAM)
 	{
 		ctx->flags |= IS_32;
 		ctx->flags |= SWAP;
+		ctx->flags |= IS_MACH;
 	}
 	else
 		return (EXIT_FAILURE);
