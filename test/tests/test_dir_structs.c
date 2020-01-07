@@ -37,10 +37,10 @@ char	*archive_file_params[] = {
 	// "test/artifacts/binary/emacs-undumped",
 
 char	*binary_file_params[] = {
-// 	"test/artifacts/binary/hard_test_1",
-// 	"test/artifacts/binary/sa_seg",
-// 	"test/artifacts/binary/ls_string_table_corr5",
-// 	"test/artifacts/binary/ls_string_table_corr2",
+	"test/artifacts/binary/hard_test_1",
+	"test/artifacts/binary/sa_seg",
+	"test/artifacts/binary/ls_string_table_corr5",
+	"test/artifacts/binary/ls_string_table_corr2",
 	"test/artifacts/binary/void32",
 	"test/artifacts/binary/ls_text_overwritten",
 	"test/artifacts/binary/hello_je_diff",
@@ -62,7 +62,7 @@ char	*binary_file_params[] = {
 	"test/artifacts/binary/64_exe_easy",
 	"test/artifacts/binary/ls_lc_growed_1",
 	"test/artifacts/binary/object_easy",
-	// "test/artifacts/binary/bomb",
+	"test/artifacts/binary/bomb",
 	"test/artifacts/binary/test_moins_facile",
 	"test/artifacts/binary/helloworldx32",
 	"test/artifacts/binary/ls_zeroed_data_section_number",

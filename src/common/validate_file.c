@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/06 16:19:46 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/06 18:06:57 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,42 @@
 uint32_t	swap(t_ctx *ctx, uint32_t val)
 {
 	return ((ctx->flags & SWAP) ? OSSwapInt32(val) : val);
+}
+
+int		validate_i386_sections(char *file, t_ctx *ctx, t_lcommand u)
+{
+	uint64_t		i;
+	uint64_t		offset;
+	struct section	*section;
+
+	i = 0;
+	offset = ((char*)u.segment - file) + sizeof(struct segment_command_64);
+	while (i++ < swap(ctx, u.segment->nsects))
+	{
+		section = (struct section*)(file + offset);
+		if (swap(ctx, section->size) > swap(ctx, u.segment->filesize))
+			return (EXIT_FAILURE);
+		offset += sizeof(struct section);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int		validate_x86_64_sections(char *file, t_lcommand u)
+{
+	uint64_t			i;
+	uint64_t			offset;
+	struct section_64	*section;
+
+	i = 0;
+	offset = ((char*)u.segment64 - file) + sizeof(struct segment_command_64);
+	while (i++ < u.segment64->nsects)
+	{
+		section = (struct section_64*)(file + offset);
+		if (section->size > u.segment64->filesize)
+			return (EXIT_FAILURE);
+		offset += sizeof(struct section_64);
+	}
+	return (EXIT_SUCCESS);
 }
 
 int		validate_symtab_entries(char *file, t_ctx *ctx, struct symtab_command *symtab)
@@ -69,7 +105,8 @@ int		validate_mach_i386(char *file, t_ctx *ctx)
 			if ((swap(ctx, u.segment->nsects) * sizeof(struct section) >
 				swap(ctx, u.segment->cmdsize) - sizeof(struct segment_command))
 				|| (swap(ctx, u.segment->fileoff) + swap(ctx, u.segment->filesize) > ctx->size)
-				|| (swap(ctx, u.segment->filesize) > swap(ctx, u.segment->vmsize)))
+				|| (swap(ctx, u.segment->filesize) > swap(ctx, u.segment->vmsize))
+				|| !OK(validate_i386_sections(file, ctx, u)))
 				return (EXIT_FAILURE);
 		}
 		else if (u.load->cmd == LC_SYMTAB)
@@ -117,7 +154,8 @@ int		validate_mach_x86_64(char *file, t_ctx *ctx)
 			if ((u.segment64->nsects * sizeof(struct section_64) >
 				u.segment64->cmdsize - sizeof(struct segment_command_64))
 				|| (u.segment64->fileoff + u.segment64->filesize > ctx->size)
-				|| (u.segment64->filesize > u.segment64->vmsize))
+				|| (u.segment64->filesize > u.segment64->vmsize)
+				|| !OK(validate_x86_64_sections(file, u)))
 				return (EXIT_FAILURE);
 		}
 		else if (u.load->cmd == LC_SYMTAB)
