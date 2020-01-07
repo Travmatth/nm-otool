@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/06 18:06:57 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/07 14:18:38 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,11 +180,20 @@ int		validate_mach_x86_64(char *file, t_ctx *ctx)
 	return (EXIT_SUCCESS);
 }
 
+int		validate_mach_fat(char *file, t_ctx *ctx)
+{
+	(void)file;
+	(void)ctx;
+	return (EXIT_SUCCESS);
+}
+
 int		validate_file(char *file, t_ctx *ctx)
 {
-	if (ctx->flags & IS_64)
+	if (ctx->flags & IS_FAT)
+		return (validate_mach_fat(file, ctx));
+	else if ((ctx->flags & IS_MACH) && (ctx->flags & IS_64))
 		return (validate_mach_x86_64(file, ctx));
-	else if (ctx->flags & IS_32)
+	else if ((ctx->flags & IS_MACH) && (ctx->flags & IS_32))
 		return (validate_mach_i386(file, ctx));
 	return (EXIT_FAILURE);
 }
