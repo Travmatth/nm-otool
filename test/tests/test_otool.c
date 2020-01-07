@@ -74,9 +74,11 @@ test_otool_main_fat_files(
 
 	int status = otool_main(2, argv, NULL);
 	munit_assert_int(fixture->exit_status, ==, status);
-	if (fd_to_str(fixture->stdout_fds[0], &out))
-		return MUNIT_ERROR;
-	munit_assert_string_equal(fixture->otool_output, out);
+	if (fixture->exit_status == EXIT_SUCCESS) {
+		if (fd_to_str(fixture->stdout_fds[0], &out))
+			return MUNIT_ERROR;
+		munit_assert_string_equal(fixture->otool_output, out);
+	}
 	return MUNIT_OK;
 }
 

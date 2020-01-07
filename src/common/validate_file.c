@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/07 14:18:38 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/07 15:37:50 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,10 +180,37 @@ int		validate_mach_x86_64(char *file, t_ctx *ctx)
 	return (EXIT_SUCCESS);
 }
 
+uint32_t		uint32_pow(uint32_t base, uint32_t power)
+{
+	uint32_t	half;
+
+	if (power == 0)
+		return (0);
+	else if (power == 1)
+		return (base);
+	half = uint32_pow(base, power / 2);
+	half = half * half;
+	half = half * (power % 2 ? base : 1);
+	return (half);
+}
+
 int		validate_mach_fat(char *file, t_ctx *ctx)
 {
-	(void)file;
-	(void)ctx;
+	uint32_t		archs;
+	uint32_t		offset;
+	uint32_t		align;
+	struct fat_arch	*arch;
+
+	offset = sizeof(struct fat_header);
+	archs = swap(ctx, ((struct fat_header*)file)->nfat_arch);
+	while (archs--)
+	{
+		arch = (struct fat_arch*)(file + offset);
+		align = uint32_pow(2, swap(ctx, arch->align));
+		if (((uint32_t)file + swap(ctx, arch->offset)) % align)
+			return (EXIT_FAILURE);
+		offset += sizeof(struct fat_arch);
+	}
 	return (EXIT_SUCCESS);
 }
 

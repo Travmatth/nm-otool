@@ -102,7 +102,7 @@ char	*binary_file_params[] = {
 char	*fat_file_params[] = {
 	"test/artifacts/fat/fat_hard",
 	"test/artifacts/fat/fat_alone",
-	// "test/artifacts/fat/audiodevice_offset_plus_un_v2",
+	"test/artifacts/fat/audiodevice_offset_plus_un_v2",
 	// "test/artifacts/fat/audiodevice_arch_plus_1",
 	"test/artifacts/fat/why_are_you_crashing",
 	"test/artifacts/fat/python_returns",
