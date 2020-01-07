@@ -1,12 +1,5 @@
 #include "../tests.h"
 
-extern char	*binary_file_params[];
-
-static MunitParameterEnum binary_params[] = {
-	{"file", binary_file_params},
-	{NULL, NULL},
-};
-
 static void*
 test_setup(const MunitParameter params[], MUNIT_UNUSED void *data) {
 	int	val;
@@ -39,6 +32,13 @@ test_teardown(void *fixture) {
 	free(fixture);
 }
 
+extern char	*binary_file_params[];
+
+static MunitParameterEnum binary_params[] = {
+	{"file", binary_file_params},
+	{NULL, NULL},
+};
+
 static MunitResult
 test_otool_main_binary_files(
 	const MunitParameter params[], void *fix) {
@@ -59,9 +59,31 @@ test_otool_main_binary_files(
 	return MUNIT_OK;
 }
 
+extern char	*fat_file_params[];
+
+static MunitParameterEnum fat_params[] = {
+	{"file", fat_file_params},
+	{NULL, NULL},
+};
+
+static MunitResult
+test_otool_main_fat_files(
+	const MunitParameter params[], void *fix) {
+	struct fixture *fixture = (struct fixture *)fix;
+	char *out, *argv[2] = { "./ft_otool", params->value };
+
+	int status = otool_main(2, argv, NULL);
+	munit_assert_int(fixture->exit_status, ==, status);
+	if (fd_to_str(fixture->stdout_fds[0], &out))
+		return MUNIT_ERROR;
+	munit_assert_string_equal(fixture->otool_output, out);
+	return MUNIT_OK;
+}
+
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
  { "test_otool_main_binary_files", test_otool_main_binary_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, binary_params },
+ { "test_otool_main_fat_files", test_otool_main_fat_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, fat_params },
  /* Mark the end of the array with an entry where the test function is NULL */
  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
