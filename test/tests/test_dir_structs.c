@@ -127,9 +127,9 @@ char	*fat_file_params[] = {
 	"test/artifacts/fat/fatbin",
 	"test/artifacts/fat/fat_corr1",
 	"test/artifacts/fat/fat_stackoverflow",
-	// "test/artifacts/fat/fat_corr7",
-	// "test/artifacts/fat/fat",
-	// "test/artifacts/fat/fat_test1",
+	"test/artifacts/fat/fat_corr7",
+	"test/artifacts/fat/fat",
+	"test/artifacts/fat/fat_test1",
 	"test/artifacts/fat/audiodevice_corupted",
 	"test/artifacts/fat/uuidgen",
 	NULL
