@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/07 20:17:25 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/08 12:45:20 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,6 @@ int		validate_mach_x86_64(char *file, t_ctx *ctx)
 	return (EXIT_SUCCESS);
 }
 
-# define MAX_SECTION_ALIGNMENT 15
 uint32_t		uint32_pow(uint32_t base, uint32_t power)
 {
 	uint32_t	half;
@@ -218,19 +217,34 @@ int		validate_mach_fat(char *file, t_ctx *ctx)
 			return (EXIT_FAILURE);
 		if (((uint32_t)file + swap(ctx, arch->offset)) % align)
 			return (EXIT_FAILURE);
+		if (!OK(validate_file(file + swap(ctx, arch->offset), ctx, TRUE)))
+			return (EXIT_FAILURE);
 		offset += sizeof(struct fat_arch);
 		i += 1;
 	}
 	return (EXIT_SUCCESS);
 }
 
-int		validate_file(char *file, t_ctx *ctx)
+int		validate_file(char *file, t_ctx *ctx, int classify)
 {
+	int		flags;
+	int		status;
+
+	if (classify == TRUE)
+	{
+		flags = ctx->flags;
+		ctx->flags = 0;
+	}
+	determine_file(file, ctx);
 	if (ctx->flags & IS_FAT)
-		return (validate_mach_fat(file, ctx));
+		status = validate_mach_fat(file, ctx);
 	else if ((ctx->flags & IS_MACH) && (ctx->flags & IS_64))
-		return (validate_mach_x86_64(file, ctx));
+		status = validate_mach_x86_64(file, ctx);
 	else if ((ctx->flags & IS_MACH) && (ctx->flags & IS_32))
-		return (validate_mach_i386(file, ctx));
-	return (EXIT_FAILURE);
+		status = validate_mach_i386(file, ctx);
+	else
+		status = EXIT_FAILURE;
+	if (classify == TRUE)
+		ctx->flags = flags;
+	return (status);
 }

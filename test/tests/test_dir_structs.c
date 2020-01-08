@@ -99,6 +99,9 @@ char	*binary_file_params[] = {
 	// "test/artifacts/fat/sqlite3",
 	// "test/artifacts/fat/fat_corr6",
 
+// outputs to stderr
+	// "test/artifacts/fat/fat_corr7",
+
 char	*fat_file_params[] = {
 	"test/artifacts/fat/fat_hard",
 	"test/artifacts/fat/fat_alone",
@@ -127,7 +130,6 @@ char	*fat_file_params[] = {
 	"test/artifacts/fat/fatbin",
 	"test/artifacts/fat/fat_corr1",
 	"test/artifacts/fat/fat_stackoverflow",
-	"test/artifacts/fat/fat_corr7",
 	"test/artifacts/fat/fat",
 	"test/artifacts/fat/fat_test1",
 	"test/artifacts/fat/audiodevice_corupted",

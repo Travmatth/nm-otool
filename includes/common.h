@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/07 14:06:50 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/08 12:43:57 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 ** mach-o/fat.h - FAT_MAGIC/FAT_CIGAM
 ** mach-o/loader.h - MH_MAGIC/MH_CIGAM/MH_MAGIC_64/MH_CIGAM_64
 ** ar.h - ARMAG/SARMAG/AR_EFMT1/struct ar_hdr
-** mach/machine.h - cpu_type, cpu_subtype_t
+** mach/machine.h - OSSwapInt32, cpu_type, cpu_subtype_t
 */
 
 # include <fcntl.h>
@@ -60,6 +60,12 @@
 */
 
 # define HEX_CHARS ("0123456789abcdef")
+
+/*
+** Maximum power of 2 that universal files objects may be aligned to
+*/
+
+# define MAX_SECTION_ALIGNMENT 15
 
 /*
 ** SWAP: endianness of data opposite of current architecture
@@ -189,7 +195,7 @@ typedef union							u_lcommand
 ** common/validate_file.c
 */
 
-int										validate_file(char *file, t_ctx *ctx);
+int										validate_file(char *file, t_ctx *ctx, int classify);
 
 /*
 ** common/format.c

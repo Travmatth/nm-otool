@@ -114,6 +114,7 @@ int		fd_to_str(int fd, char **out) {
 	struct pollfd fds = {fd, POLLIN, 0};
 	char *str = calloc(1, sizeof(char)), tmp[BUFSIZ] = {0};
 
+	int t __attribute__((unused)) = poll(&fds, 1, 0);
 	do {
 		c = read(fd, tmp, BUFSIZ - 1);
 		if (c == -1){
