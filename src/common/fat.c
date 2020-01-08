@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 17:39:07 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/08 15:15:27 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int		extract_fat_arch_64(char *file, int flags, struct fat_arch_64 **arch)
 	if ((flags & SWAP))
 	{
 		(*arch)->cputype = OSSwapInt32((*arch)->cputype);
-		(*arch)->cpusubtype = OSSwapInt32((*arch)->cputype);
+		(*arch)->cpusubtype = OSSwapInt32((*arch)->cpusubtype);
 		(*arch)->offset = OSSwapInt32((*arch)->offset);
 		(*arch)->size = OSSwapInt32((*arch)->size);
 		(*arch)->align = OSSwapInt32((*arch)->align);
@@ -105,7 +105,8 @@ int		dump_fat_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		offset = sizeof(struct fat_header) + (i * sizeof(struct fat_arch));
 		if (!OK(extract_fat_arch(file + offset, ctx->flags, &arch)))
 			return (EXIT_FAILURE);
-		if (arch->cputype == CPU_TYPE_X86_64 && HOST_64BIT)
+		if (arch->cputype == CPU_TYPE_X86_64 &&
+			OSSwapInt32((((struct fat_arch*)(file + offset))->cpusubtype)& CPU_SUBTYPE_MASK) == CPU_SUBTYPE_X86_64_ALL)
 			file_multiplexer(file + arch->offset, ctx, dump, FALSE);
 		free(arch);
 		i += 1;
@@ -137,7 +138,7 @@ int		dump_fat64_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		offset = sizeof(struct fat_header) + (i * sizeof(struct fat_arch));
 		if (!OK(extract_fat_arch_64(file + offset, ctx->flags, &arch)))
 			return (EXIT_FAILURE);
-		if (arch->cputype == CPU_TYPE_X86_64 && HOST_64BIT)
+		if (arch->cputype == CPU_TYPE_X86_64 && arch->cpusubtype == CPU_SUBTYPE_X86_64_ALL)
 			file_multiplexer(file + arch->offset, ctx, dump, FALSE);
 		free(arch);
 		i += 1;
