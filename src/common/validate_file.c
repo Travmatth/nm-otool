@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/07 15:37:50 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/07 16:47:44 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ uint32_t		uint32_pow(uint32_t base, uint32_t power)
 	uint32_t	half;
 
 	if (power == 0)
-		return (0);
+		return (1);
 	else if (power == 1)
 		return (base);
 	half = uint32_pow(base, power / 2);
@@ -196,20 +196,27 @@ uint32_t		uint32_pow(uint32_t base, uint32_t power)
 
 int		validate_mach_fat(char *file, t_ctx *ctx)
 {
+	uint32_t		i;
 	uint32_t		archs;
 	uint32_t		offset;
-	uint32_t		align;
 	struct fat_arch	*arch;
 
+	i = 0;
 	offset = sizeof(struct fat_header);
 	archs = swap(ctx, ((struct fat_header*)file)->nfat_arch);
-	while (archs--)
+	while (i < archs)
 	{
 		arch = (struct fat_arch*)(file + offset);
-		align = uint32_pow(2, swap(ctx, arch->align));
-		if (((uint32_t)file + swap(ctx, arch->offset)) % align)
+		uint32_t c __attribute__((unused)) = OSSwapInt32(arch->cputype);
+		if (file + swap(ctx, arch->offset) < file + (i * sizeof(struct fat_arch)))
+			return (EXIT_FAILURE);
+		if (file + swap(ctx, arch->offset) + swap(ctx, arch->size) > file + ctx->size)
+			return (EXIT_FAILURE);
+		if (((uint32_t)file + swap(ctx, arch->offset))
+			% uint32_pow(2, swap(ctx, arch->align)))
 			return (EXIT_FAILURE);
 		offset += sizeof(struct fat_arch);
+		i += 1;
 	}
 	return (EXIT_SUCCESS);
 }
