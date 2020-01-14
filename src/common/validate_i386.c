@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 21:23:12 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/13 21:46:57 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/14 00:54:42 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ static int		validate_symtab(char *file
 	sym = *symtab;
 	if (ctx->flags & SWAP)
 		swap_symtab_command(&sym, NX_UnknownByteOrder);
+	if (sym.symoff > ctx->size)
+		return (EXIT_FAILURE);
 	else if (sym.symoff >= 0 && sym.symoff <
 		(sizeof(struct mach_header_64) + header->sizeofcmds))
 		return (EXIT_FAILURE);
@@ -130,12 +132,12 @@ int		validate_mach_i386(char *file, t_ctx *ctx)
 	offset = sizeof(struct mach_header);
 	while (i < header.ncmds)
 	{
+		if (file + offset + sizeof(struct load_command) > file + sizeof(struct mach_header) + header.sizeofcmds)
+			return (EXIT_FAILURE);
 		lc = *(struct load_command*)(file + offset);
 		if (ctx->flags & SWAP)
 			swap_load_command(&lc, NX_UnknownByteOrder);
-		if (file + offset + sizeof(struct load_command) > file + sizeof(struct mach_header) + header.sizeofcmds)
-			return (EXIT_FAILURE);
-		else if (lc.cmdsize % 4)
+		if (lc.cmdsize % 4)
 			return (EXIT_FAILURE);
 		else if (lc.cmd == LC_SEGMENT && validate_segment(file, ctx
 				, (struct segment_command*)(file + offset)) == EXIT_FAILURE)
