@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/06 11:45:24 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/12 19:26:43 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int				print_x86_64_text_section(char *file, struct section_64 *section)
 {
 	uint64_t	current;
 	char		ptr_buf[17];
-	char		mem_buf[33];
+	char		mem[33];
 
 	if (section && ft_strcmp(SECT_TEXT, section->sectname))
 		return (EXIT_SUCCESS);
@@ -40,8 +40,8 @@ int				print_x86_64_text_section(char *file, struct section_64 *section)
 			ft_putstr(ptr_buf);
 			ft_putstr("	");
 		}
-		format_mem(file + section->offset, &current, section->size, mem_buf);
-		if (!OK(print_memory_buf(FALSE, mem_buf)))
+		format_mem(file + section->offset, &current, section->size, mem);
+		if (!OK(print_memory_buf(FALSE, mem)))
 			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

@@ -27,9 +27,9 @@ int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *
 	return EXIT_SUCCESS;
 }
 
-int		verify_i386_sections(char *file, t_ctx *ctx, struct section *section) {
+int		verify_i386_sections(char *file, int swap, struct section *section) {
 	(void)file;
-	(void)ctx;
+	(void)swap;
 	(void)section;
 	g_section_calls += 1;
 	return EXIT_SUCCESS;
@@ -53,8 +53,8 @@ int		verify_segment_address(char *file, t_ctx *ctx, struct segment_command *segm
 	return EXIT_SUCCESS;
 }
 
-int		verify_section_i386_address(char *file, t_ctx *ctx, struct section *sect) {
-	(void)ctx;
+int		verify_section_i386_address(char *file, int swap, struct section *sect) {
+	(void)swap;
 	if (!strcmp("__text", sect->sectname)) {
 		uint64_t val = *(uint64_t*)(file + sect->offset);
 		if (val == 0xe824ec8353e58955ULL)
@@ -114,8 +114,7 @@ int		fd_to_str(int fd, char **out) {
 	struct pollfd fds = {fd, POLLIN, 0};
 	char *str = calloc(1, sizeof(char)), tmp[BUFSIZ] = {0};
 
-	int t __attribute__((unused)) = poll(&fds, 1, 0);
-	do {
+	while (poll(&fds, 1, 0)) {
 		c = read(fd, tmp, BUFSIZ - 1);
 		if (c == -1){
 			char *err __attribute__((unused)) = strerror(errno);
@@ -128,7 +127,7 @@ int		fd_to_str(int fd, char **out) {
 		free(str);
 		str = next;
 		bytes += c;
-	} while (poll(&fds, 1, 0));
+	}
 	*out = str;
 	return EXIT_SUCCESS;
 }

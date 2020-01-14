@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/28 23:20:18 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/06 11:46:00 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/12 19:40:28 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	format_pointer(uint64_t addr, char ptr_buf[], int is_64)
 ** @param{char[]} buffer to store string
 */
 
-void	format_mem(char *binary, uint64_t *offset, uint64_t size, char mem_buf[])
+void	format_mem(char *file, uint64_t *offset, uint64_t size, char mem_buf[])
 {
 	uint64_t		bin_i;
 	int				buf_i;
@@ -79,8 +79,8 @@ void	format_mem(char *binary, uint64_t *offset, uint64_t size, char mem_buf[])
 	*offset = *offset + size;
 	while (size-- > 0)
 	{
-		mem_buf[buf_i++] = HEX_CHARS[((binary[bin_i] >> 4) & 0xf)];
-		mem_buf[buf_i++] = HEX_CHARS[(binary[bin_i++] & 0xf)];
+		mem_buf[buf_i++] = HEX_CHARS[((file[bin_i] >> 4) & 0xf)];
+		mem_buf[buf_i++] = HEX_CHARS[(file[bin_i++] & 0xf)];
 	}
 	mem_buf[buf_i] = '\0';
 }

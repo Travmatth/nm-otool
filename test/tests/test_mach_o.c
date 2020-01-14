@@ -7,7 +7,7 @@ extern int	g_lc_calls;
 extern int	g_section_calls;
 
 static MunitResult
-test_dump_macho_bin_dumps_machi386(
+test_dump_mach_i386_dumps_machi386(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
 	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
@@ -16,7 +16,7 @@ test_dump_macho_bin_dumps_machi386(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	// munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_header_calls, ==, 1);
@@ -40,7 +40,7 @@ test_mach_i386_segment_addr(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_segment_calls, ==, 1);
@@ -58,7 +58,7 @@ test_machi386_section_addr(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_file(ctx.file, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_macho_bin(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_section_calls, ==, 1);
@@ -68,7 +68,7 @@ test_machi386_section_addr(
 
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
- { "test_dump_macho_bin_dumps_machi386", test_dump_macho_bin_dumps_machi386, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+ { "test_dump_mach_i386_dumps_machi386", test_dump_mach_i386_dumps_machi386, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_mach_i386_segment_addr", test_mach_i386_segment_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  { "test_machi386_section_addr", test_machi386_section_addr, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
  /* Mark the end of the array with an entry where the test function is NULL */

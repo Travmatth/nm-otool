@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/05 17:42:26 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/13 23:59:29 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 
 int		otool_main(int argc, char *argv[], char *envp[])
 {
-	char		*file;
 	t_ctx		ctx;
 	t_dump_fxs	func;
 	int			status;
@@ -38,10 +37,10 @@ int		otool_main(int argc, char *argv[], char *envp[])
 	func.x86_64_section = print_x86_64_text_section;
 	func.i386_section = print_i386_text_section;
 	func.load = NULL;
+	ft_bzero(&ctx, sizeof(t_ctx));
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	file = ctx.file;
-	status = file_multiplexer(file, &ctx, &func, TRUE);
+	status = file_multiplexer(ctx.file, &ctx, &func, TRUE);
 	if (cleanup_ctx(&ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (status);
