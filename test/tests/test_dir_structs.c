@@ -1,5 +1,21 @@
 #include "../tests.h"
 
+// Too long, test outside
+	// "test/artifacts/binary/64_exe_hard",
+	// "test/artifacts/binary/cvfsdb_sbin",
+	// "test/artifacts/binary/bash",
+	// "test/artifacts/binary/32_exe_hard",
+	// "test/artifacts/binary/undumpedbin",
+	// "test/artifacts/binary/64_bundle",
+	// "test/artifacts/binary/emacs-undumped",
+// Too long, test outside
+	// "test/artifacts/fat/big_fat",
+	// "test/artifacts/fat/distnoted",
+	// "test/artifacts/fat/sqlite3",
+	// "test/artifacts/fat/fat_corr6",
+// outputs to stderr
+	// "test/artifacts/fat/fat_corr7",
+
 char	*archive_file_params[] = {
 	"test/artifacts/archive/macho_lft_macho.a",
 	"test/artifacts/archive/libft32.a",
@@ -26,15 +42,6 @@ char	*archive_file_params[] = {
 	"test/artifacts/archive/archiveception_niv1.a",
 	NULL
 };
-
-// Too long, test outside
-	// "test/artifacts/binary/64_exe_hard",
-	// "test/artifacts/binary/cvfsdb_sbin",
-	// "test/artifacts/binary/bash",
-	// "test/artifacts/binary/32_exe_hard",
-	// "test/artifacts/binary/undumpedbin",
-	// "test/artifacts/binary/64_bundle",
-	// "test/artifacts/binary/emacs-undumped",
 
 char	*binary_file_params[] = {
 	"test/artifacts/binary/hard_test_1",
@@ -92,15 +99,6 @@ char	*binary_file_params[] = {
 	"test/artifacts/binary/64_exe_medium",
 	NULL,
 };
-
-// Too long, test outside
-	// "test/artifacts/fat/big_fat",
-	// "test/artifacts/fat/distnoted",
-	// "test/artifacts/fat/sqlite3",
-	// "test/artifacts/fat/fat_corr6",
-
-// outputs to stderr
-	// "test/artifacts/fat/fat_corr7",
 
 char	*fat_file_params[] = {
 	"test/artifacts/fat/fat_hard",
