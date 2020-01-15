@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 21:23:12 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/14 00:54:42 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/15 13:31:44 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,21 +54,17 @@ static int		validate_symtab(char *file
 	sym = *symtab;
 	if (ctx->flags & SWAP)
 		swap_symtab_command(&sym, NX_UnknownByteOrder);
-	if (sym.symoff > ctx->size)
-		return (EXIT_FAILURE);
-	else if (sym.symoff >= 0 && sym.symoff <
+	if ((sym.symoff > ctx->size)
+		|| (sym.symoff >= header->sizeofcmds && sym.symoff <
 		(sizeof(struct mach_header_64) + header->sizeofcmds))
-		return (EXIT_FAILURE);
-	else if (sym.symoff + sym.nsyms * sizeof(struct nlist_64) > 0 &&
+		|| (sym.symoff + sym.nsyms * sizeof(struct nlist_64) > header->sizeofcmds &&
 		sym.symoff + sym.nsyms * sizeof(struct nlist_64) <
 			(sizeof(struct mach_header_64) + header->sizeofcmds))
-		return (EXIT_FAILURE);
-	else if (sym.symoff <= 0 &&
+		|| (sym.symoff <= header->sizeofcmds &&
 		sym.symoff + (sym.nsyms) * sizeof(struct nlist_64) >=
 			(sizeof(struct mach_header_64) + header->sizeofcmds))
-		return (EXIT_FAILURE);
-	else if ((sym.stroff + sym.strsize > ctx->size)
-		|| validate_symtab_entries(file, ctx, &sym))
+		|| ((sym.stroff + sym.strsize > ctx->size)
+			|| validate_symtab_entries(file, ctx, &sym)))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
@@ -130,23 +126,20 @@ int		validate_mach_i386(char *file, t_ctx *ctx)
 	if (ctx->flags & SWAP)
 		swap_mach_header(&header, NX_UnknownByteOrder);
 	offset = sizeof(struct mach_header);
-	while (i < header.ncmds)
+	while (i++ < header.ncmds)
 	{
 		if (file + offset + sizeof(struct load_command) > file + sizeof(struct mach_header) + header.sizeofcmds)
 			return (EXIT_FAILURE);
 		lc = *(struct load_command*)(file + offset);
 		if (ctx->flags & SWAP)
 			swap_load_command(&lc, NX_UnknownByteOrder);
-		if (lc.cmdsize % 4)
-			return (EXIT_FAILURE);
-		else if (lc.cmd == LC_SEGMENT && validate_segment(file, ctx
+		if ((lc.cmdsize % 4)
+			|| (lc.cmd == LC_SEGMENT && validate_segment(file, ctx
 				, (struct segment_command*)(file + offset)) == EXIT_FAILURE)
-			return (EXIT_FAILURE);
-		else if (lc.cmd == LC_SYMTAB && validate_symtab(file, ctx
-				, (struct symtab_command*)(file + offset), &header) == EXIT_FAILURE)
+			|| (lc.cmd == LC_SYMTAB && validate_symtab(file, ctx
+				, (struct symtab_command*)(file + offset), &header) == EXIT_FAILURE))
 			return (EXIT_FAILURE);
 		offset += lc.cmdsize;
-		i += 1;
 	}
 	return (EXIT_SUCCESS);
 }

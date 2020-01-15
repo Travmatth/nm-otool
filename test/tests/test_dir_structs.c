@@ -137,25 +137,6 @@ char	*fat_file_params[] = {
 	NULL
 };
 
-char	*files_file_params[] = {
-	"test/artifacts/files/fichier_vide",
-	"test/artifacts/files/big_ar.c",
-	"test/artifacts/files/errftnm",
-	"test/artifacts/files/res",
-	"test/artifacts/files/resftnm",
-	"test/artifacts/files/errnm",
-	"test/artifacts/files/test1.c",
-	"test/artifacts/files/resnm",
-	"test/artifacts/files/empty_file",
-	"test/artifacts/files/diff",
-	"test/artifacts/files/test.c",
-	"test/artifacts/files/mine",
-	"test/artifacts/files/mine_err",
-	"test/artifacts/files/corr1",
-	NULL,
-};
-
-
 char	*lib_file_params[] = {
 	"test/artifacts/lib/libsqlite3.dylib",
 	"test/artifacts/lib/libblas.dylib",
