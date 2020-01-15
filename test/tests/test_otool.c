@@ -105,11 +105,37 @@ test_otool_main_object_files(
 	return MUNIT_OK;
 }
 
+extern char	*lib_file_params[];
+
+static MunitParameterEnum lib_params[] = {
+	{"file", lib_file_params},
+	{NULL, NULL},
+};
+
+static MunitResult
+test_otool_main_lib_files(
+	const MunitParameter params[], void *fix) {
+	struct fixture *fixture = (struct fixture *)fix;
+	char *out, *argv[2] = { "./ft_otool", params->value };
+
+	int status = otool_main(2, argv, NULL);
+	if (strcmp(params->value, "test/artifacts/lib/lib_archive_medium"))
+		munit_assert_int(fixture->exit_status, ==, status);
+	if (fixture->exit_status == EXIT_SUCCESS &&
+		strcmp(params->value, "test/artifacts/lib/lib_archive_medium")) {
+		if (fd_to_str(fixture->stdout_fds[0], &out))
+			return MUNIT_ERROR;
+		munit_assert_string_equal(fixture->otool_output, out);
+	}
+	return MUNIT_OK;
+}
+
 static MunitTest tests[] = {
 //{ name , test , setup , tear_down , options, parameters },
  { "test_otool_main_binary_files", test_otool_main_binary_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, binary_params },
  { "test_otool_main_fat_files", test_otool_main_fat_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, fat_params },
  { "test_otool_main_object_files", test_otool_main_object_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, object_params },
+ { "test_otool_main_lib_files", test_otool_main_lib_files, test_setup, test_teardown, MUNIT_TEST_OPTION_NONE, lib_params },
  /* Mark the end of the array with an entry where the test function is NULL */
  { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL }
 };
