@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/12 22:58:15 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/15 15:50:57 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int			determine_file(char *file, t_ctx *ctx)
 		return (EXIT_SUCCESS);
 	else if (is_mach64(ctx, magic) == EXIT_SUCCESS)
 		return (EXIT_SUCCESS);
-	return (is_archive(ctx));
+	return (is_archive(file, ctx));
 }
 
 /*

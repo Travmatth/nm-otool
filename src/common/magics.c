@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/20 12:35:51 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/07 14:12:48 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/15 15:50:39 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,15 @@ int		is_mach32(t_ctx *ctx, uint32_t magic)
 ** @return {int} 0 on success, 1 on error
 */
 
-int		is_archive(t_ctx *ctx)
+int		is_archive(char *file, t_ctx *ctx)
 {
 	char	name[SARMAG + 4];
 
 	ft_strcpy(name, ARMAG);
 	ft_strcat(name, AR_EFMT1);
-	if (ctx->size >= SARMAG + 2 && !ft_strncmp(name, ctx->file, SARMAG + 2))
+	if (ctx->size >= SARMAG + 2 && !ft_strncmp(name, file, SARMAG + 2))
 		ctx->flags |= IS_EXTENDED_ARCHIVE;
-	else if (ctx->size >= SARMAG && !ft_strncmp(name, ctx->file, SARMAG))
+	else if (ctx->size >= SARMAG && !ft_strncmp(name, file, SARMAG))
 		ctx->flags |= IS_ARCHIVE;
 	else
 		return (EXIT_FAILURE);

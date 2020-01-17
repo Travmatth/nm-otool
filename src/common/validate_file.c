@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/13 23:38:45 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/15 15:16:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int		validate_file(char *file, t_ctx *ctx, int classify)
 		status = validate_mach_i386(file, ctx);
 	else if ((f & IS_MACH) && (f & IS_64) && (f & SWAP))
 		status = EXIT_SUCCESS;
+	else if ((f & IS_EXTENDED_ARCHIVE))
+		status = validate_extended_archive(file, ctx);
 	if (classify == TRUE)
 		ctx->flags = flags;
 	return (status);

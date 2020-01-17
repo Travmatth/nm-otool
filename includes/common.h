@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/13 16:56:18 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/01/15 15:51:08 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,17 @@
 
 # define MAX_SECTION_ALIGNMENT 15
 
-
 /*
 ** common/validate_file.c
 */
 
 int			validate_file(char *file, t_ctx *ctx, int classify);
+
+/*
+** common/validate_archive.c
+*/
+
+int			validate_extended_archive(char *file, t_ctx *ctx);
 
 /*
 ** common/validate_i386.c
@@ -109,7 +114,7 @@ int			is_fat32(t_ctx *ctx, uint32_t magic);
 int			is_fat64(t_ctx *ctx, uint32_t magic);
 int			is_mach64(t_ctx *ctx, uint32_t magic);
 int			is_mach32(t_ctx *ctx, uint32_t magic);
-int			is_archive(t_ctx *ctx);
+int			is_archive(char *file, t_ctx *ctx);
 
 /*
 ** common/utils.c
