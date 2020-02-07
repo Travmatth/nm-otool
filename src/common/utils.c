@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/15 15:50:57 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/06 21:48:57 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,6 @@ uint32_t		uint32_pow(uint32_t base, uint32_t power)
 	return (half * half * (power % 2 ? base : 1));
 }
 
-uint32_t	swap(t_ctx *ctx, uint32_t val)
-{
-	return ((ctx->flags & SWAP) ? OSSwapInt32(val) : val);
-}
-
 /*
 ** opens file passed in argv[1], verifies not a dir, maps it to **file
 ** @param {int} # of args passed to program
@@ -81,28 +76,6 @@ int			get_file(int argc, char **argv, char **envp, t_ctx *ctx)
 		return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
-}
-
-/*
-** determine if given file is FAT, 32/64bit Mach-O binary, or archive
-** @param {t_ctx*} struct containing file
-** @return {int} 0 on success, 1 on error
-*/
-
-int			determine_file(char *file, t_ctx *ctx)
-{
-	uint32_t	magic;
-
-	magic = *(uint32_t*)file;
-	if (is_fat32(ctx, magic) == EXIT_SUCCESS)
-		return (EXIT_SUCCESS);
-	else if (is_fat64(ctx, magic) == EXIT_SUCCESS)
-		return (EXIT_SUCCESS);
-	else if (is_mach32(ctx, magic) == EXIT_SUCCESS)
-		return (EXIT_SUCCESS);
-	else if (is_mach64(ctx, magic) == EXIT_SUCCESS)
-		return (EXIT_SUCCESS);
-	return (is_archive(file, ctx));
 }
 
 /*

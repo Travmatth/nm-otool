@@ -16,7 +16,7 @@ test_dump_fat_bin_dumps(
 	(void)fixture;
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(file_multiplexer(ctx.file, &ctx, &funcs, TRUE), ==, EXIT_SUCCESS);
+	munit_assert_int(validate_multiplex(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_header_calls, ==, 1);

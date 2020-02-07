@@ -21,20 +21,20 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_i386_sections(char *file, int swap, struct segment_command *segment, t_dump_fxs *dump)
+int		dump_i386_sections(char *file, struct segment_command *segment, t_dump_fxs *dump, int flags)
 {
 	uint32_t		nsects;
 	uint32_t		offset;
 	struct section	*section;
 	void			*addr;
 
-	nsects = swap ? OSSwapInt32(segment->nsects) : segment->nsects;
+	nsects = flags & SWAP ? OSSwapInt32(segment->nsects) : segment->nsects;
 	offset = ((char*)segment - file) + sizeof(struct segment_command);
 	while (nsects--)
 	{
 		section = (struct section*)(file + offset);
-		addr = file + (swap ? OSSwapInt32(section->offset) : section->offset);
-		if (dump->i386_section && !OK(dump->i386_section(file, swap, section)))
+		addr = file + (flags & SWAP ? OSSwapInt32(section->offset) : section->offset);
+		if (dump->i386_section && !OK(dump->i386_section(file, flags & SWAP, section)))
 				return (EXIT_FAILURE);
 		offset += sizeof(struct section);
 	}
@@ -49,33 +49,30 @@ int		dump_i386_sections(char *file, int swap, struct segment_command *segment, t
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *dump)
+int		dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags)
 {
-	struct mach_header	*hdr;
 	t_lcommand			u;
-	int					swap;
+	struct mach_header	*hdr;
 	uint64_t			ncmds;
 	uint64_t			offset;
 
-	swap = (ctx->flags & SWAP);
 	hdr = (struct mach_header*)file;
-	ncmds = swap ? OSSwapInt32(hdr->ncmds) : hdr->ncmds;
+	ncmds = (flags & SWAP) ? OSSwapInt32(hdr->ncmds) : hdr->ncmds;
 	offset = sizeof(struct mach_header);
 	if (dump->header && !OK(dump->header(file, ctx, hdr, NULL)))
 		return (EXIT_FAILURE);
 	print_section_prologue(file, ctx);
 	while (ncmds--)
 	{
-		u.load = (struct load_command*)(file + offset);
-		if (swap ? (OSSwapInt32(u.load->cmd) == LC_SEGMENT) : (u.load->cmd == LC_SEGMENT))
-		{
-			if ((dump->segment && !OK(dump->segment(file, ctx, u.segment, NULL)))
-				|| (!OK(dump_i386_sections(file, swap, u.segment, dump))))
-				return (EXIT_FAILURE);
-		}
-		else if (dump->load && !OK(dump->load(file, ctx, NULL, u.load)))
+		if ((u.load = (struct load_command*)(file + offset)) && flags & SWAP)
+			swap_load_command(u.load, NX_UnknownByteOrder);
+		if (u.load->cmd == LC_SEGMENT && dump->segment &&
+			((!OK(dump->segment(file, ctx, u.segment, NULL)))
+				|| (!OK(dump_i386_sections(file, u.segment, dump, flags)))))
 			return (EXIT_FAILURE);
-		offset += swap ? OSSwapInt32(u.load->cmdsize) : u.load->cmdsize;
+		if (dump->load && !OK(dump->load(file, ctx, NULL, u.load)))
+			return (EXIT_FAILURE);
+		offset += u.load->cmdsize;
 	}
 	return (EXIT_SUCCESS);
 }

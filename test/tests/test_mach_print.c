@@ -23,6 +23,7 @@ static MunitResult
 test_print_i386_text_section(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
+	int flags;
 	struct fixture s;
 	char *out, *argv[2] = { NULL, "test/artifacts/binary/main32" };
 	t_dump_fxs funcs = { NULL, NULL, print_i386_text_section, NULL, NULL };
@@ -30,16 +31,13 @@ test_print_i386_text_section(
 	bzero(&ctx, sizeof(t_ctx));
 	if (swap_stdout(&s) == EXIT_FAILURE)
 		return MUNIT_ERROR;
-	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return MUNIT_FAIL;
-	else if (validate_file(ctx.file, &ctx, TRUE) == EXIT_FAILURE)
-		return MUNIT_FAIL;
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(validate_unknown(ctx.file, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_magic(ctx.file, &flags), ==, EXIT_SUCCESS);
 	// run func under test
-	else if (dump_mach_i386(ctx.file, &ctx, &funcs) == EXIT_FAILURE)
-		return MUNIT_FAIL;
+	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs, flags), ==, EXIT_SUCCESS);
 	// close resources
-	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return MUNIT_FAIL;
+	munit_assert_int(cleanup_ctx(&ctx), ==, EXIT_SUCCESS);
 	// evaluate test
 	int status = fd_to_str(s.stdout_fds[0], &out);
 	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
@@ -59,14 +57,9 @@ test_print_swapped_i386_text_section(
 	bzero(&ctx, sizeof(t_ctx));
 	if (swap_stdout(&s) == EXIT_FAILURE)
 		return MUNIT_ERROR;
-	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return MUNIT_FAIL;
-	// run func under test
-	else if (file_multiplexer(ctx.file, &ctx, &funcs, TRUE) == EXIT_FAILURE)
-		return MUNIT_FAIL;
-	// close resources
-	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return MUNIT_FAIL;
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(validate_multiplex(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(cleanup_ctx(&ctx), ==, EXIT_SUCCESS);
 	// evaluate test
 	struct stat buf;
 	int b = open("test/tests/swapped_ref.txt", O_RDONLY);
@@ -97,17 +90,10 @@ test_print_x86_64_text_section(
 	bzero(&ctx, sizeof(t_ctx));
 	if (swap_stdout(&s) == EXIT_FAILURE)
 		return MUNIT_ERROR;
-	else if (get_file(2, argv, NULL, &ctx) == EXIT_FAILURE)
-		return MUNIT_FAIL;
-	else if (validate_file(ctx.file, &ctx, TRUE) == EXIT_FAILURE)
-		return MUNIT_FAIL;
-	// run func under test
-	else if (dump_mach_x86_64(ctx.file, &ctx, &funcs) == EXIT_FAILURE)
-		return MUNIT_FAIL;
-	// close resources
-	else if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
-		return MUNIT_FAIL;
-	// evaluate test
+	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(validate_unknown(ctx.file, &ctx), ==, EXIT_SUCCESS);
+	munit_assert_int(dump_mach_x86_64(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(cleanup_ctx(&ctx), ==, EXIT_SUCCESS);
 	int status = fd_to_str(s.stdout_fds[0], &out);
 	if (restore_stdout(&s) == EXIT_FAILURE || status == EXIT_FAILURE)
 		return MUNIT_ERROR;

@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/20 12:35:51 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/15 15:50:39 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/06 16:11:06 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@
 ** @return {int} 0 on success, 1 on error
 */
 
-int		is_fat32(t_ctx *ctx, uint32_t magic)
+int		is_fat32(int *flags, uint32_t magic)
 {
 	if (magic == FAT_MAGIC)
 	{
-		ctx->flags |= IS_32;
-		ctx->flags |= IS_FAT;
+		*flags |= IS_32;
+		*flags |= IS_FAT;
 	}
 	else if (magic == FAT_CIGAM)
 	{
-		ctx->flags |= IS_32;
-		ctx->flags |= IS_FAT;
-		ctx->flags |= SWAP;
+		*flags |= IS_32;
+		*flags |= IS_FAT;
+		*flags |= SWAP;
 	}
 	else
 		return (EXIT_FAILURE);
@@ -44,14 +44,14 @@ int		is_fat32(t_ctx *ctx, uint32_t magic)
 ** @return {int} 0 on success, 1 on error
 */
 
-int		is_fat64(t_ctx *ctx, uint32_t magic)
+int		is_fat64(int *flags, uint32_t magic)
 {
 	if (magic == FAT_MAGIC_64)
-		ctx->flags |= IS_FAT;
+		*flags |= IS_FAT;
 	else if (magic == FAT_CIGAM_64)
 	{
-		ctx->flags |= IS_FAT;
-		ctx->flags |= SWAP;
+		*flags |= IS_FAT;
+		*flags |= SWAP;
 	}
 	else
 		return (EXIT_FAILURE);
@@ -65,19 +65,19 @@ int		is_fat64(t_ctx *ctx, uint32_t magic)
 ** @return {int} 0 on success, 1 on error
 */
 
-int		is_mach64(t_ctx *ctx, uint32_t magic)
+int		is_mach64(int *flags, uint32_t magic)
 {
 	if (magic == MH_CIGAM_64)
 	{
-		ctx->flags |= IS_64;
-		ctx->flags |= SWAP;
-		ctx->flags |= IS_MACH;
+		*flags |= IS_64;
+		*flags |= SWAP;
+		*flags |= IS_MACH;
 		return (EXIT_SUCCESS);
 	}
 	else if (magic == MH_MAGIC_64)
 	{
-		ctx->flags |= IS_MACH;
-		ctx->flags |= IS_64;
+		*flags |= IS_MACH;
+		*flags |= IS_64;
 		return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
@@ -90,18 +90,18 @@ int		is_mach64(t_ctx *ctx, uint32_t magic)
 ** @return {int} 0 on success, 1 on error
 */
 
-int		is_mach32(t_ctx *ctx, uint32_t magic)
+int		is_mach32(int *flags, uint32_t magic)
 {
 	if (magic == MH_MAGIC)
 	{
-		ctx->flags |= IS_32;
-		ctx->flags |= IS_MACH;
+		*flags |= IS_32;
+		*flags |= IS_MACH;
 	}
 	else if (magic == MH_CIGAM)
 	{
-		ctx->flags |= IS_32;
-		ctx->flags |= SWAP;
-		ctx->flags |= IS_MACH;
+		*flags |= IS_32;
+		*flags |= SWAP;
+		*flags |= IS_MACH;
 	}
 	else
 		return (EXIT_FAILURE);
@@ -115,16 +115,16 @@ int		is_mach32(t_ctx *ctx, uint32_t magic)
 ** @return {int} 0 on success, 1 on error
 */
 
-int		is_archive(char *file, t_ctx *ctx)
+int		is_archive(char *file, int *flags)
 {
 	char	name[SARMAG + 4];
 
 	ft_strcpy(name, ARMAG);
 	ft_strcat(name, AR_EFMT1);
-	if (ctx->size >= SARMAG + 2 && !ft_strncmp(name, file, SARMAG + 2))
-		ctx->flags |= IS_EXTENDED_ARCHIVE;
-	else if (ctx->size >= SARMAG && !ft_strncmp(name, file, SARMAG))
-		ctx->flags |= IS_ARCHIVE;
+	if (!ft_strncmp(name, file, SARMAG + 2))
+		*flags |= IS_EXTENDED_ARCHIVE;
+	else if (!ft_strncmp(name, file, SARMAG))
+		*flags |= IS_ARCHIVE;
 	else
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);

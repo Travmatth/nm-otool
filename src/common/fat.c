@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/13 20:24:50 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/06 22:34:31 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,13 @@ int		dump_fat_bin(char *file, t_ctx *ctx, t_dump_fxs *dump)
 		subtype = OSSwapInt32(arch->cpusubtype & CPU_SUBTYPE_MASK);
 		if (OSSwapInt32(arch->cputype) == CPU_TYPE_X86_64 &&
 			subtype == CPU_SUBTYPE_X86_64_ALL)
-			file_multiplexer(file + OSSwapInt32(arch->offset), ctx, dump, FALSE);
+			validate_multiplex(file + OSSwapInt32(arch->offset), ctx, dump);
 		else if (ctx->has_x86_64 == FALSE && OSSwapInt32(arch->cputype) == CPU_TYPE_POWERPC &&
 			subtype == CPU_SUBTYPE_POWERPC_ALL)
-			file_multiplexer(file + OSSwapInt32(arch->offset), ctx, dump, FALSE);
+			validate_multiplex(file + OSSwapInt32(arch->offset), ctx, dump);
 		else if (ctx->has_x86_64 == FALSE && OSSwapInt32(arch->cputype) == CPU_TYPE_I386 &&
 			subtype == CPU_SUBTYPE_I386_ALL)
-			file_multiplexer(file + OSSwapInt32(arch->offset), ctx, dump, FALSE);
+			validate_multiplex(file + OSSwapInt32(arch->offset), ctx, dump);
 		offset += sizeof(struct fat_arch);
 	}
 	return (EXIT_SUCCESS);

@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 19:21:46 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/12 22:55:15 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/06 21:48:01 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ typedef struct						s_ctx
 {
 	char							*file;
 	char							*filename;
-	int								flags;
 	uint32_t						magic;
 	size_t							size;
 	int								has_x86_64;

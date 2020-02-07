@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/15 15:51:08 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/06 22:34:38 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@
 ** common/validate_file.c
 */
 
-int			validate_file(char *file, t_ctx *ctx, int classify);
+int			determine_magic(char *file, int *flags);
+int			validate_file(char *file, t_ctx *ctx, int flags);
+int			validate_file_flags(char *file, t_ctx *ctx, int *flags);
+int			validate_unknown(char *file, t_ctx *ctx);
 
 /*
 ** common/validate_archive.c
@@ -81,19 +84,19 @@ int			validate_extended_archive(char *file, t_ctx *ctx);
 ** common/validate_i386.c
 */
 
-int			validate_mach_i386(char *file, t_ctx *ctx);
+int			validate_mach_i386(char *file, t_ctx *ctx, int flags);
 
 /*
 ** common/validate_x86_64.c
 */
 
-int			validate_mach_x86_64(char *file, t_ctx *ctx);
+int			validate_mach_x86_64(char *file, t_ctx *ctx, int flags);
 
 /*
 ** common/validate_fat.c
 */
 
-int			validate_fat(char *file, t_ctx *ctx);
+int			validate_fat(char *file, t_ctx *ctx, int flags);
 
 /*
 ** common/format.c
@@ -110,21 +113,20 @@ void		format_mem(char *file
 ** common/magics.c
 */
 
-int			is_fat32(t_ctx *ctx, uint32_t magic);
-int			is_fat64(t_ctx *ctx, uint32_t magic);
-int			is_mach64(t_ctx *ctx, uint32_t magic);
-int			is_mach32(t_ctx *ctx, uint32_t magic);
-int			is_archive(char *file, t_ctx *ctx);
+int			is_fat32(int *flags, uint32_t magic);
+int			is_fat64(int *flags, uint32_t magic);
+int			is_mach64(int *flags, uint32_t magic);
+int			is_mach32(int *flags, uint32_t magic);
+int			is_archive(char *file, int *flags);
 
 /*
 ** common/utils.c
 */
 
-uint32_t		uint32_pow(uint32_t base, uint32_t power);
+uint32_t	uint32_pow(uint32_t base, uint32_t power);
 void		print_section_prologue(char *file, t_ctx *ctx);
 uint32_t	swap(t_ctx *ctx, uint32_t val);
 int			get_file(int argc, char **argv, char **envp, t_ctx *ctx);
-int			determine_file(char *file, t_ctx *ctx);
 int			cleanup_ctx(t_ctx *ctx);
 
 
@@ -132,16 +134,14 @@ int			cleanup_ctx(t_ctx *ctx);
 ** common/file_multiplexer
 */
 
-int			file_multiplexer(char *file
-							, t_ctx *ctx
-							, t_dump_fxs *dump
-							, int validate);
+int			file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags);
+int			validate_multiplex(char *file, t_ctx *ctx, t_dump_fxs *dump);
 
 /*
 ** common/mach_i386.c
 */
 
-int			dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *fxs);
+int			dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *fxs, int flags);
 
 /*
 ** common/mach_x86_64.c

@@ -6,37 +6,35 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 14:22:21 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/13 23:33:48 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/06 22:43:27 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
 
-int		file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int validate)
+int		file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags)
 {
-	int		f;
+	int		status;
+
+	status = EXIT_SUCCESS;
+	if ((flags & IS_FAT))
+		status = dump_fat_bin(file, ctx, dump);
+	else if ((flags & IS_32) && (flags & IS_MACH))
+		status = dump_mach_i386(file, ctx, dump, flags);
+	else if ((flags & IS_64) && (flags & IS_MACH) && !(flags & SWAP))
+		status = dump_mach_x86_64(file, ctx, dump);
+	else if ((flags & IS_64) && (flags & IS_MACH) && (flags & SWAP))
+		status = EXIT_SUCCESS;
+	return (status);
+}
+
+int		validate_multiplex(char *file, t_ctx *ctx, t_dump_fxs *dump)
+{
 	int		flags;
 	int		status;
 
-	flags = ctx->flags;
-	ctx->flags = 0;
 	status = EXIT_SUCCESS;
-	if (validate == TRUE && !OK(validate_file(file, ctx, FALSE)))
-	{
-		ctx->flags = flags;
+	if (!OK(validate_file_flags(file, ctx, &flags)))
 		return (EXIT_FAILURE);
-	}
-	else if (validate == FALSE)
-		determine_file(file, ctx);
-	f = ctx->flags;
-	if ((f & IS_FAT))
-		status = dump_fat_bin(file, ctx, dump);
-	else if ((f & IS_32) && (f & IS_MACH))
-		status = dump_mach_i386(file, ctx, dump);
-	else if ((f & IS_64) && (f & IS_MACH) && !(f & SWAP))
-		status = dump_mach_x86_64(file, ctx, dump);
-	else if ((f & IS_64) && (f & IS_MACH) && (f & SWAP))
-		status = EXIT_SUCCESS;
-	ctx->flags = flags;
-	return (status);
+	return (file_multiplexer(file, ctx, dump, flags));
 }
