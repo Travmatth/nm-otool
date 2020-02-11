@@ -12,7 +12,7 @@ test_dump_mach_i386_dumps_machi386(
 	t_ctx ctx;
 	int flags = 0;
 	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
-	t_dump_fxs funcs = {verify_header, verify_segments, verify_i386_sections, NULL, verify_load_command };
+	t_dump_fxs funcs = {verify_i386_header, NULL, verify_i386_segments, NULL, verify_i386_sections, NULL, verify_load_command };
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
@@ -37,7 +37,7 @@ test_mach_i386_segment_addr(
 	t_ctx ctx;
 	int flags = 0;
 	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
-	t_dump_fxs funcs = { NULL, verify_segment_address, NULL, NULL, NULL	};
+	t_dump_fxs funcs = {NULL, NULL, verify_i386_segment_address, NULL, NULL, NULL, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
@@ -56,7 +56,7 @@ test_machi386_section_addr(
 	t_ctx ctx;
 	int flags = 0;
 	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
-	t_dump_fxs funcs = { NULL, NULL, verify_section_i386_address, NULL, NULL };
+	t_dump_fxs funcs = {NULL, NULL, verify_i386_segment_address, NULL, verify_section_i386_address, NULL, NULL };
 
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);

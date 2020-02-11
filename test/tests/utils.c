@@ -9,10 +9,18 @@ int	g_segment_calls = 0;
 int	g_lc_calls = 0;
 int	g_section_calls = 0;
 
-int		verify_segments(char *file, t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
+int		verify_i386_segments(char *file, t_ctx *ctx, int flags, struct segment_command *segment) {
 	(void)file;
 	(void)ctx;
+	(void)flags;
 	(void)segment;
+	g_segment_calls += 1;
+	return EXIT_SUCCESS;
+}
+
+int		verify_x86_64_segments(char *file, t_ctx *ctx, struct segment_command_64 *segment_64) {
+	(void)file;
+	(void)ctx;
 	(void)segment_64;
 	g_segment_calls += 1;
 	return EXIT_SUCCESS;
@@ -42,9 +50,20 @@ int		verify_x86_64_sections(char *file, struct section_64 *section) {
 	return EXIT_SUCCESS;
 }
 
-int		verify_segment_address(char *file, t_ctx *ctx, struct segment_command *segment, struct segment_command_64 *segment_64) {
+int		verify_i386_segment_address(char *file, t_ctx *ctx, int flags, struct segment_command *segment) {
 	(void)ctx;
-	(void)segment_64;
+	(void)flags;
+	if (!strcmp(segment->segname, "__TEXT")) {
+		uint32_t magic = *(uint32_t *)file + segment->fileoff;
+		if (magic == MH_MAGIC)
+			g_segment_calls += 1;
+	}
+	return EXIT_SUCCESS;
+}
+
+int		verify_x86_64_segment_address(char *file, t_ctx *ctx, int flags, struct segment_command *segment) {
+	(void)ctx;
+	(void)flags;
 	if (!strcmp(segment->segname, "__TEXT")) {
 		uint32_t magic = *(uint32_t *)file + segment->fileoff;
 		if (magic == MH_MAGIC)
@@ -72,10 +91,9 @@ int		verify_section_x86_64_address(char *file, struct section_64 *sect) {
 	return EXIT_SUCCESS;
 }
 
-int		verify_header(char *file, t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64) {
+int		verify_i386_header(char *file, int flags, struct mach_header *header) {
 	(void)file;
-	(void)ctx;
-	(void)header_64;
+	(void)flags;
 	if (header) {
 		if (header->magic == MH_MAGIC)
 			g_header_calls += 1;
@@ -94,10 +112,8 @@ int		verify_section64_address(char *file, t_ctx *ctx, struct section *sect, stru
 	return EXIT_SUCCESS;
 }
 
-int		verify_header64(char *file, t_ctx *ctx, struct mach_header *header, struct mach_header_64 *header_64) {
+int		verify_header64(char *file, struct mach_header_64 *header_64) {
 	(void)file;
-	(void)ctx;
-	(void)header;
 	if (header_64) {
 		if (header_64->magic == MH_MAGIC_64)
 			g_header_calls += 1;

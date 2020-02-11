@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 19:21:46 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 21:48:01 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 15:20:38 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,36 +62,62 @@ typedef struct						s_ctx
 ** signature of functions passed into dump_* functions
 */
 
-typedef int							(*t_hdr_f)(char *file
-										, t_ctx *ctx
-										, struct mach_header *header
-										, struct mach_header_64 *header_64);
-typedef int							(*t_seg_f)(char *file
-										, t_ctx *ctx
-										, struct segment_command *segment
-										, struct segment_command_64 *segment_64);
-typedef int							(*t_sec_i386_f)(char *file
-										, int swap
-										, struct section *section);
-typedef int							(*t_sec_x86_64_f)(char *file
-										, struct section_64 *section);
-typedef int							(*t_lc_f)(char *file
-										, t_ctx *ctx
-										, struct load_command *lc
-										, void *addr);
+/*
+**
+*/
+
+typedef int								(*t_hdr_i386_f)(char *file
+											, int flags
+											, struct mach_header *header);
+typedef int								(*t_hdr_x86_64_f)(char *file
+											, struct mach_header_64 *header_64);
+
+/*
+**
+*/
+
+typedef int								(*t_seg_i386_f)(char *file
+											, t_ctx *ctx
+											, int flags
+											, struct segment_command *segment);
+typedef int								(*t_seg_x86_64_f)(char *file
+											, t_ctx *ctx
+											, int flags
+											, struct segment_command_64 *segment_64);
+
+/*
+**
+*/
+
+typedef int								(*t_sec_i386_f)(char *file
+											, int flags
+											, struct section *section);
+typedef int								(*t_sec_x86_64_f)(char *file
+											, struct section_64 *section);
+
+/*
+**
+*/
+
+typedef int								(*t_lc_f)(char *file
+											, t_ctx *ctx
+											, struct load_command *lc
+											, void *addr);
 
 /*
 ** struct containing functions called when dumping different parts of binary
 */
 
-typedef struct						s_dump_fxs
+typedef struct							s_dump_fxs
 {
-	t_hdr_f							header;
-	t_seg_f							segment;
-	t_sec_i386_f					i386_section;
-	t_sec_x86_64_f					x86_64_section;
-	t_lc_f							load;
-}									t_dump_fxs;
+	t_hdr_i386_f						i386_header;
+	t_hdr_x86_64_f						x86_64_header;
+	t_seg_i386_f						i386_segment;
+	t_seg_x86_64_f						x86_64_segment;
+	t_sec_i386_f						i386_section;
+	t_sec_x86_64_f						x86_64_section;
+	t_lc_f								load;
+}										t_dump_fxs;
 
 typedef union							u_lcommand
 {

@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 15:58:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/12 15:24:39 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 15:16:54 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int		dump_x86_64_sections(char *file, struct segment_command_64 *segment, t_dump
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		dump_mach_x86_64(char *file, t_ctx *ctx, t_dump_fxs *dump)
+int		dump_mach_x86_64(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags)
 {
 	struct mach_header_64	*hdr;
 	t_lcommand				u;
@@ -59,19 +59,13 @@ int		dump_mach_x86_64(char *file, t_ctx *ctx, t_dump_fxs *dump)
 	i = 0;
 	hdr = (struct mach_header_64*)file;
 	offset = sizeof(struct mach_header_64);
-	if (dump->header && !OK(dump->header(file, ctx, NULL, hdr)))
+	if (dump->x86_64_header && !OK(dump->x86_64_header(file, hdr)))
 		return (EXIT_FAILURE);
 	print_section_prologue(file, ctx);
 	while (i++ < hdr->ncmds)
 	{
 		u.load = (struct load_command*)(file + offset);
-		if (u.load->cmd == LC_SEGMENT_64)
-		{
-			if ((dump->segment && !OK(dump->segment(file, ctx, NULL, u.segment64)))
-				|| (!OK(dump_x86_64_sections(file, u.segment64, dump))))
-				return (EXIT_FAILURE);
-		}
-		else if (dump->load && !OK(dump->load(file, ctx, NULL, u.load)))
+		if (dump_load_command(file, ctx, dump, flags, &u) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 		offset += u.load->cmdsize;
 	}

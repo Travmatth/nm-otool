@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 14:22:21 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 22:43:27 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 15:00:59 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int		file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags)
 	else if ((flags & IS_32) && (flags & IS_MACH))
 		status = dump_mach_i386(file, ctx, dump, flags);
 	else if ((flags & IS_64) && (flags & IS_MACH) && !(flags & SWAP))
-		status = dump_mach_x86_64(file, ctx, dump);
+		status = dump_mach_x86_64(file, ctx, dump, flags);
 	else if ((flags & IS_64) && (flags & IS_MACH) && (flags & SWAP))
 		status = EXIT_SUCCESS;
 	return (status);

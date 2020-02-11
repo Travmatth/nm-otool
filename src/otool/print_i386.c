@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/12 19:26:43 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 15:21:36 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_i386_text_section(char *file, int swap, struct section *section)
+int		print_i386_text_section(char *file, int flags, struct section *section)
 {
 	struct section	sect;
 	uint64_t		current;
@@ -32,9 +32,9 @@ int		print_i386_text_section(char *file, int swap, struct section *section)
 	if (section && ft_strcmp(SECT_TEXT, section->sectname))
 		return (EXIT_SUCCESS);
 	ft_putendl("Contents of (__TEXT,__text) section");
-	sect.size = swap ? OSSwapInt32(section->size) : section->size;
-	sect.addr = swap ? OSSwapInt32(section->addr) : section->addr;
-	sect.offset = swap ? OSSwapInt32(section->offset) : section->offset;
+	sect.size = (flags & SWAP) ? OSSwapInt32(section->size) : section->size;
+	sect.addr = (flags & SWAP) ? OSSwapInt32(section->addr) : section->addr;
+	sect.offset = (flags & SWAP) ? OSSwapInt32(section->offset) : section->offset;
 	current = 0;
 	while (current < sect.size)
 	{
@@ -45,7 +45,7 @@ int		print_i386_text_section(char *file, int swap, struct section *section)
 			ft_putstr("	");
 		}
 		format_mem(file + sect.offset, &current, sect.size, mem);
-		if (!OK(print_memory_buf(swap, mem)))
+		if (!OK(print_memory_buf(flags, mem)))
 			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);

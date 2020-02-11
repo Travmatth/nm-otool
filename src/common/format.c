@@ -6,13 +6,13 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/28 23:20:18 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/12 19:40:28 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 15:21:57 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
 
-int		print_memory_buf(int swapped, char mem_buf[33])
+int		print_memory_buf(int flags, char mem_buf[33])
 {
 	int		i;
 
@@ -24,12 +24,12 @@ int		print_memory_buf(int swapped, char mem_buf[33])
 		if (write(STDOUT_FILENO, mem_buf + i, 2) == -1)
 			return (EXIT_FAILURE);
 		i += 2;
-		if (swapped && !(i % 8))
+		if ((flags & SWAP) && !(i % 8))
 		{
 			if (write(STDOUT_FILENO, " ", 1) == -1)
 				return (EXIT_FAILURE);
 		}
-		else if (!swapped && !(i % 2))
+		else if (!(flags & SWAP) && !(i % 2))
 		{
 			if (write(STDOUT_FILENO, " ", 1) == -1)
 				return (EXIT_FAILURE);

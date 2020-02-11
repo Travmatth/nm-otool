@@ -6,11 +6,22 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 16:55:23 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 14:59:32 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/otool.h"
+
+void	load_parse_functions(t_dump_fxs *func)
+{
+	func->i386_header = NULL;
+	func->x86_64_header = NULL;
+	func->i386_segment = NULL;
+	func->x86_64_segment = NULL;
+	func->x86_64_section = print_x86_64_text_section;
+	func->i386_section = print_i386_text_section;
+	func->load = NULL;
+}
 
 /*
 ** The objdump(1) option to display the contents of the (__TEXT,__text)
@@ -32,11 +43,7 @@ int		otool_main(int argc, char *argv[], char *envp[])
 	t_dump_fxs	func;
 	int			status;
 
-	func.header = NULL;
-	func.segment = NULL;
-	func.x86_64_section = print_x86_64_text_section;
-	func.i386_section = print_i386_text_section;
-	func.load = NULL;
+
 	ft_bzero(&ctx, sizeof(t_ctx));
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);

@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 22:34:38 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 15:06:25 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,16 +138,28 @@ int			file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags);
 int			validate_multiplex(char *file, t_ctx *ctx, t_dump_fxs *dump);
 
 /*
+** common/load_commands.c
+*/
+
+int			dump_load_command(char *file
+							, t_ctx *ctx
+							, t_dump_fxs *dump
+							, int flags
+							, t_lcommand *u);
+
+/*
 ** common/mach_i386.c
 */
 
+int			dump_i386_sections(char *file, struct segment_command *segment, t_dump_fxs *dump, int flags);
 int			dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *fxs, int flags);
 
 /*
 ** common/mach_x86_64.c
 */
 
-int			dump_mach_x86_64(char *file, t_ctx *ctx, t_dump_fxs *fxs);
+int			dump_x86_64_sections(char *file, struct segment_command_64 *segment, t_dump_fxs *dump);
+int			dump_mach_x86_64(char *file, t_ctx *ctx, t_dump_fxs *fxs, int flags);
 
 /*
 ** common/fat.c

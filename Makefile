@@ -17,7 +17,7 @@ IS_DEBUG =
 
 # common variables
 COMMON = file_multiplexer format magics utils
-COMMON += archive fat mach_i386 mach_x86_64
+COMMON += archive fat mach_i386 mach_x86_64 load_commands
 COMMON += validate_archive validate_file validate_fat validate_i386 validate_x86_64
 COMMON_FILES = $(addprefix src/common/, $(COMMON))
 COMMON_SRC = $(addsuffix .c, $(COMMON_FILES))
