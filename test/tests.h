@@ -31,7 +31,7 @@ int		restore_stderr(struct fixture *s);
 */
 
 int		verify_i386_segments(char *file, t_ctx *ctx, int flags, struct segment_command *segment);
-int		verify_x86_64_segments(char *file, t_ctx *ctx, struct segment_command_64 *segment_64);
+int		verify_x86_64_segments(char *file, t_ctx *ctx, int flags, struct segment_command_64 *segment_64);
 int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *addr);
 int		verify_i386_sections(char *file, int swap, struct section *section);
 int		verify_x86_64_sections(char *file, struct section_64 *section_64);

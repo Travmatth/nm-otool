@@ -23,7 +23,7 @@ static MunitResult
 test_print_i386_text_section(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
-	int flags;
+	int flags = 0;
 	struct fixture s;
 	char *out, *argv[2] = { NULL, "test/artifacts/binary/main32" };
 	t_dump_fxs funcs = {NULL, NULL, NULL, NULL, print_i386_text_section, NULL, NULL };
@@ -32,7 +32,6 @@ test_print_i386_text_section(
 	if (swap_stdout(&s) == EXIT_FAILURE)
 		return MUNIT_ERROR;
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(validate_unknown(ctx.file, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_magic(ctx.file, &flags), ==, EXIT_SUCCESS);
 	// run func under test
 	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs, flags), ==, EXIT_SUCCESS);
@@ -50,6 +49,7 @@ static MunitResult
 test_print_swapped_i386_text_section(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
+	int	flags = 0;
 	struct fixture s;
 	char *out, *argv[2] = { NULL, "test/artifacts/binary/ppc_only" };
 	t_dump_fxs funcs = {NULL, NULL, NULL, NULL, print_i386_text_section, NULL, NULL };
@@ -58,7 +58,9 @@ test_print_swapped_i386_text_section(
 	if (swap_stdout(&s) == EXIT_FAILURE)
 		return MUNIT_ERROR;
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
-	munit_assert_int(validate_multiplex(ctx.file, &ctx, &funcs), ==, EXIT_SUCCESS);
+	munit_assert_int(determine_magic(ctx.file, &flags), ==, EXIT_SUCCESS);
+	// run func under test
+	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs, flags), ==, EXIT_SUCCESS);
 	munit_assert_int(cleanup_ctx(&ctx), ==, EXIT_SUCCESS);
 	// evaluate test
 	struct stat buf;

@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 14:59:32 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 22:21:48 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ int		otool_main(int argc, char *argv[], char *envp[])
 
 
 	ft_bzero(&ctx, sizeof(t_ctx));
+	load_parse_functions(&func);
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	status = validate_multiplex(ctx.file, &ctx, &func);

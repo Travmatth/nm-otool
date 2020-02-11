@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 14:22:21 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 15:00:59 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 22:23:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,9 @@ int		validate_multiplex(char *file, t_ctx *ctx, t_dump_fxs *dump)
 	int		flags;
 	int		status;
 
+	flags = 0;
 	status = EXIT_SUCCESS;
-	if (!OK(validate_file_flags(file, ctx, &flags)))
+	if (validate_file_flags(file, ctx, &flags) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (file_multiplexer(file, ctx, dump, flags));
 }

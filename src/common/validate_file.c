@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 22:35:34 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/10 21:31:30 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,6 @@ int		validate_unknown(char *file, t_ctx *ctx)
 {
 	int		flags;
 
+	flags = 0;
 	return (validate_file_flags(file, ctx, &flags));
 }

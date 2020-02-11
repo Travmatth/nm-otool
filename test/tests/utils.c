@@ -18,9 +18,10 @@ int		verify_i386_segments(char *file, t_ctx *ctx, int flags, struct segment_comm
 	return EXIT_SUCCESS;
 }
 
-int		verify_x86_64_segments(char *file, t_ctx *ctx, struct segment_command_64 *segment_64) {
+int		verify_x86_64_segments(char *file, t_ctx *ctx, int flags, struct segment_command_64 *segment_64) {
 	(void)file;
 	(void)ctx;
+	(void)flags;
 	(void)segment_64;
 	g_segment_calls += 1;
 	return EXIT_SUCCESS;

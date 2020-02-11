@@ -67,7 +67,7 @@ int		dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags)
 		u.load = (struct load_command*)(file + offset);
 		if (dump_load_command(file, ctx, dump, flags, &u) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
-		offset += u.load->cmdsize;
+		offset += flags & SWAP ? OSSwapInt32(u.load->cmdsize) : u.load->cmdsize;
 	}
 	return (EXIT_SUCCESS);
 }

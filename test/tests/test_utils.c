@@ -65,7 +65,7 @@ static MunitResult
 test_determine_magic_detects_fat(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
-	int flags;
+	int flags = 0;
 	char *argv[2] = { NULL, "test/artifacts/fat/fat" };
 
 	bzero(&ctx, sizeof(t_ctx));
