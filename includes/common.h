@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 15:06:25 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 07:53:19 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@
 */
 
 int			determine_magic(char *file, int *flags);
-int			validate_file(char *file, t_ctx *ctx, int flags);
+int			validate_file(char *file, t_ctx *ctx, int flags, int validate_archive);
 int			validate_file_flags(char *file, t_ctx *ctx, int *flags);
 int			validate_unknown(char *file, t_ctx *ctx);
 

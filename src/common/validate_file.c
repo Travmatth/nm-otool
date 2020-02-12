@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 21:31:30 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 07:56:38 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int			determine_magic(char *file, int *flags)
 	return (is_archive(file, flags));
 }
 
-int		validate_file(char *file, t_ctx *ctx, int flags)
+int		validate_file(char *file, t_ctx *ctx, int flags, int validate_archive)
 {
 	int		status;
 
@@ -48,15 +48,17 @@ int		validate_file(char *file, t_ctx *ctx, int flags)
 		status = validate_mach_i386(file, ctx, flags);
 	else if ((flags & IS_MACH) && (flags & IS_64) && (flags & SWAP))
 		status = EXIT_SUCCESS;
-	else if ((flags & IS_EXTENDED_ARCHIVE))
+	else if (validate_archive && (flags & IS_EXTENDED_ARCHIVE))
 		status = validate_extended_archive(file, ctx);
+	else if (!validate_archive && (flags & IS_EXTENDED_ARCHIVE))
+		status = EXIT_SUCCESS;
 	return (status);
 }
 
 int		validate_file_flags(char *file, t_ctx *ctx, int *flags)
 {
 	determine_magic(file, flags);
-	return (validate_file(file, ctx, *flags));
+	return (validate_file(file, ctx, *flags, TRUE));
 }
 
 int		validate_unknown(char *file, t_ctx *ctx)
