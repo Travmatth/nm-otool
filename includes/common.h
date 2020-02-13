@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 07:53:19 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 18:04:45 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,49 +124,21 @@ int			is_archive(char *file, int *flags);
 */
 
 uint32_t	uint32_pow(uint32_t base, uint32_t power);
-void		print_section_prologue(char *file, t_ctx *ctx);
 uint32_t	swap(t_ctx *ctx, uint32_t val);
 int			get_file(int argc, char **argv, char **envp, t_ctx *ctx);
 int			cleanup_ctx(t_ctx *ctx);
 
 
 /*
-** common/file_multiplexer
+** common/hook_functions.c
 */
 
-int			file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags);
-int			validate_multiplex(char *file, t_ctx *ctx, t_dump_fxs *dump);
-
-/*
-** common/load_commands.c
-*/
-
-int			dump_load_command(char *file
-							, t_ctx *ctx
-							, t_dump_fxs *dump
-							, int flags
-							, t_lcommand *u);
-
-/*
-** common/mach_i386.c
-*/
-
-int			dump_i386_sections(char *file, struct segment_command *segment, t_dump_fxs *dump, int flags);
-int			dump_mach_i386(char *file, t_ctx *ctx, t_dump_fxs *fxs, int flags);
-
-/*
-** common/mach_x86_64.c
-*/
-
-int			dump_x86_64_sections(char *file, struct segment_command_64 *segment, t_dump_fxs *dump);
-int			dump_mach_x86_64(char *file, t_ctx *ctx, t_dump_fxs *fxs, int flags);
-
-/*
-** common/fat.c
-*/
-
-int			dump_fat_bin(char *file, t_ctx *ctx, t_dump_fxs *fxs);
-int			dump_fat64_bin(char *file, t_ctx *ctx, t_dump_fxs *fxs);
+int			save_x86_64_section(char *file, struct section_64 *sect, t_ctx *ctx, int flags);
+int			save_i386_section(char *file, struct section *sect, t_ctx *ctx, int flags);
+int			save_i386_header(struct mach_header *header, t_ctx *ctx, int flags);
+int			save_x86_64_header(struct mach_header_64 *header, t_ctx *ctx, int flags);
+int			save_i386_segment(struct segment_command *segment, t_ctx *ctx, int flags);
+int			save_x86_64_segment(struct segment_command_64 *segment, t_ctx *ctx, int flags);
 
 /*
 ** Debug statements used when compiled with __DEBUG__ variable defined

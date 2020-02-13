@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 15:21:36 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 16:37:40 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int		print_i386_text_section(char *file, int flags, struct section *section)
+int				print_i386_text_section(struct section *section
+										, char *data
+										, int flags __attribute__((unused)))
 {
 	struct section	sect;
 	uint64_t		current;
@@ -32,9 +34,6 @@ int		print_i386_text_section(char *file, int flags, struct section *section)
 	if (section && ft_strcmp(SECT_TEXT, section->sectname))
 		return (EXIT_SUCCESS);
 	ft_putendl("Contents of (__TEXT,__text) section");
-	sect.size = (flags & SWAP) ? OSSwapInt32(section->size) : section->size;
-	sect.addr = (flags & SWAP) ? OSSwapInt32(section->addr) : section->addr;
-	sect.offset = (flags & SWAP) ? OSSwapInt32(section->offset) : section->offset;
 	current = 0;
 	while (current < sect.size)
 	{
@@ -44,9 +43,25 @@ int		print_i386_text_section(char *file, int flags, struct section *section)
 			ft_putstr(ptr_buf);
 			ft_putstr("	");
 		}
-		format_mem(file + sect.offset, &current, sect.size, mem);
+		format_mem(data, &current, sect.size, mem);
 		if (!OK(print_memory_buf(flags, mem)))
 			return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int			print_i386_text_section(t_x86_64_text *i386)
+{
+	int		i;
+
+	i = 0;
+	while (i386->sections[i])
+	{
+		if (print_x86_64_text_section(i386->sections[i]
+									, i386->data[i]
+									, i386->flags[i]) == EXIT_FAILURE)
+			return (EXIT_FAILURE);
+		i += 1;
 	}
 	return (EXIT_SUCCESS);
 }

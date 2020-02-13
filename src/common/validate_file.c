@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/30 18:19:02 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 07:56:38 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 13:31:34 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ int		validate_file(char *file, t_ctx *ctx, int flags, int validate_archive)
 {
 	int		status;
 
-	ctx->objects += 1;
 	status = EXIT_FAILURE;
 	if (flags & IS_FAT)
 		status = validate_fat(file, ctx, flags);

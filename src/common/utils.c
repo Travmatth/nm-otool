@@ -6,28 +6,11 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:00 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 21:48:57 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 17:33:50 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
-
-void	print_section_prologue(char *file, t_ctx *ctx)
-{
-	uint32_t			magic;
-
-	magic = *(uint32_t*)file;
-	ft_putstr(ctx->filename);
-	if (ctx->has_x86_64 == FALSE && ctx->objects > 1)
-	{
-		ft_putstr(" ");
-		if (magic == MH_MAGIC)
-			ft_putstr("(architecture i386)");
-		else if (magic == MH_CIGAM)
-			ft_putstr("(architecture ppc)");
-	}
-	ft_putendl(":");
-}
 
 uint32_t		uint32_pow(uint32_t base, uint32_t power)
 {

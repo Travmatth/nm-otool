@@ -6,21 +6,39 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 22:21:48 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 18:01:22 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/otool.h"
 
-void	load_parse_functions(t_dump_fxs *func)
+void	load_parse_functionality(t_ctx *ctx)
 {
-	func->i386_header = NULL;
-	func->x86_64_header = NULL;
-	func->i386_segment = NULL;
-	func->x86_64_segment = NULL;
-	func->x86_64_section = print_x86_64_text_section;
-	func->i386_section = print_i386_text_section;
-	func->load = NULL;
+	ctx->hook.i386_header = NULL;
+	ctx->hook.x86_64_header = NULL;
+	ctx->hook.i386_segment = NULL;
+	ctx->hook.x86_64_segment = NULL;
+	ctx->hook.i386_section = save_i386_section;
+	ctx->hook.x86_64_section = save_x86_64_section;
+}
+
+int		print_objects(t_ctx *ctx)
+{
+	uint32_t			magic;
+
+	ft_putstr(ctx->filename);
+	if (ctx->out.i386_text.sections[0])
+	{
+		ft_putstr(" ");
+		if (ctx->out.i386_text.flags[0] & SWAP)
+			ft_putstr("(architecture ppc)");
+		else
+			ft_putstr("(architecture i386)");
+	}
+	ft_putendl(":");
+	if (ctx->out.x86_64_text.sections[0])
+		return (print_x86_64_text_sections(ctx->out.x86_64_text));
+	return (print_i386_text_sections(ctx->out.i386_text));
 }
 
 /*
@@ -43,12 +61,12 @@ int		otool_main(int argc, char *argv[], char *envp[])
 	t_dump_fxs	func;
 	int			status;
 
-
 	ft_bzero(&ctx, sizeof(t_ctx));
-	load_parse_functions(&func);
+	load_parse_functionality(&ctx);
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	status = validate_multiplex(ctx.file, &ctx, &func);
+	print_objects(&ctx);
 	if (cleanup_ctx(&ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	return (status);

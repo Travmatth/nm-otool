@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/01/12 19:26:43 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 17:25:32 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@
 ** @return {int} 0 on success, 1 on failure
 */
 
-int				print_x86_64_text_section(char *file, struct section_64 *section)
+int				print_x86_64_text_section(struct section_64 *section
+										, char *data
+										, int flags __attribute__((unused)))
 {
 	uint64_t	current;
 	char		ptr_buf[17];
 	char		mem[33];
 
-	if (section && ft_strcmp(SECT_TEXT, section->sectname))
-		return (EXIT_SUCCESS);
 	ft_putendl("Contents of (__TEXT,__text) section");
 	current = 0;
 	while (current < section->size)
@@ -40,9 +40,25 @@ int				print_x86_64_text_section(char *file, struct section_64 *section)
 			ft_putstr(ptr_buf);
 			ft_putstr("	");
 		}
-		format_mem(file + section->offset, &current, section->size, mem);
+		format_mem(data, &current, section->size, mem);
 		if (!OK(print_memory_buf(FALSE, mem)))
 			return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int			print_x86_64_text_sections(t_x86_64_text *x86_64)
+{
+	int		i;
+
+	i = 0;
+	while (x86_64->sections[i])
+	{
+		if (print_x86_64_text_section(x86_64->sections[i]
+									, x86_64->data[i]
+									, x86_64->flags[i]) == EXIT_FAILURE)
+			return (EXIT_FAILURE);
+		i += 1;
 	}
 	return (EXIT_SUCCESS);
 }

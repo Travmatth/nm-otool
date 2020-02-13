@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 19:21:46 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/10 15:20:38 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/12 17:57:30 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,87 @@
 # include <mach/machine.h>
 
 /*
+** Record what types of objects to be parsed and printed
+** TEXT_SECTIONS: print __TEXT__text sections of macho objects
+*/
+
+enum								e_targets
+{
+	TEXT_SECTIONS = (1u << 0),
+};
+
+typedef struct						s_i386_text
+{
+	struct section					**sections;
+	char							**data;
+	int								*flags;
+}									t_i386_text;
+
+typedef struct						s_x86_64_text
+{
+	struct section_64				**sections;
+	char							**data;
+	int								*flags;
+}									t_x86_64_text;
+
+/*
+** Struct to hold the different sections and segments parsed from the file
+**
+*/
+
+typedef struct						s_out
+{
+	t_i386_text						i386_text;
+	t_x86_64_text					x86_64_text;
+}									t_out;
+
+/*
+** Hook function used to save the needed segments/sections of the input file
+** for later printing
+*/
+
+typedef int								(*t_i386_header_hook)(struct mach_header *header
+																, t_ctx *ctx
+																, int flags);
+
+typedef int								(*t_x86_64_header_hook)(struct mach_header_64 *header
+																, t_ctx *ctx
+																, int flags);
+
+typedef int								(*t_i386_segment_hook)(struct segment_command *segment
+																, t_ctx *ctx
+																, int flags);
+
+typedef int								(*t_x86_64_segment_hook)(struct segment_command_64 *segment
+																, t_ctx *ctx
+																, int flags);
+
+typedef int								(*t_i386_section_hook)(struct section *sect
+																, t_ctx *ctx
+																, int flags);
+
+typedef int								(*t_x86_64_section_hook)(struct section_64 *sect
+																, t_ctx *ctx
+																, int flags);
+
+typedef struct						s_hook
+{
+	t_i386_header_hook				i386_header;
+	t_x86_64_header_hook			x86_64_header;
+	t_i386_segment_hook				i386_segment;
+	t_x86_64_segment_hook			x86_64_segment;
+	t_i386_section_hook				i386_section;
+	t_x86_64_section_hook			x86_64_section;
+}									t_hook;
+
+/*
 ** SWAP: endianness of data opposite of current architecture
-** IS_32: binary file targeted for 32bit systems
-** IS_FAT: binary file is in FAT format
+** IS_32: binary file for 32bit systems
+** IS_FAT: binary file for FAT format
+** IS_ARCHIVE: binary file for archive format
+** IS_EXTENDED_ARCHIVE: binary file for extended format
+** IS_64: binary file for x86_64 format
+** IS_MACH: binary file for macho format
 */
 
 enum								e_flags
@@ -43,81 +121,20 @@ enum								e_flags
 /*
 ** t_ctx
 ** file: binary file being parsed
-** flags: e_flags options
-** magic: magic number describing binary file format & endianness
+** file: binary filename being parsed
 ** size: size of binary file in bytes
+** targets: types of objects to parse
 */
 
 typedef struct						s_ctx
 {
 	char							*file;
 	char							*filename;
-	uint32_t						magic;
 	size_t							size;
-	int								has_x86_64;
-	int								objects;
+	int								targets;
+	t_out							out;
+	t_hook							hook;
 }									t_ctx;
-
-/*
-** signature of functions passed into dump_* functions
-*/
-
-/*
-**
-*/
-
-typedef int								(*t_hdr_i386_f)(char *file
-											, int flags
-											, struct mach_header *header);
-typedef int								(*t_hdr_x86_64_f)(char *file
-											, struct mach_header_64 *header_64);
-
-/*
-**
-*/
-
-typedef int								(*t_seg_i386_f)(char *file
-											, t_ctx *ctx
-											, int flags
-											, struct segment_command *segment);
-typedef int								(*t_seg_x86_64_f)(char *file
-											, t_ctx *ctx
-											, int flags
-											, struct segment_command_64 *segment_64);
-
-/*
-**
-*/
-
-typedef int								(*t_sec_i386_f)(char *file
-											, int flags
-											, struct section *section);
-typedef int								(*t_sec_x86_64_f)(char *file
-											, struct section_64 *section);
-
-/*
-**
-*/
-
-typedef int								(*t_lc_f)(char *file
-											, t_ctx *ctx
-											, struct load_command *lc
-											, void *addr);
-
-/*
-** struct containing functions called when dumping different parts of binary
-*/
-
-typedef struct							s_dump_fxs
-{
-	t_hdr_i386_f						i386_header;
-	t_hdr_x86_64_f						x86_64_header;
-	t_seg_i386_f						i386_segment;
-	t_seg_x86_64_f						x86_64_segment;
-	t_sec_i386_f						i386_section;
-	t_sec_x86_64_f						x86_64_section;
-	t_lc_f								load;
-}										t_dump_fxs;
 
 typedef union							u_lcommand
 {
