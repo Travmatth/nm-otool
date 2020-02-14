@@ -81,7 +81,7 @@ static MunitResult
 test_determine_magic_detects_i386(
 	MUNIT_UNUSED const MunitParameter params[], MUNIT_UNUSED void *fixture) {
 	t_ctx ctx;
-	int flags;
+	int flags = 0;
 	char *argv[2] = { NULL, "test/artifacts/binary/main32" };
 
 	bzero(&ctx, sizeof(t_ctx));

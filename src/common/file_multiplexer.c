@@ -6,13 +6,13 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 14:22:21 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 09:10:01 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:53:33 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/common.h"
 
-int		file_multiplexer(char *file, t_ctx *ctx, t_dump_fxs *dump, int flags)
+int		file_multiplexer(char *file, t_ctx *ctx *dump, int flags)
 {
 	int		status;
 
