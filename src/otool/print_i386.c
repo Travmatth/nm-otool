@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/18 17:36:48 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 16:37:40 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:39:07 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 int				print_i386_text_section(struct section *section
 										, char *data
-										, int flags __attribute__((unused)))
+										, int flags)
 {
 	struct section	sect;
 	uint64_t		current;
@@ -44,20 +44,20 @@ int				print_i386_text_section(struct section *section
 			ft_putstr("	");
 		}
 		format_mem(data, &current, sect.size, mem);
-		if (!OK(print_memory_buf(flags, mem)))
+		if (print_memory_buf(flags, mem) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
 
-int			print_i386_text_section(t_x86_64_text *i386)
+int			print_i386_text_sections(t_i386_text *i386)
 {
 	int		i;
 
 	i = 0;
 	while (i386->sections[i])
 	{
-		if (print_x86_64_text_section(i386->sections[i]
+		if (print_i386_text_section(i386->sections[i]
 									, i386->data[i]
 									, i386->flags[i]) == EXIT_FAILURE)
 			return (EXIT_FAILURE);

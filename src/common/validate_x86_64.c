@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 21:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 18:00:03 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:33:08 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static int		validate_x86_64_sections(char *file, t_ctx *ctx, struct segment_comm
 	{
 		if (sections[i].size > segment->filesize)
 			status = EXIT_FAILURE;
-		else if (ctx->hook.x86_64_section(file, &sections[i], ctx, flags))
+		else if (ctx->hook.x86_64_section(&sections[i], ctx, flags))
 			status = EXIT_FAILURE;
 		i += 1;
 	}

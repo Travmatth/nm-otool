@@ -6,28 +6,28 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/12 09:11:40 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 17:59:22 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:52:23 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/otool.h"
+#include "../../includes/common.h"
 
 int		prep_x86_64_section(t_x86_64_text *x86_64_text, int *i)
 {
 	int		len;
 	struct section_64	**new_sections;
 	char				**new_data;
-	int					**new_flags;
+	int					*new_flags;
 
 	*i = 0;
 	while (x86_64_text->sections && x86_64_text->sections[*i])
 		*i += 1;
 	len = *i + 2;
-	if ((new_sections = ft_malloc(sizeof(struct section_64*) * len)) == NULL)
+	if ((new_sections = ft_memalloc(sizeof(struct section_64*) * len)) == NULL)
 		return (EXIT_SUCCESS);
-	else if ((new_data = ft_malloc(sizeof(char*) * len)) == NULL)
+	else if ((new_data = ft_memalloc(sizeof(char*) * len)) == NULL)
 		return (EXIT_SUCCESS);
-	else if ((new_flags = ft_malloc(sizeof(int) * len)) == NULL)
+	else if ((new_flags = ft_memalloc(sizeof(int) * len)) == NULL)
 		return (EXIT_SUCCESS);
 	if (*i != 0)
 	{
@@ -45,10 +45,9 @@ int		prep_x86_64_section(t_x86_64_text *x86_64_text, int *i)
 ** Save sections of the input file for later printing
 */
 
-int		save_x86_64_section(char *file, struct section_64 *sect, t_ctx *ctx, int flags)
+int		save_x86_64_section(struct section_64 *sect, t_ctx *ctx, int flags)
 {
-	char	i;
-	char	**new;
+	int		i;
 
 	if (sect == NULL)
 		return (EXIT_SUCCESS);
@@ -61,6 +60,7 @@ int		save_x86_64_section(char *file, struct section_64 *sect, t_ctx *ctx, int fl
 		ctx->out.x86_64_text.flags[i] = flags;
 		ctx->out.x86_64_text.data[i] = ctx->file + sect->offset;
 	}
+	return (EXIT_SUCCESS);
 }
 
 /*
@@ -72,17 +72,17 @@ int		prep_i386_section(t_i386_text *i386, int *i)
 	int				len;
 	struct section	**new_sections;
 	char			**new_data;
-	int				**new_flags;
+	int				*new_flags;
 
 	*i = 0;
 	while (i386->sections && i386->sections[*i])
 		*i += 1;
 	len = *i + 2;
-	if ((new_sections = ft_malloc(sizeof(struct section*) * len)) == NULL)
+	if ((new_sections = ft_memalloc(sizeof(struct section*) * len)) == NULL)
 		return (EXIT_SUCCESS);
-	else if ((new_data = ft_malloc(sizeof(char*) * len)) == NULL)
+	else if ((new_data = ft_memalloc(sizeof(char*) * len)) == NULL)
 		return (EXIT_SUCCESS);
-	else if ((new_flags = ft_malloc(sizeof(int) * len)) == NULL)
+	else if ((new_flags = ft_memalloc(sizeof(int) * len)) == NULL)
 		return (EXIT_SUCCESS);
 	if (*i != 0)
 	{
@@ -100,10 +100,9 @@ int		prep_i386_section(t_i386_text *i386, int *i)
 ** Save sections of the input file for later printing
 */
 
-int		save_i386_section(char *file, struct section *sect, t_ctx *ctx, int flags)
+int		save_i386_section(struct section *sect, t_ctx *ctx, int flags)
 {
-	char	i;
-	char	**new;
+	int		i;
 
 	if (sect == NULL)
 		return (EXIT_SUCCESS);
@@ -116,6 +115,7 @@ int		save_i386_section(char *file, struct section *sect, t_ctx *ctx, int flags)
 		ctx->out.i386_text.flags[i] = flags;
 		ctx->out.i386_text.data[i] = ctx->file + sect->offset;
 	}
+	return (EXIT_SUCCESS);
 }
 
 int		save_i386_header(struct mach_header *header, t_ctx *ctx, int flags)

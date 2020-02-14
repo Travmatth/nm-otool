@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/07 15:52:13 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 18:01:22 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:43:00 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ void	load_parse_functionality(t_ctx *ctx)
 
 int		print_objects(t_ctx *ctx)
 {
-	uint32_t			magic;
-
 	ft_putstr(ctx->filename);
 	if (ctx->out.i386_text.sections[0])
 	{
@@ -37,8 +35,8 @@ int		print_objects(t_ctx *ctx)
 	}
 	ft_putendl(":");
 	if (ctx->out.x86_64_text.sections[0])
-		return (print_x86_64_text_sections(ctx->out.x86_64_text));
-	return (print_i386_text_sections(ctx->out.i386_text));
+		return (print_x86_64_text_sections(&ctx->out.x86_64_text));
+	return (print_i386_text_sections(&ctx->out.i386_text));
 }
 
 /*
@@ -58,14 +56,13 @@ int		print_objects(t_ctx *ctx)
 int		otool_main(int argc, char *argv[], char *envp[])
 {
 	t_ctx		ctx;
-	t_dump_fxs	func;
 	int			status;
 
 	ft_bzero(&ctx, sizeof(t_ctx));
 	load_parse_functionality(&ctx);
 	if (get_file(argc, argv, envp, &ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	status = validate_multiplex(ctx.file, &ctx, &func);
+	status = validate_unknown(ctx.file, &ctx);
 	print_objects(&ctx);
 	if (cleanup_ctx(&ctx) == EXIT_FAILURE)
 		return (EXIT_FAILURE);

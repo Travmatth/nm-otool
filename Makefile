@@ -16,8 +16,8 @@ LDFLAGS = -Llibftprintf -lftprintf -I./includes
 IS_DEBUG =
 
 # common variables
-COMMON = file_multiplexer format magics utils
-COMMON += archive fat mach_i386 mach_x86_64 load_commands
+COMMON = format magics utils hook_functions #file_multiplexer 
+COMMON += #archive fat mach_i386 mach_x86_64 load_commands
 COMMON += validate_archive validate_file validate_fat validate_i386 validate_x86_64
 COMMON_FILES = $(addprefix src/common/, $(COMMON))
 COMMON_SRC = $(addsuffix .c, $(COMMON_FILES))
@@ -43,7 +43,7 @@ OTOOL_OBJ = $(OTOOL_SRC:.c=.o)
 TESTFLAGS = -I./test -I./test/fff
 TEST_FILE = test/test.c
 TEST_NAME = test/run_test
-TESTS = utils test_utils test_format test_mach_o test_mach_print test_fat test_dir_structs test_otool
+TESTS = utils test_utils test_format #test_mach_o test_mach_print test_fat test_dir_structs test_otool
 TEST_LIB = test/munit/munit.c
 TEST_FILES = $(addprefix test/tests/, $(TESTS))  
 TEST_SRC = $(addsuffix .c, $(TEST_FILES))

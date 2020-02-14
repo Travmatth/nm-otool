@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 19:21:46 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 17:57:30 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:29:01 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,10 @@ enum								e_targets
 {
 	TEXT_SECTIONS = (1u << 0),
 };
+
+/*
+** Out structs store information of hooked objects for use in printing
+*/
 
 typedef struct						s_i386_text
 {
@@ -63,29 +67,31 @@ typedef struct						s_out
 ** for later printing
 */
 
-typedef int								(*t_i386_header_hook)(struct mach_header *header
-																, t_ctx *ctx
-																, int flags);
+struct s_ctx;
 
-typedef int								(*t_x86_64_header_hook)(struct mach_header_64 *header
-																, t_ctx *ctx
-																, int flags);
+typedef int							(*t_i386_header_hook)(struct mach_header *header
+														, struct s_ctx *ctx
+														, int flags);
 
-typedef int								(*t_i386_segment_hook)(struct segment_command *segment
-																, t_ctx *ctx
-																, int flags);
+typedef int							(*t_x86_64_header_hook)(struct mach_header_64 *header
+														, struct s_ctx *ctx
+														, int flags);
 
-typedef int								(*t_x86_64_segment_hook)(struct segment_command_64 *segment
-																, t_ctx *ctx
-																, int flags);
+typedef int							(*t_i386_segment_hook)(struct segment_command *segment
+														, struct s_ctx *ctx
+														, int flags);
 
-typedef int								(*t_i386_section_hook)(struct section *sect
-																, t_ctx *ctx
-																, int flags);
+typedef int							(*t_x86_64_segment_hook)(struct segment_command_64 *segment
+														, struct s_ctx *ctx
+														, int flags);
 
-typedef int								(*t_x86_64_section_hook)(struct section_64 *sect
-																, t_ctx *ctx
-																, int flags);
+typedef int							(*t_i386_section_hook)(struct section *sect
+														, struct s_ctx *ctx
+														, int flags);
+
+typedef int							(*t_x86_64_section_hook)(struct section_64 *sect
+														, struct s_ctx *ctx
+														, int flags);
 
 typedef struct						s_hook
 {
@@ -156,5 +162,4 @@ typedef union							u_lcommand
 	struct encryption_info_command		*info;
 	struct encryption_info_command_64	*info64;
 }										t_lcommand;
-
 #endif

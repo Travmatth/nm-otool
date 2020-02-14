@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/07 17:19:39 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/12 18:04:45 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 15:41:03 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ int			cleanup_ctx(t_ctx *ctx);
 ** common/hook_functions.c
 */
 
-int			save_x86_64_section(char *file, struct section_64 *sect, t_ctx *ctx, int flags);
-int			save_i386_section(char *file, struct section *sect, t_ctx *ctx, int flags);
+int			save_x86_64_section(struct section_64 *sect, t_ctx *ctx, int flags);
+int			save_i386_section(struct section *sect, t_ctx *ctx, int flags);
 int			save_i386_header(struct mach_header *header, t_ctx *ctx, int flags);
 int			save_x86_64_header(struct mach_header_64 *header, t_ctx *ctx, int flags);
 int			save_i386_segment(struct segment_command *segment, t_ctx *ctx, int flags);
