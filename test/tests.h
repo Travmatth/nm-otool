@@ -42,6 +42,6 @@ int		verify_section_i386_address(char *file, int swap, struct section *sect);
 int		verify_section_x86_64_address(char *file, struct section_64 *sect);
 int		verify_i386_header(char *file, int flags, struct mach_header *header);
 int		verify_section64_address(char *file, t_ctx *ctx, struct section *sect, struct section_64 *sect64);
-int		verify_header64(char *file, struct mach_header_64 *header_64);
+int		verify_x86_64_header(char *file, struct mach_header_64 *header_64);
 int		fd_to_str(int fd, char **out);
 #endif

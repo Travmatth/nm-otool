@@ -6,13 +6,13 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 21:24:17 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/14 15:33:08 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 22:46:54 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/otool.h"
 
-static int		validate_symtab_entries(char *file
+static int		validate_x86_64_symtab_entries(char *file
 								, struct symtab_command *symtab
 								, int flags)
 {
@@ -44,8 +44,7 @@ static int		validate_symtab_entries(char *file
 ** commands
 */
 
-static int		validate_symtab(char *file
-						, t_ctx *ctx
+int				validate_symtab_x86_64(t_ctx *ctx
 						, struct symtab_command	*symtab
 						, uint32_t sizeofcmds
 						, int flags)
@@ -67,100 +66,85 @@ static int		validate_symtab(char *file
 		sym.symoff + (sym.nsyms) * sizeof(struct nlist_64) >=
 			(sizeof(struct mach_header_64) + sizeofcmds))
 		|| ((sym.stroff + sym.strsize > ctx->size)
-			|| validate_symtab_entries(file, &sym, flags)))
+			|| validate_x86_64_symtab_entries(ctx->file, &sym, flags)))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
-static int		validate_x86_64_sections(char *file, t_ctx *ctx, struct segment_command_64 *segment, ptrdiff_t base, int flags)
+static int		validate_i386_sections(struct segment_command_64 *segment
+									, t_ctx *ctx
+									, int flags)
 {
 	int					status;
 	uint32_t			i;
-	uint32_t			offset;
-	struct section_64	*sections;
+	struct section_64	*section;
 
-	status = EXIT_SUCCESS;
 	i = 0;
-	offset = base + sizeof(struct segment_command_64);
-	sections = ft_memdup(file + offset, sizeof(struct section_64) * segment->nsects);
-	if (sections == NULL)
+	status = EXIT_SUCCESS;
+	section = ft_memdup(ctx->file
+		+ ctx->offset + sizeof(struct segment_command_64)
+		, sizeof(struct section_64) * segment->nsects);
+	if (section == NULL)
 		return (EXIT_FAILURE);
-	if (flags & SWAP)
-		swap_section_64(sections, segment->nsects, NX_UnknownByteOrder);
+	else if (flags & SWAP)
+		swap_section_64(section, segment->nsects, NX_UnknownByteOrder);
 	while (status == EXIT_SUCCESS && i < segment->nsects)
 	{
-		if (sections[i].size > segment->filesize)
+		if (section[i++].size > segment->filesize)
 			status = EXIT_FAILURE;
-		else if (ctx->hook.x86_64_section(&sections[i], ctx, flags))
-			status = EXIT_FAILURE;
-		i += 1;
 	}
-	free(sections);
+	free(section);
 	return (status);
 }
 
-static int		validate_segment(char *file, t_ctx *ctx, struct segment_command_64 *seg, int flags)
+int				validate_x86_64_segment(struct segment_command_64 *seg
+									, t_ctx *ctx
+									, int flags)
 {
 	struct segment_command_64	segment;
-	int						status;
 
-	status = EXIT_SUCCESS;
 	segment = *seg;
 	if (flags & SWAP)
 		swap_segment_command_64(&segment, NX_UnknownByteOrder);
-	if ((segment.nsects * sizeof(struct section) >
+	if (segment.nsects * sizeof(struct section_64) >
 		segment.cmdsize - sizeof(struct segment_command_64))
-		|| (segment.fileoff + segment.filesize > ctx->size)
-		|| (segment.filesize > segment.vmsize))
 		return (EXIT_FAILURE);
-	return (validate_x86_64_sections(file, ctx, &segment, (char*)seg - file, flags));
+	else if (segment.fileoff + segment.filesize > ctx->size)
+		return (EXIT_FAILURE);
+	else if (segment.filesize > segment.vmsize)
+		return (EXIT_FAILURE);
+	else if (validate_x86_64_sections(&segment, ctx, flags) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	if (ctx->hook.i386_segment)
+		return (ctx->hook.x86_64_segment(seg, ctx, flags));
+	return (EXIT_SUCCESS);
 }
 
-int		validate_load_command(char *file, t_ctx *ctx, uint32_t *offset, uint32_t sizeofcmds, int flags)
+int				validate_mach_x86_64(char *file, t_ctx *ctx, int flags)
 {
-	int							status;
-	struct load_command			lc;
-	struct segment_command_64	*seg_64;
-	struct symtab_command		*symtab;
-
-	lc = *(struct load_command*)(file + *offset);
-	if (flags & SWAP)
-		swap_load_command(&lc, NX_UnknownByteOrder);
-	status = lc.cmdsize % 4 ? EXIT_FAILURE : EXIT_SUCCESS;
-	if (status == EXIT_SUCCESS && lc.cmd == LC_SEGMENT_64)
-	{
-		seg_64 = (struct segment_command_64*)(file + *offset);
-		status = validate_segment(file, ctx, seg_64, flags);
-	}
-	else if (status == EXIT_SUCCESS && lc.cmd == LC_SYMTAB)
-	{
-		symtab = (struct symtab_command*)(file + *offset);
-		status = validate_symtab(file, ctx, symtab, sizeofcmds, flags);
-	}
-	*offset += lc.cmdsize;
-	return (status);
-}
-
-int		validate_mach_x86_64(char *file, t_ctx *ctx, int flags)
-{
-	int						status;
-	uint32_t				i;
-	uint32_t				offset;
-	struct mach_header_64	header;
+	uint32_t			i;
+	t_header			h;
+	struct load_command	lc;
+	t_lcommand			u;
 
 	i = 0;
-	header = *(struct mach_header_64*)file;
+	h.header_64 = *(struct mach_header_64*)file;
 	if (flags & SWAP)
-		swap_mach_header_64(&header, NX_UnknownByteOrder);
-	offset = sizeof(struct mach_header_64);
-	status = EXIT_SUCCESS;
-	while (status == EXIT_SUCCESS && i++ < header.ncmds)
+		swap_mach_header(&h.header_64, NX_UnknownByteOrder);
+	ctx->offset = sizeof(struct mach_header_64);
+	while (i++ < h.header_64.ncmds)
 	{
-		if (file + offset + sizeof(struct load_command) >
-			file + sizeof(struct mach_header_64) + header.sizeofcmds)
-			status = EXIT_FAILURE;
-		else
-			status = validate_load_command(file, ctx, &offset, header.sizeofcmds, flags);
+		if (file + ctx->offset + sizeof(struct load_command) >
+			file + sizeof(struct mach_header_64) + h.header_64.sizeofcmds)
+			return (EXIT_FAILURE);
+		u.load = *(struct load_command*)(file + ctx->offset);
+		if (flags & SWAP)
+			swap_load_command(&u.load, NX_UnknownByteOrder);
+		if (validate_load_command(h, ctx, flags, u) == EXIT_FAILURE)
+			return (EXIT_FAILURE);
+		else if (ctx->hook.load_command
+			&& ctx->hook.load_command(&u, ctx, flags))
+			return (EXIT_FAILURE);
 	}
-	return (status);
+	return (EXIT_SUCCESS);
 }

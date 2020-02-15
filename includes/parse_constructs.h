@@ -6,7 +6,7 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 19:21:46 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/14 15:29:01 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 22:29:56 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,46 @@ typedef struct						s_out
 }									t_out;
 
 /*
+** Union representing all possible values of load commands
+*/
+
+typedef union							u_header
+{
+	struct mach_header					header;
+	struct mach_header_64				header_64;
+}										t_header;
+
+typedef union							u_lcommand
+{
+	struct load_command					load;
+	struct segment_command				segment;
+	struct segment_command_64			segment64;
+	struct symtab_command				symtab;
+	struct symseg_command				symseg;
+	struct thread_command				thread;
+	struct fvmlib_command				fvmlib;
+	struct ident_command				ident;
+	struct fvmfile_command				fvmfile;
+	struct dysymtab_command				dysymtab;
+	struct dylib_command				dylib;
+	struct dylinker_command				dylinker;
+	struct prebound_dylib_command		prebound;
+	struct routines_command				routines;
+	struct routines_command_64			routines64;
+	struct encryption_info_command		info;
+	struct encryption_info_command_64	info64;
+}										t_lcommand;
+
+/*
 ** Hook function used to save the needed segments/sections of the input file
 ** for later printing
 */
 
 struct s_ctx;
+
+typedef int							(*t_load_command_hook)(t_lcommand *lcmd
+														, struct s_ctx *ctx
+														, int flags);
 
 typedef int							(*t_i386_header_hook)(struct mach_header *header
 														, struct s_ctx *ctx
@@ -95,6 +130,7 @@ typedef int							(*t_x86_64_section_hook)(struct section_64 *sect
 
 typedef struct						s_hook
 {
+	t_load_command_hook				load_command;
 	t_i386_header_hook				i386_header;
 	t_x86_64_header_hook			x86_64_header;
 	t_i386_segment_hook				i386_segment;
@@ -140,26 +176,7 @@ typedef struct						s_ctx
 	int								targets;
 	t_out							out;
 	t_hook							hook;
+	uint32_t						offset;
 }									t_ctx;
 
-typedef union							u_lcommand
-{
-	struct load_command					*load;
-	struct segment_command				*segment;
-	struct segment_command_64			*segment64;
-	struct symtab_command				*symtab;
-	struct symseg_command				*symseg;
-	struct thread_command				*thread;
-	struct fvmlib_command				*fvmlib;
-	struct ident_command				*ident;
-	struct fvmfile_command				*fvmfile;
-	struct dysymtab_command				*dysymtab;
-	struct dylib_command				*dylib;
-	struct dylinker_command				*dylinker;
-	struct prebound_dylib_command		*prebound;
-	struct routines_command				*routines;
-	struct routines_command_64			*routines64;
-	struct encryption_info_command		*info;
-	struct encryption_info_command_64	*info64;
-}										t_lcommand;
 #endif

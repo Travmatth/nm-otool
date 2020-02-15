@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     MunitSuite *suites = calloc(7, sizeof(MunitSuite));
     suites[0] = common_format_suite;
     suites[1] = common_utils_suite;
-    // suites[2] = common_macho_suite;
+    suites[2] = common_macho_suite;
     // suites[3] = mach_print_suite;
     // suites[4] = common_fat_suite;
     // suites[5] = otool_suite;

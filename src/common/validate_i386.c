@@ -6,13 +6,13 @@
 /*   By: tmatthew <tmatthew@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/12 21:23:12 by tmatthew          #+#    #+#             */
-/*   Updated: 2020/02/06 22:00:55 by tmatthew         ###   ########.fr       */
+/*   Updated: 2020/02/14 22:47:00 by tmatthew         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/otool.h"
 
-static int		validate_symtab_entries(char *file
+static int		validate_i386_symtab_entries(char *file
 								, struct symtab_command *symtab
 								, int flags)
 {
@@ -44,8 +44,7 @@ static int		validate_symtab_entries(char *file
 ** commands
 */
 
-static int		validate_symtab(char *file
-						, t_ctx *ctx
+int				validate_symtab_i386(t_ctx *ctx
 						, struct symtab_command	*symtab
 						, struct mach_header *header
 						, int flags)
@@ -58,32 +57,34 @@ static int		validate_symtab(char *file
 	if ((sym.symoff > ctx->size)
 		|| (sym.symoff >= header->sizeofcmds && sym.symoff <
 		(sizeof(struct mach_header_64) + header->sizeofcmds))
-		|| (sym.symoff + sym.nsyms * sizeof(struct nlist_64) > header->sizeofcmds &&
-		sym.symoff + sym.nsyms * sizeof(struct nlist_64) <
+		|| (sym.symoff + sym.nsyms * sizeof(struct nlist_64) >
+			header->sizeofcmds &&
+			sym.symoff + sym.nsyms * sizeof(struct nlist_64) <
 			(sizeof(struct mach_header_64) + header->sizeofcmds))
 		|| (sym.symoff <= header->sizeofcmds &&
 		sym.symoff + (sym.nsyms) * sizeof(struct nlist_64) >=
 			(sizeof(struct mach_header_64) + header->sizeofcmds))
 		|| ((sym.stroff + sym.strsize > ctx->size)
-			|| validate_symtab_entries(file, &sym, flags)))
+			|| validate_i386_symtab_entries(ctx->file, &sym, flags)))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
-static int		validate_i386_sections(char *file, struct segment_command *segment, ptrdiff_t base, int flags)
+static int		validate_i386_sections(struct segment_command *segment
+									, t_ctx *ctx
+									, int flags)
 {
 	int				status;
 	uint32_t		i;
-	uint32_t		offset;
 	struct section	*section;
 
-	status = EXIT_SUCCESS;
 	i = 0;
-	offset = base + sizeof(struct segment_command);
-	if ((section = ft_memdup(file + offset
-		, sizeof(struct section) * segment->nsects)) == NULL)
+	status = EXIT_SUCCESS;
+	section = ft_memdup(ctx->file + ctx->offset + sizeof(struct segment_command)
+		, sizeof(struct section) * segment->nsects);
+	if (section == NULL)
 		return (EXIT_FAILURE);
-	if (flags & SWAP)
+	else if (flags & SWAP)
 		swap_section(section, segment->nsects, NX_UnknownByteOrder);
 	while (status == EXIT_SUCCESS && i < segment->nsects)
 	{
@@ -94,53 +95,54 @@ static int		validate_i386_sections(char *file, struct segment_command *segment, 
 	return (status);
 }
 
-static int		validate_segment(char *file, t_ctx *ctx, struct segment_command *seg, int flags)
+int				validate_i386_segment(struct segment_command *seg
+							, t_ctx *ctx
+							, int flags)
 {
 	struct segment_command	segment;
-	int						status;
 
-	status = EXIT_SUCCESS;
 	segment = *seg;
 	if (flags & SWAP)
 		swap_segment_command(&segment, NX_UnknownByteOrder);
 	if (segment.nsects * sizeof(struct section) >
 		segment.cmdsize - sizeof(struct segment_command))
-		status = EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	else if (segment.fileoff + segment.filesize > ctx->size)
-		status = EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	else if (segment.filesize > segment.vmsize)
-		status = EXIT_FAILURE;
-	else
-		status = validate_i386_sections(file, &segment, (char*)seg - file, flags);
-	return (status);
+		return (EXIT_FAILURE);
+	else if (validate_i386_sections(&segment, ctx, flags) == EXIT_FAILURE)
+		return (EXIT_FAILURE);
+	if (ctx->hook.i386_segment)
+		return (ctx->hook.i386_segment(seg, ctx, flags));
+	return (EXIT_SUCCESS);
 }
 
-int		validate_mach_i386(char *file, t_ctx *ctx, int flags)
+int				validate_mach_i386(char *file, t_ctx *ctx, int flags)
 {
 	uint32_t			i;
-	uint32_t			offset;
-	struct mach_header	header;
+	t_header			h;
 	struct load_command	lc;
+	t_lcommand			u;
 
 	i = 0;
-	header = *(struct mach_header*)file;
+	h.header = *(struct mach_header*)file;
 	if (flags & SWAP)
-		swap_mach_header(&header, NX_UnknownByteOrder);
-	offset = sizeof(struct mach_header);
-	while (i++ < header.ncmds)
+		swap_mach_header(&h.header, NX_UnknownByteOrder);
+	ctx->offset = sizeof(struct mach_header);
+	while (i++ < h.header.ncmds)
 	{
-		if (file + offset + sizeof(struct load_command) > file + sizeof(struct mach_header) + header.sizeofcmds)
+		if (file + ctx->offset + sizeof(struct load_command) >
+			file + sizeof(struct mach_header) + h.header.sizeofcmds)
 			return (EXIT_FAILURE);
-		lc = *(struct load_command*)(file + offset);
+		u.load = *(struct load_command*)(file + ctx->offset);
 		if (flags & SWAP)
-			swap_load_command(&lc, NX_UnknownByteOrder);
-		if ((lc.cmdsize % 4)
-			|| (lc.cmd == LC_SEGMENT && validate_segment(file, ctx
-				, (struct segment_command*)(file + offset), flags) == EXIT_FAILURE)
-			|| (lc.cmd == LC_SYMTAB && validate_symtab(file, ctx
-				, (struct symtab_command*)(file + offset), &header, flags) == EXIT_FAILURE))
+			swap_load_command(&u.load, NX_UnknownByteOrder);
+		if (validate_load_command(h, ctx, flags, u) == EXIT_FAILURE)
 			return (EXIT_FAILURE);
-		offset += lc.cmdsize;
+		else if (ctx->hook.load_command
+			&& ctx->hook.load_command(&u, ctx, flags))
+			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }

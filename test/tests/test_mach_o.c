@@ -17,7 +17,8 @@ test_dump_mach_i386_dumps_machi386(
 	bzero(&ctx, sizeof(t_ctx));
 	munit_assert_int(get_file(2, argv, NULL, &ctx), ==, EXIT_SUCCESS);
 	munit_assert_int(determine_magic(ctx.file, &flags), ==, EXIT_SUCCESS);
-	munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs, flags), ==, EXIT_SUCCESS);
+	munit_assert_int(validate_mach_i386(ctx.file, &ctx, flags), ==, EXIT_SUCCESS);
+	// munit_assert_int(dump_mach_i386(ctx.file, &ctx, &funcs, flags), ==, EXIT_SUCCESS);
 	if (cleanup_ctx(&ctx) != EXIT_SUCCESS)
 		return MUNIT_ERROR;
 	munit_assert_int(g_header_calls, ==, 1);

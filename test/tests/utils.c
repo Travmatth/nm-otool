@@ -36,64 +36,66 @@ int		verify_load_command(char *file, t_ctx *ctx, struct load_command *lc, void *
 	return EXIT_SUCCESS;
 }
 
-int		verify_i386_sections(char *file, int swap, struct section *section) {
-	(void)file;
-	(void)swap;
-	(void)section;
-	g_section_calls += 1;
-	return EXIT_SUCCESS;
-}
-
-int		verify_x86_64_sections(char *file, struct section_64 *section) {
-	(void)file;
-	(void)section;
-	g_section_calls += 1;
-	return EXIT_SUCCESS;
-}
-
-int		verify_i386_segment_address(char *file, t_ctx *ctx, int flags, struct segment_command *segment) {
+int		verify_i386_sections(struct section *sect, t_ctx *ctx, int flags) {
+	(void)sect;
 	(void)ctx;
 	(void)flags;
-	if (!strcmp(segment->segname, "__TEXT")) {
-		uint32_t magic = *(uint32_t *)file + segment->fileoff;
+	g_section_calls += 1;
+	return EXIT_SUCCESS;
+}
+
+int		verify_x86_64_sections(struct section_64 *sect, t_ctx *ctx, int flags) {
+	(void)sect;
+	(void)ctx;
+	(void)flags;
+	g_section_calls += 1;
+	return EXIT_SUCCESS;
+}
+
+int		verify_i386_segment_address(struct segment_command *segment, t_ctx *ctx, int flags) {
+	(void)ctx;
+	(void)flags;
+	if (!strcmp(segment->segname, SEG_TEXT)) {
+		uint32_t magic = *(uint32_t *)ctx->file + segment->fileoff;
 		if (magic == MH_MAGIC)
 			g_segment_calls += 1;
 	}
 	return EXIT_SUCCESS;
 }
 
-int		verify_x86_64_segment_address(char *file, t_ctx *ctx, int flags, struct segment_command *segment) {
+int		verify_x86_64_segment_address(struct segment_command_64 *segment, t_ctx *ctx, int flags) {
 	(void)ctx;
 	(void)flags;
-	if (!strcmp(segment->segname, "__TEXT")) {
-		uint32_t magic = *(uint32_t *)file + segment->fileoff;
+	if (!strcmp(segment->segname, SEG_TEXT)) {
+		uint32_t magic = *(uint32_t *)ctx->file + segment->fileoff;
 		if (magic == MH_MAGIC)
 			g_segment_calls += 1;
 	}
 	return EXIT_SUCCESS;
 }
 
-int		verify_section_i386_address(char *file, int swap, struct section *sect) {
-	(void)swap;
-	if (!strcmp("__text", sect->sectname)) {
-		uint64_t val = *(uint64_t*)(file + sect->offset);
+int		verify_section_i386_address(struct section *sect, t_ctx *ctx, int flags) {
+	(void)flags;
+	if (!strcmp(SECT_TEXT, sect->sectname)) {
+		uint64_t val = *(uint64_t*)(ctx->file + sect->offset);
 		if (val == 0xe824ec8353e58955ULL)
 			g_section_calls += 1;
 	}
 	return EXIT_SUCCESS;
 }
 
-int		verify_section_x86_64_address(char *file, struct section_64 *sect) {
-	if (!strcmp("__text", sect->sectname)) {
-		uint64_t val = *(uint64_t*)(file + sect->offset);
+int		verify_section_x86_64_address(struct section_64 *sect, t_ctx *ctx, int flags) {
+	(void)flags;
+	if (!strcmp(SECT_TEXT->sectname)) {
+		uint64_t val = *(uint64_t*)(ctx->file + sect->offset);
 		if (val == 0xe824ec8353e58955ULL)
 			g_section_calls += 1;
 	}
 	return EXIT_SUCCESS;
 }
 
-int		verify_i386_header(char *file, int flags, struct mach_header *header) {
-	(void)file;
+int		verify_i386_header(struct mach_header *header, t_ctx *ctx, int flags) {
+	(void)ctx;
 	(void)flags;
 	if (header) {
 		if (header->magic == MH_MAGIC)
@@ -102,21 +104,11 @@ int		verify_i386_header(char *file, int flags, struct mach_header *header) {
 	return EXIT_SUCCESS;
 }
 
-int		verify_section64_address(char *file, t_ctx *ctx, struct section *sect, struct section_64 *sect64) {
+int		verify_x86_64_header(struct mach_header_64 *header, t_ctx *ctx, int flags) {
 	(void)ctx;
-	(void)sect;
-	if (!strcmp("__text", sect64->sectname)) {
-		uint64_t val = *(uint64_t*)(file + sect64->offset);
-		if (val == 1219493948222425173ULL)
-			g_section_calls += 1;
-	}
-	return EXIT_SUCCESS;
-}
-
-int		verify_header64(char *file, struct mach_header_64 *header_64) {
-	(void)file;
-	if (header_64) {
-		if (header_64->magic == MH_MAGIC_64)
+	(void)flags;
+	if (header) {
+		if (header->magic == MH_MAGIC_64)
 			g_header_calls += 1;
 	}
 	return EXIT_SUCCESS;
